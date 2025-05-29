@@ -1,0 +1,487 @@
+-- CreateTable
+CREATE TABLE `ConfigLocal` (
+    `DataID` VARCHAR(48) NULL,
+    `DataCenter` VARCHAR(255) NULL,
+    `ConfigName` VARCHAR(100) NOT NULL,
+    `ConfigValue` LONGTEXT NULL,
+    `HWID` VARCHAR(20) NULL,
+    `DataHash` BIGINT NULL,
+
+    INDEX `IdxDataCenter`(`DataCenter`),
+    PRIMARY KEY (`ConfigName`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `ConfigScale` (
+    `DataID` VARCHAR(48) NULL,
+    `DataCenter` VARCHAR(255) NULL,
+    `BrandName` VARCHAR(50) NOT NULL,
+    `ComPort` VARCHAR(50) NULL,
+    `BitPerSecond` INTEGER NULL,
+    `DataBit` TINYINT UNSIGNED NULL,
+    `Parity` VARCHAR(10) NULL,
+    `StopBit` TINYINT UNSIGNED NULL,
+    `PacketSize` TINYINT UNSIGNED NULL,
+    `StartAscii` TINYINT UNSIGNED NULL,
+    `EndAscii` TINYINT UNSIGNED NULL,
+    `WeightPos` TINYINT UNSIGNED NULL,
+    `WeightSize` TINYINT UNSIGNED NULL,
+    `ToledoFormat` BIT(1) NOT NULL,
+    `RightToLeftWeight` BIT(1) NOT NULL,
+    `Status` VARCHAR(1) NULL,
+    `HWID` VARCHAR(20) NULL,
+    `DataHash` BIGINT NULL,
+
+    INDEX `IdxDataCenter`(`DataCenter`),
+    PRIMARY KEY (`BrandName`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `ConfigSystem` (
+    `DataID` VARCHAR(48) NULL,
+    `DataCenter` VARCHAR(255) NULL,
+    `ConfigName` VARCHAR(100) NOT NULL,
+    `ConfigValue` LONGTEXT NULL,
+    `HWID` VARCHAR(20) NULL,
+    `DataHash` BIGINT NULL,
+
+    INDEX `IdxDataCenter`(`DataCenter`),
+    PRIMARY KEY (`ConfigName`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Customer` (
+    `DataID` VARCHAR(48) NOT NULL,
+    `DataCenter` VARCHAR(255) NULL,
+    `CustomerID` VARCHAR(20) NULL,
+    `CustomerName` VARCHAR(100) NULL,
+    `Address1` VARCHAR(100) NULL,
+    `Address2` VARCHAR(100) NULL,
+    `SequenceWeightIn` VARCHAR(10) NULL,
+    `SequenceWeightOut` VARCHAR(10) NULL,
+    `FlagCancel` VARCHAR(1) NULL,
+    `HWID` VARCHAR(20) NULL,
+    `DataHash` BIGINT NULL,
+
+    UNIQUE INDEX `Customer_CustomerID_key`(`CustomerID`),
+    INDEX `IdxDataCenter`(`DataCenter`),
+    INDEX `IX_Customer_2`(`CustomerName`),
+    INDEX `Customer_IX_Customer`(`FlagCancel`),
+    PRIMARY KEY (`DataID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Driver` (
+    `DataID` VARCHAR(48) NOT NULL,
+    `DataCenter` VARCHAR(255) NULL,
+    `DriverID` VARCHAR(20) NULL,
+    `DriverName` VARCHAR(100) NULL,
+    `Address1` VARCHAR(100) NULL,
+    `Address2` VARCHAR(100) NULL,
+    `SequenceWeightIn` VARCHAR(10) NULL,
+    `SequenceWeightOut` VARCHAR(10) NULL,
+    `FlagCancel` VARCHAR(1) NULL,
+    `HWID` VARCHAR(20) NULL,
+    `DataHash` BIGINT NULL,
+
+    UNIQUE INDEX `Driver_DriverID_key`(`DriverID`),
+    INDEX `IdxDataCenter`(`DataCenter`),
+    INDEX `IX_Driver_2`(`DriverName`),
+    INDEX `Driver_IX_Driver`(`FlagCancel`),
+    PRIMARY KEY (`DataID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `LogUserActivity` (
+    `DataID` VARCHAR(48) NOT NULL,
+    `DataCenter` VARCHAR(255) NULL,
+    `EventTime` DATETIME(3) NULL,
+    `UserActivityTypeDataID` VARCHAR(48) NULL,
+    `UserLogInDataID` VARCHAR(48) NULL,
+    `HostName` VARCHAR(255) NULL,
+    `ApplicationForm` VARCHAR(255) NULL,
+    `DatabaseTableName` VARCHAR(255) NULL,
+    `EffectedDataDataID` VARCHAR(48) NULL,
+    `UserActivityDescription1` LONGTEXT NULL,
+    `RawData` LONGTEXT NULL,
+    `HWID` VARCHAR(20) NULL,
+    `DataHash` BIGINT NULL,
+
+    INDEX `IdxDataCenter`(`DataCenter`),
+    INDEX `IdxEventTime`(`EventTime`),
+    INDEX `IdxUserActivityTypeDataID`(`UserActivityTypeDataID`),
+    INDEX `IdxUserLogInDataID`(`UserLogInDataID`),
+    PRIMARY KEY (`DataID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `NotificationQueue` (
+    `DataID` VARCHAR(48) NOT NULL,
+    `DataCenter` VARCHAR(255) NULL,
+    `NotificationTime` DATETIME(3) NULL,
+    `NotificationMessage` LONGTEXT NULL,
+    `NotificationObject` LONGBLOB NULL,
+    `HWID` VARCHAR(20) NULL,
+    `DataHash` BIGINT NULL,
+
+    INDEX `Idx_NotificationQueue_DataCenter`(`DataCenter`),
+    INDEX `Idx_NotificationQueue_NotificationTime`(`NotificationTime`),
+    PRIMARY KEY (`DataID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Product` (
+    `DataID` VARCHAR(48) NOT NULL,
+    `DataCenter` VARCHAR(255) NULL,
+    `ProductID` VARCHAR(20) NULL,
+    `ProductName` VARCHAR(100) NULL,
+    `ProductUnitDataID` VARCHAR(48) NULL,
+    `Price` DOUBLE NULL,
+    `SequenceWeightIn` VARCHAR(10) NULL,
+    `SequenceWeightOut` VARCHAR(10) NULL,
+    `FlagCancel` VARCHAR(1) NULL,
+    `HWID` VARCHAR(20) NULL,
+    `DataHash` BIGINT NULL,
+
+    UNIQUE INDEX `Product_ProductID_key`(`ProductID`),
+    INDEX `IdxDataCenter`(`DataCenter`),
+    INDEX `IX_Product_2`(`ProductName`),
+    INDEX `Product_IX_Product`(`FlagCancel`),
+    PRIMARY KEY (`DataID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `RFIDTag` (
+    `DataID` VARCHAR(48) NOT NULL,
+    `DataCenter` VARCHAR(255) NULL,
+    `RFIDTagID` VARCHAR(10) NULL,
+    `RFIDTagSerialNo` VARCHAR(50) NULL,
+    `CarRegister` VARCHAR(50) NULL,
+    `CarRegister2` VARCHAR(50) NULL,
+    `WeightTypeDataID` VARCHAR(48) NULL,
+    `CustomerDataID` VARCHAR(48) NULL,
+    `ProductDataID` VARCHAR(48) NULL,
+    `TransporterDataID` VARCHAR(48) NULL,
+    `DriverDataID` VARCHAR(48) NULL,
+    `SequenceWeightIn` VARCHAR(10) NULL,
+    `WeightDateIn` DATETIME(3) NULL,
+    `WeightTimeIn` DATETIME(3) NULL,
+    `WeightIn` DOUBLE NULL,
+    `UserLogInDataIDIn` VARCHAR(48) NULL,
+    `TicketPrintCountIn` INTEGER NULL,
+    `SequenceWeightOut` VARCHAR(10) NULL,
+    `WeightDateOut` DATETIME(3) NULL,
+    `WeightTimeOut` DATETIME(3) NULL,
+    `WeightOut` DOUBLE NULL,
+    `UserLogInDataIDOut` VARCHAR(48) NULL,
+    `TicketPrintCountOut` INTEGER NULL,
+    `Weight` DOUBLE NULL,
+    `WeightAdjust` DOUBLE NULL,
+    `AdjustPercent` DOUBLE NULL,
+    `AdjustPercentWeight` DOUBLE NULL,
+    `WeightAdjKey1` DOUBLE NULL,
+    `WeightAdjCal1` DOUBLE NULL,
+    `WeightAdjKey2` DOUBLE NULL,
+    `WeightAdjCal2` DOUBLE NULL,
+    `WeightAdjKey3` DOUBLE NULL,
+    `WeightAdjCal3` DOUBLE NULL,
+    `WeightNet` DOUBLE NULL,
+    `ProductUnitDataID` VARCHAR(48) NULL,
+    `KgToUnit` DOUBLE NULL,
+    `Price` DOUBLE NULL,
+    `Tax` DOUBLE NULL,
+    `Amount` DOUBLE NULL,
+    `AmountAdjKey1` DOUBLE NULL,
+    `AmountAdjCal1` DOUBLE NULL,
+    `AmountAdjKey2` DOUBLE NULL,
+    `AmountAdjCal2` DOUBLE NULL,
+    `AmountAdjKey3` DOUBLE NULL,
+    `AmountAdjCal3` DOUBLE NULL,
+    `AmountNet` DOUBLE NULL,
+    `Remark1` VARCHAR(50) NULL,
+    `Remark2` VARCHAR(50) NULL,
+    `Remark3` VARCHAR(50) NULL,
+    `Remark4` VARCHAR(50) NULL,
+    `FlagCancel` VARCHAR(1) NULL,
+    `HWID` VARCHAR(20) NULL,
+    `DataHash` BIGINT NULL,
+
+    UNIQUE INDEX `RFIDTag_RFIDTagID_key`(`RFIDTagID`),
+    UNIQUE INDEX `RFIDTag_RFIDTagSerialNo_key`(`RFIDTagSerialNo`),
+    INDEX `IdxDataCenter`(`DataCenter`),
+    INDEX `IX_RFID_3`(`CarRegister`),
+    INDEX `RFID_IX_RFID`(`FlagCancel`),
+    PRIMARY KEY (`DataID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Transporter` (
+    `DataID` VARCHAR(48) NOT NULL,
+    `DataCenter` VARCHAR(255) NULL,
+    `TransporterID` VARCHAR(20) NULL,
+    `TransporterName` VARCHAR(100) NULL,
+    `Address1` VARCHAR(100) NULL,
+    `Address2` VARCHAR(100) NULL,
+    `SequenceWeightIn` VARCHAR(10) NULL,
+    `SequenceWeightOut` VARCHAR(10) NULL,
+    `FlagCancel` VARCHAR(1) NULL,
+    `HWID` VARCHAR(20) NULL,
+    `DataHash` BIGINT NULL,
+
+    UNIQUE INDEX `Transporter_TransporterID_key`(`TransporterID`),
+    INDEX `IdxDataCenter`(`DataCenter`),
+    INDEX `IX_Transporter_2`(`TransporterName`),
+    INDEX `Transporter_IX_Transporter`(`FlagCancel`),
+    PRIMARY KEY (`DataID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Truck` (
+    `DataID` VARCHAR(48) NOT NULL,
+    `DataCenter` VARCHAR(255) NULL,
+    `CarRegister` VARCHAR(50) NOT NULL,
+    `CarRegister2` VARCHAR(50) NULL,
+    `WeightTypeDataID` VARCHAR(48) NULL,
+    `CustomerDataID` VARCHAR(48) NULL,
+    `ProductDataID` VARCHAR(48) NULL,
+    `TransporterDataID` VARCHAR(48) NULL,
+    `DriverDataID` VARCHAR(48) NULL,
+    `SequenceWeight` VARCHAR(10) NULL,
+    `WeightDate` DATETIME(3) NULL,
+    `WeightTime` DATETIME(3) NULL,
+    `Weight` DOUBLE NULL,
+    `UserLogInDataID` VARCHAR(48) NULL,
+    `WeightScaleID` VARCHAR(20) NULL,
+    `WeightAdjKey1` DOUBLE NULL,
+    `WeightAdjCal1` DOUBLE NULL,
+    `WeightAdjKey2` DOUBLE NULL,
+    `WeightAdjCal2` DOUBLE NULL,
+    `WeightAdjKey3` DOUBLE NULL,
+    `WeightAdjCal3` DOUBLE NULL,
+    `ProductUnitDataID` VARCHAR(48) NULL,
+    `Price` DOUBLE NULL,
+    `Tax` DOUBLE NULL,
+    `AmountAdjKey1` DOUBLE NULL,
+    `AmountAdjCal1` DOUBLE NULL,
+    `AmountAdjKey2` DOUBLE NULL,
+    `AmountAdjCal2` DOUBLE NULL,
+    `AmountAdjKey3` DOUBLE NULL,
+    `AmountAdjCal3` DOUBLE NULL,
+    `Remark1` VARCHAR(50) NULL,
+    `Remark2` VARCHAR(50) NULL,
+    `Remark3` VARCHAR(50) NULL,
+    `Remark4` VARCHAR(50) NULL,
+    `FlagAutoSave` VARCHAR(1) NULL,
+    `FlagPlatformEdgeSensor` VARCHAR(3) NULL,
+    `FlagCancel` VARCHAR(1) NULL,
+    `HWID` VARCHAR(20) NULL,
+    `DataHash` BIGINT NULL,
+
+    INDEX `Truck_CarRegister_idx`(`CarRegister`),
+    INDEX `Truck_DataCenter_idx`(`DataCenter`),
+    INDEX `Truck_FlagCancel_idx`(`FlagCancel`),
+    PRIMARY KEY (`DataID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `UserActivityType` (
+    `DataID` VARCHAR(48) NOT NULL,
+    `DataCenter` VARCHAR(255) NULL,
+    `UserActivityTypeID` VARCHAR(20) NOT NULL,
+    `UserActivityTypeName` VARCHAR(100) NULL,
+    `FlagCancel` VARCHAR(1) NULL,
+    `HWID` VARCHAR(20) NULL,
+    `DataHash` BIGINT NULL,
+
+    UNIQUE INDEX `UserActivityType_UserActivityTypeID_key`(`UserActivityTypeID`),
+    INDEX `IdxDataCenter`(`DataCenter`),
+    INDEX `IdxUserActivityTypeName`(`UserActivityTypeName`),
+    INDEX `IdxFlagCancel`(`FlagCancel`),
+    PRIMARY KEY (`DataID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `UserLogIn` (
+    `DataID` VARCHAR(48) NOT NULL,
+    `DataCenter` VARCHAR(255) NULL,
+    `LogInName` VARCHAR(20) NULL,
+    `LogInPassword` VARCHAR(255) NULL,
+    `FullName` VARCHAR(100) NULL,
+    `Permission` LONGTEXT NULL,
+    `FlagCancel` VARCHAR(1) NULL,
+    `HWID` VARCHAR(20) NULL,
+    `DataHash` BIGINT NULL,
+
+    UNIQUE INDEX `UserLogIn_LogInName_key`(`LogInName`),
+    INDEX `IdxDataCenter`(`DataCenter`),
+    INDEX `UserLogIn_IX_UserLogIn`(`FlagCancel`),
+    PRIMARY KEY (`DataID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Weight` (
+    `DataID` VARCHAR(48) NOT NULL,
+    `DataCenter` VARCHAR(255) NULL,
+    `DocID` VARCHAR(48) NULL,
+    `DocNoIn` VARCHAR(10) NULL,
+    `DocNoOut` VARCHAR(10) NULL,
+    `WeightModeDataID` VARCHAR(48) NULL,
+    `CarRegister` VARCHAR(50) NULL,
+    `CarRegister2` VARCHAR(50) NULL,
+    `TruckDataID` VARCHAR(48) NULL,
+    `RFIDTagDataID` VARCHAR(48) NULL,
+    `WeightTypeDataID` VARCHAR(48) NULL,
+    `CustomerDataID` VARCHAR(48) NULL,
+    `ProductDataID` VARCHAR(48) NULL,
+    `TransporterDataID` VARCHAR(48) NULL,
+    `DriverDataID` VARCHAR(48) NULL,
+    `SequenceWeightIn` VARCHAR(10) NULL,
+    `WeightDateIn` DATETIME(3) NULL,
+    `WeightTimeIn` DATETIME(3) NULL,
+    `WeightIn` DOUBLE NULL,
+    `UserLogInDataIDIn` VARCHAR(48) NULL,
+    `WeightScaleIDIn` VARCHAR(20) NULL,
+    `TicketPrintCountIn` INTEGER NULL,
+    `SequenceWeightOut` VARCHAR(10) NULL,
+    `WeightDateOut` DATETIME(3) NULL,
+    `WeightTimeOut` DATETIME(3) NULL,
+    `WeightOut` DOUBLE NULL,
+    `UserLogInDataIDOut` VARCHAR(48) NULL,
+    `WeightScaleIDOut` VARCHAR(20) NULL,
+    `TicketPrintCountOut` INTEGER NULL,
+    `Weight` DOUBLE NULL,
+    `WeightAdjust` DOUBLE NULL,
+    `AdjustPercent` DOUBLE NULL,
+    `AdjustPercentWeight` DOUBLE NULL,
+    `WeightAdjKey1` DOUBLE NULL,
+    `WeightAdjCal1` DOUBLE NULL,
+    `WeightAdjKey2` DOUBLE NULL,
+    `WeightAdjCal2` DOUBLE NULL,
+    `WeightAdjKey3` DOUBLE NULL,
+    `WeightAdjCal3` DOUBLE NULL,
+    `WeightNet` DOUBLE NULL,
+    `Price` DOUBLE NULL,
+    `Tax` DOUBLE NULL,
+    `ProductUnitDataID` VARCHAR(48) NULL,
+    `KgToUnit` DOUBLE NULL,
+    `Amount` DOUBLE NULL,
+    `AmountAdjKey1` DOUBLE NULL,
+    `AmountAdjCal1` DOUBLE NULL,
+    `AmountAdjKey2` DOUBLE NULL,
+    `AmountAdjCal2` DOUBLE NULL,
+    `AmountAdjKey3` DOUBLE NULL,
+    `AmountAdjCal3` DOUBLE NULL,
+    `AmountNet` DOUBLE NULL,
+    `Remark1` VARCHAR(50) NULL,
+    `Remark2` VARCHAR(50) NULL,
+    `Remark3` VARCHAR(50) NULL,
+    `Remark4` VARCHAR(50) NULL,
+    `SequenceRegisterIn` VARCHAR(10) NULL,
+    `RegisterDateIn` DATETIME(3) NULL,
+    `RegisterTimeIn` DATETIME(3) NULL,
+    `UserLogInDataIDRegisterIn` VARCHAR(48) NULL,
+    `RegisterStationIDIn` VARCHAR(48) NULL,
+    `SequenceRegisterOut` VARCHAR(10) NULL,
+    `RegisterDateOut` DATETIME(3) NULL,
+    `RegisterTimeOut` DATETIME(3) NULL,
+    `UserLogInDataIDRegisterOut` VARCHAR(48) NULL,
+    `RegisterStationIDOut` VARCHAR(48) NULL,
+    `FlagRegisterStatus` VARCHAR(1) NULL,
+    `FlagAutoSaveIn` VARCHAR(1) NULL,
+    `FlagAutoSaveOut` VARCHAR(1) NULL,
+    `FlagPlatformEdgeSensorIn` VARCHAR(3) NULL,
+    `FlagPlatformEdgeSensorOut` VARCHAR(3) NULL,
+    `FlagStatus` VARCHAR(1) NULL,
+    `FlagComplete` VARCHAR(1) NULL,
+    `FlagPayment` VARCHAR(1) NULL,
+    `PaymentDataID` VARCHAR(48) NULL,
+    `PaymentDate` DATETIME(3) NULL,
+    `PaymentTime` DATETIME(3) NULL,
+    `PaymentUserLogInDataID` VARCHAR(48) NULL,
+    `WeightNetStandard` DOUBLE NULL,
+    `WeightNetTolerancePositive` DOUBLE NULL,
+    `WeightNetToleranceNegative` DOUBLE NULL,
+    `WeightNetApproveUserLogInDataID` VARCHAR(48) NULL,
+    `FlagCancel` VARCHAR(1) NULL,
+    `HWID` VARCHAR(20) NULL,
+    `ExtendedData` TEXT NULL,
+    `DataHash` BIGINT NULL,
+    `FlagUploadIn` VARCHAR(1) NULL,
+    `FlagUploadOut` VARCHAR(1) NULL,
+
+    INDEX `IdxDataCenter`(`DataCenter`),
+    INDEX `Weight_IX_Weight`(`FlagCancel`),
+    INDEX `IX_Weight_1`(`FlagStatus`),
+    INDEX `IX_Weight_10`(`CustomerDataID`),
+    INDEX `IX_Weight_11`(`ProductDataID`),
+    INDEX `IX_Weight_12`(`TransporterDataID`),
+    INDEX `IX_Weight_13`(`DriverDataID`),
+    INDEX `IX_Weight_14`(`DocNoIn`),
+    INDEX `IX_Weight_15`(`DocNoOut`),
+    INDEX `IX_Weight_16`(`FlagComplete`),
+    INDEX `IX_Weight_17`(`DocID`),
+    INDEX `IX_Weight_18`(`FlagPayment`),
+    INDEX `IX_Weight_19`(`FlagRegisterStatus`),
+    INDEX `IX_Weight_2`(`SequenceWeightIn`),
+    INDEX `IX_Weight_20`(`PaymentDataID`),
+    INDEX `IX_Weight_21`(`PaymentDate`),
+    INDEX `IX_Weight_3`(`SequenceWeightOut`),
+    INDEX `IX_Weight_4`(`WeightDateIn`),
+    INDEX `IX_Weight_5`(`WeightTimeIn`),
+    INDEX `IX_Weight_6`(`WeightDateOut`),
+    INDEX `IX_Weight_7`(`WeightTimeOut`),
+    INDEX `IX_Weight_8`(`CarRegister`),
+    INDEX `IX_Weight_9`(`WeightTypeDataID`),
+    PRIMARY KEY (`DataID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `WeightImage` (
+    `DataID` VARCHAR(48) NOT NULL,
+    `DataCenter` VARCHAR(255) NULL,
+    `WeightDataID` VARCHAR(48) NULL,
+    `ImageCode` VARCHAR(20) NULL,
+    `WeightImage` LONGBLOB NULL,
+    `HWID` VARCHAR(20) NULL,
+    `DataHash` BIGINT NULL,
+
+    INDEX `IdxDataCenter`(`DataCenter`),
+    INDEX `IdxWeightDataID`(`WeightDataID`),
+    PRIMARY KEY (`DataID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `WeightReport` (
+    `DataID` VARCHAR(48) NOT NULL,
+    `DataCenter` VARCHAR(255) NULL,
+    `WeightReportID` VARCHAR(20) NULL,
+    `WeightReportName` VARCHAR(100) NULL,
+    `WeightReportFileName` VARCHAR(255) NULL,
+    `FlagCancel` VARCHAR(1) NULL,
+    `HWID` VARCHAR(20) NULL,
+    `DataHash` BIGINT NULL,
+
+    UNIQUE INDEX `WeightReport_WeightReportID_key`(`WeightReportID`),
+    INDEX `IdxDataCenter`(`DataCenter`),
+    INDEX `IX_WeightReport_2`(`WeightReportName`),
+    INDEX `WeightReport_IX_WeightReport`(`FlagCancel`),
+    PRIMARY KEY (`DataID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `WeightUnit` (
+    `DataID` VARCHAR(48) NOT NULL,
+    `DataCenter` VARCHAR(255) NULL,
+    `WeightUnitID` VARCHAR(20) NULL,
+    `WeightUnitName` VARCHAR(100) NULL,
+    `KgToUnit` DOUBLE NULL,
+    `FlagCancel` VARCHAR(1) NULL,
+    `HWID` VARCHAR(20) NULL,
+    `DataHash` BIGINT NULL,
+
+    UNIQUE INDEX `WeightUnit_WeightUnitID_key`(`WeightUnitID`),
+    INDEX `IdxDataCenter`(`DataCenter`),
+    INDEX `IX_WeightUnit_2`(`WeightUnitName`),
+    INDEX `WeightUnit_IX_WeightUnit`(`FlagCancel`),
+    PRIMARY KEY (`DataID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

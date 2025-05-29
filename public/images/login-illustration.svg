@@ -1,0 +1,58 @@
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <path d="M0 0H800V600H0V0Z" fill="#F5F9FF"/>
+  
+  <!-- Dollar coin -->
+  <circle cx="400" cy="250" r="120" fill="#FFD54F"/>
+  <circle cx="400" cy="250" r="100" fill="#FFCA28"/>
+  <path d="M400 180C402.761 180 405 182.239 405 185V196.213C418.431 197.598 430.116 203.456 437.452 212.87C444.789 222.284 447.159 235.204 443.678 245.87C440.197 256.536 431.199 264.888 420 267.787V315C420 317.761 417.761 320 415 320H385C382.239 320 380 317.761 380 315V267.787C368.801 264.888 359.803 256.536 356.322 245.87C352.841 235.204 355.211 222.284 362.548 212.87C369.884 203.456 381.569 197.598 395 196.213V185C395 182.239 397.239 180 400 180ZM405 214.787C397 213.694 389.376 216.424 384.574 222.43C379.772 228.436 378.498 237.064 381.272 243.87C384.046 250.676 390.46 255.306 398 256.213V235C398 232.239 400.239 230 403 230H407C409.761 230 412 232.239 412 235V256.213C419.54 255.306 425.954 250.676 428.728 243.87C431.502 237.064 430.228 228.436 425.426 222.43C420.624 216.424 413 213.694 405 214.787Z" fill="#28812D"/>
+
+  <!-- Person 1 -->
+  <circle cx="280" cy="380" r="40" fill="#4CAF50"/>
+  <rect x="260" y="420" width="40" height="80" rx="20" fill="#4CAF50"/>
+  <rect x="245" y="450" width="70" height="15" rx="7.5" fill="#4CAF50"/>
+  <circle cx="280" cy="360" r="20" fill="#FFB74D"/>
+
+  <!-- Person 2 -->
+  <circle cx="520" cy="380" r="40" fill="#FFA000"/>
+  <rect x="500" y="420" width="40" height="80" rx="20" fill="#FFA000"/>
+  <rect x="485" y="450" width="70" height="15" rx="7.5" fill="#FFA000"/>
+  <circle cx="520" cy="360" r="20" fill="#FFB74D"/>
+
+  <!-- Money bill 1 -->
+  <rect x="150" y="300" width="120" height="60" rx="10" fill="#66BB6A"/>
+  <circle cx="190" cy="330" r="15" fill="#43A047"/>
+  <rect x="215" y="320" width="40" height="10" rx="5" fill="#43A047"/>
+  <rect x="215" y="335" width="30" height="5" rx="2.5" fill="#43A047"/>
+
+  <!-- Money bill 2 -->
+  <rect x="530" y="450" width="120" height="60" rx="10" fill="#66BB6A"/>
+  <circle cx="570" cy="480" r="15" fill="#43A047"/>
+  <rect x="595" y="470" width="40" height="10" rx="5" fill="#43A047"/>
+  <rect x="595" y="485" width="30" height="5" rx="2.5" fill="#43A047"/>
+
+  <!-- Money bill 3 -->
+  <rect x="340" y="480" width="120" height="60" rx="10" fill="#66BB6A"/>
+  <circle cx="380" cy="510" r="15" fill="#43A047"/>
+  <rect x="405" y="500" width="40" height="10" rx="5" fill="#43A047"/>
+  <rect x="405" y="515" width="30" height="5" rx="2.5" fill="#43A047"/>
+
+  <!-- Coin stack 1 -->
+  <ellipse cx="200" cy="520" rx="30" ry="10" fill="#FFD54F"/>
+  <ellipse cx="200" cy="510" rx="30" ry="10" fill="#FFCA28"/>
+  <ellipse cx="200" cy="500" rx="30" ry="10" fill="#FFD54F"/>
+  <ellipse cx="200" cy="490" rx="30" ry="10" fill="#FFCA28"/>
+
+  <!-- Coin stack 2 -->
+  <ellipse cx="600" cy="380" rx="30" ry="10" fill="#FFD54F"/>
+  <ellipse cx="600" cy="370" rx="30" ry="10" fill="#FFCA28"/>
+  <ellipse cx="600" cy="360" rx="30" ry="10" fill="#FFD54F"/>
+
+  <!-- Decorative elements -->
+  <circle cx="150" cy="220" r="8" fill="#FF8F00"/>
+  <circle cx="650" cy="280" r="8" fill="#4CAF50"/>
+  <path d="M180 240L190 220L200 240" stroke="#F44336" stroke-width="3"/>
+  <path d="M620 320L630 300L640 320" stroke="#2196F3" stroke-width="3"/>
+  <path d="M300 170L310 150L320 170" stroke="#9C27B0" stroke-width="3"/>
+  <path d="M500 200L510 180L520 200" stroke="#FF9800" stroke-width="3"/>
+</svg> 
