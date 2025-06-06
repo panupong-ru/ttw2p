@@ -3,8 +3,8 @@
 import { muiTheme } from '@/app/mui-theme';
 
 // Sidebar dimensions
-export const DRAWER_WIDTH = 240;
-export const COLLAPSED_DRAWER_WIDTH = 70;
+export const DRAWER_WIDTH = 300;
+export const COLLAPSED_DRAWER_WIDTH = 56;
 
 // Sidebar colors - ใช้สีจาก MUI Theme
 export const DRAWER_BACKGROUND_COLOR = muiTheme.palette.background.sidebar;

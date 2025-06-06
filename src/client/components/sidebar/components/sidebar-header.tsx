@@ -3,10 +3,10 @@
 import { Box, useTheme, IconButton } from '@mui/material';
 import Image from 'next/image';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
-import { SidebarHeaderProps } from '../types';
+import type { SidebarHeaderProps } from '../types';
 import { DRAWER_BACKGROUND_COLOR, DRAWER_WHITE_BACKGROUND } from '../constants';
 
-export default function SidebarHeader({ open, onClose }: SidebarHeaderProps) {
+export default function SidebarHeader({ open, onCloseAction }: SidebarHeaderProps) {
   const theme = useTheme();
 
   return (
@@ -28,10 +28,10 @@ export default function SidebarHeader({ open, onClose }: SidebarHeaderProps) {
       {open ? (
         <>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Image src='/images/logo.png' alt='Logo' width={40} height={30} priority quality={90} />
+            <Image src='/images/logo.ico' alt='Logo' width={40} height={30} priority quality={90} />
           </Box>
           <IconButton
-            onClick={onClose}
+            onClick={onCloseAction}
             sx={{
               transition: theme.transitions.create('transform', {
                 duration: theme.transitions.duration.shortest,
@@ -67,7 +67,7 @@ export default function SidebarHeader({ open, onClose }: SidebarHeaderProps) {
             },
           }}
         >
-          <Image src='/images/logo.png' alt='Logo' width={40} height={30} priority quality={90} />
+          <Image src='/images/logo.ico' alt='Logo' width={40} height={30} priority quality={90} />
         </Box>
       )}
     </Box>

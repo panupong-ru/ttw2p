@@ -1,28 +1,88 @@
 'use client';
 
-import { Apps, Person, Description, Calculate, Group, Visibility } from '@mui/icons-material';
-import { MenuCategoryType } from './types';
-import { ROUTE } from '@/core/constants/route';
+import { Person, Group, Visibility } from '@mui/icons-material';
+import type { MenuCategoryType } from './types';
 export const MENU_CATEGORIES: MenuCategoryType[] = [
-  {
-    title: '',
-    items: [{ text: 'Dashboard', icon: <Apps />, href: ROUTE.HOME }],
-  },
+  // {
+  //   title: '',
+  //   items: [{ text: 'Dashboard', icon: <Apps />, href: ROUTE.HOME }],
+  // },
   {
     title: 'เมนู',
     items: [
       {
-        text: 'รายงานตัว',
+        text: 'ข้อมูล',
         icon: <Person />,
         href: '',
         subItems: [
-          { text: 'จัดการผู้ใช้', icon: <Group />, href: '' },
-          { text: 'ดูข้อมูล', icon: <Visibility />, href: '' },
+          { text: 'ข้อมูลประเภทชั่ง', icon: <Group />, href: '' },
+          { text: 'ข้อมูลคู่ค้า', icon: <Visibility />, href: '' },
+          { text: 'ข้อมูลสินค้า', icon: <Visibility />, href: '' },
+          { text: 'ข้อมูลผู้ขนส่ง', icon: <Visibility />, href: '' },
+          { text: 'ข้อมูลพนักงานขับรถ', icon: <Visibility />, href: '' },
+          { text: 'ข้อมูลบัตร RFID', icon: <Visibility />, href: '' },
+          { text: 'ข้อมูลรถบรรทุก', icon: <Visibility />, href: '' },
+          { text: 'ข้อมูลหน่วยราคา', icon: <Visibility />, href: '' },
+          { text: 'ข้อมูลรถค้างชั่ง', icon: <Visibility />, href: '' },
+          { text: 'ข้อมูลชั่งน้ำหนัก', icon: <Visibility />, href: '' },
         ],
         isOpen: false,
       },
-      { text: 'ประวัติการยื่นกู้', icon: <Description />, href: '' },
-      { text: 'คำนวณเงินกู้', icon: <Calculate />, href: '' },
+      {
+        text: 'รายงาน',
+        icon: <Person />,
+        href: '',
+        subItems: [
+          { text: 'รายงานประเภทชั่ง', icon: <Group />, href: '' },
+          { text: 'รายงานคู่ค้า', icon: <Visibility />, href: '' },
+          { text: 'รายงานสินค้า', icon: <Visibility />, href: '' },
+          { text: 'รายงานผู้ขนส่ง', icon: <Visibility />, href: '' },
+          { text: 'รายงานพนักงานขับรถ', icon: <Visibility />, href: '' },
+          { text: 'รายงานบัตร RFID', icon: <Visibility />, href: '' },
+          { text: 'รายงานรถบรรทุก', icon: <Visibility />, href: '' },
+          { text: 'รายงานหน่วยราคา', icon: <Visibility />, href: '' },
+          { text: 'รายงานรูปแบบรายงาน', icon: <Visibility />, href: '' },
+          { text: 'รายงานผู้ใช้โปรแกรม', icon: <Visibility />, href: '' },
+          { text: 'รายงานชั่งน้ำหนัก', icon: <Visibility />, href: '' },
+        ],
+        isOpen: false,
+      },
+      {
+        text: 'จัดการระบบ',
+        icon: <Person />,
+        href: '',
+        subItems: [
+          {
+            text: 'จัดการฐานข้อมูล',
+            icon: <Visibility />,
+            href: '',
+            subItems: [
+              { text: 'สำรองข้อมูล', icon: <Visibility />, href: '' },
+              { text: 'นำข้อมูลสำรองกลับมาใช้', icon: <Visibility />, href: '' },
+              { text: 'ลบข้อมูล', icon: <Visibility />, href: '' },
+            ],
+          },
+          { text: 'ข้อมูลรูปแบบรายงาน', icon: <Visibility />, href: '' },
+          { text: 'ข้อมูลผู้ใช้โปรแกรม', icon: <Visibility />, href: '' },
+          { text: 'ออกแบบรายงาน', icon: <Visibility />, href: '' },
+          { text: 'ตั้งค่าบริษัท', icon: <Visibility />, href: '' },
+          { text: 'ตั้งค่าเครื่องชั่ง', icon: <Visibility />, href: '' },
+          { text: 'ตั้งค่าโปรแกรม', icon: <Visibility />, href: '' },
+          { text: 'การใช้งานโปรแกรม', icon: <Visibility />, href: '' },
+          { text: 'เปลี่ยนรหัสผ่าน', icon: <Visibility />, href: '' },
+        ],
+        isOpen: false,
+      },
+      {
+        text: 'ช่วยเหลือ',
+        icon: <Person />,
+        href: '',
+        subItems: [
+          { text: 'คู่มือการใช้งาน', icon: <Visibility />, href: '' },
+          { text: 'เกี่ยวกับโปรแกรม', icon: <Visibility />, href: '' },
+        ],
+        isOpen: false,
+      },
     ],
   },
 ];

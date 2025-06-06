@@ -258,7 +258,7 @@ model Truck {
 model UserActivityType {
   DataID               String  @id @db.VarChar(48)
   DataCenter           String? @db.VarChar(255)
-  UserActivityTypeID   String  @unique @db.VarChar(20)
+  UserActivityTypeID   String? @unique(map: "IX_WeightType_1") @db.VarChar(20)
   UserActivityTypeName String? @db.VarChar(100)
   FlagCancel           String? @db.VarChar(1)
   HWID                 String? @db.VarChar(20)
@@ -440,4 +440,32 @@ model WeightUnit {
   @@index([DataCenter], name: "IdxDataCenter")
   @@index([WeightUnitName], name: "IX_WeightUnit_2")
   @@index([FlagCancel], name: "WeightUnit_IX_WeightUnit")
+}
+
+model WeightType {
+  DataID                    String  @id @db.VarChar(48)
+  DataCenter                String? @db.VarChar(255)
+  WeightTypeID              String? @unique(map: "IX_WeightType_1") @db.VarChar(20)
+  WeightTypeName            String? @db.VarChar(100)
+  FileRegisterTicketIn      String? @db.VarChar(255)
+  FileRegisterTicketOut     String? @db.VarChar(255)
+  FileAutoRegisterTicketIn  String? @db.VarChar(255)
+  FileAutoRegisterTicketOut String? @db.VarChar(255)
+  FileTicketIn              String? @db.VarChar(255)
+  FileTicketOut             String? @db.VarChar(255)
+  FileAutoTicketIn          String? @db.VarChar(255)
+  FileAutoTicketOut         String? @db.VarChar(255)
+  FileTicketRFIDTag         String? @db.VarChar(255)
+  SequenceRegisterIn        String? @db.VarChar(10)
+  SequenceRegisterOut       String? @db.VarChar(10)
+  SequenceWeightIn          String? @db.VarChar(10)
+  SequenceWeightOut         String? @db.VarChar(10)
+  FlagPayment               String? @db.VarChar(1)
+  FlagCancel                String? @db.VarChar(1)
+  HWID                      String? @db.VarChar(20)
+  DataHash                  BigInt?
+
+  @@index([FlagCancel], name: "WeightType_IX_WeightType")
+  @@index([WeightTypeName], name: "IX_WeightType_2")
+  @@index([DataCenter], name: "IdxDataCenter")
 }

@@ -4,15 +4,15 @@ import { Box, Typography, Button } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
 
-interface ForgetPasswordSuccessProps {
+type ForgetPasswordSuccessProps = {
   email: string;
-}
+};
 
 export const ForgetPasswordSuccessContent = ({ email }: ForgetPasswordSuccessProps) => {
   return (
     <Box sx={{ textAlign: 'center', py: 3 }}>
       <Image
-        src='/images/logo.png'
+        src='/images/logo.ico'
         alt='Logo'
         width={60}
         height={60}

@@ -2,9 +2,8 @@
 
 import { Toolbar, IconButton, Box, Divider } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { NavbarProps } from './types';
+import type { NavbarProps } from './types';
 import { StyledAppBar } from './styles';
-import NavbarNotifications from './components/notifications';
 import NavbarUser from './components/user';
 
 export default function Navbar({ onToggleSidebar, sidebarOpen = true }: NavbarProps) {
@@ -18,7 +17,7 @@ export default function Navbar({ onToggleSidebar, sidebarOpen = true }: NavbarPr
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <NavbarNotifications notificationCount={2} />
+          {/* <NavbarNotifications notificationCount={2} /> */}
 
           <Divider orientation='vertical' flexItem sx={{ height: 24, my: 'auto', mx: 1 }} />
 

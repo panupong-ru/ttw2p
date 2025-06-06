@@ -1,28 +1,28 @@
-export interface SidebarProps {
+export type SidebarProps = {
   open: boolean;
-  onClose: () => void;
-}
+  onCloseAction: () => void;
+};
 
-export interface MenuItemType {
+export type MenuItemType = {
   text: string;
   icon: React.ReactNode;
   href: string;
   subItems?: MenuItemType[];
   isOpen?: boolean;
-}
+};
 
-export interface MenuCategoryType {
+export type MenuCategoryType = {
   title: string;
   items: MenuItemType[];
-}
+};
 
-export interface SidebarHeaderProps {
+export type SidebarHeaderProps = {
   open: boolean;
-  onClose: () => void;
-}
+  onCloseAction: () => void;
+};
 
-export interface SidebarMenuProps {
+export type SidebarMenuProps = {
   open: boolean;
   menuCategories: MenuCategoryType[];
   pathname: string;
-}
+};

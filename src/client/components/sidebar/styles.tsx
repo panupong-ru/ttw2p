@@ -24,7 +24,10 @@ export const CustomListItemButton = muiStyled(ListItemButton, {
   color: active ? TEXT_LIGHT : sidebarOpen ? TEXT_DARK : TEXT_LIGHT,
   borderRadius: sidebarOpen ? '8px' : '50%',
   margin: sidebarOpen ? '4px 8px' : '4px auto',
-  width: sidebarOpen ? 'auto' : '80%',
+  width: sidebarOpen ? 'auto' : 56,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
   transition: theme.transitions.create(['background-color', 'transform', 'color', 'width'], {
     duration: theme.transitions.duration.standard,
     easing: theme.transitions.easing.easeInOut,

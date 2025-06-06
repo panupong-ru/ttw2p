@@ -6,10 +6,11 @@ import { DRAWER_BACKGROUND_COLOR, DRAWER_WHITE_BACKGROUND, DRAWER_WIDTH, COLLAPS
 import SidebarHeader from './components/sidebar-header';
 import SidebarMenu from './components/sidebar-menu';
 import { MENU_CATEGORIES } from './menu-items';
-import { SidebarProps } from './types';
+import { MENU_CATEGORIES_COLLAPSED } from './menu-items-collapsed';
+import type { SidebarProps } from './types';
 import { StyledDrawer } from './styles';
 
-export default function Sidebar({ open, onClose }: SidebarProps) {
+export default function Sidebar({ open, onCloseAction }: SidebarProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const pathname = usePathname();
@@ -28,8 +29,12 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
         }),
       }}
     >
-      <SidebarHeader open={open} onClose={onClose} />
-      <SidebarMenu open={open} menuCategories={MENU_CATEGORIES} pathname={pathname} />
+      <SidebarHeader open={open} onCloseAction={onCloseAction} />
+      <SidebarMenu
+        open={open}
+        menuCategories={open ? MENU_CATEGORIES : MENU_CATEGORIES_COLLAPSED}
+        pathname={pathname}
+      />
     </Box>
   );
 
@@ -38,7 +43,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
       variant='permanent'
       open={open}
       isMobile={isMobile}
-      onClose={onClose}
+      onClose={onCloseAction}
       sx={{
         width: open ? DRAWER_WIDTH : COLLAPSED_DRAWER_WIDTH,
         transition: theme.transitions.create(['width', 'background-color'], {

@@ -1,9 +1,9 @@
-import { DashBoard } from '@/client/modules/dashboard';
+import { WeightType } from '@/client/modules/weight-type';
 import { CircularProgress } from '@mui/material';
 import { Box } from '@mui/material';
 import { Suspense } from 'react';
 
-export default function DashBoardPage() {
+export default function WeightTypePage() {
   return (
     <Suspense
       fallback={
@@ -12,7 +12,7 @@ export default function DashBoardPage() {
         </Box>
       }
     >
-      <DashBoard />
+      <WeightType />
     </Suspense>
   );
 }

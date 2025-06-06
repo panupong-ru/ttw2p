@@ -7,11 +7,11 @@
     {
       "type": "chrome",
       "request": "launch",
-      "name": "Launch Brave against localhost",
+      "name": "Launch Edge against localhost",
       "url": "http://localhost:3000",
       "webRoot": "${workspaceFolder}/src/app",
-      "runtimeExecutable": "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
-      "userDataDir": "C:\\Users\\panup\\AppData\\Local\\BraveSoftware\\Brave-Browser\\User Data"
+      "runtimeExecutable": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe"
+      // "userDataDir": "C:\\Users\\panup\\AppData\\Local\\Microsoft\\Edge\\User Data"
     }
   ]
 }

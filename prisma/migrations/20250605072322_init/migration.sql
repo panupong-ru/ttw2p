@@ -287,13 +287,13 @@ CREATE TABLE `Truck` (
 CREATE TABLE `UserActivityType` (
     `DataID` VARCHAR(48) NOT NULL,
     `DataCenter` VARCHAR(255) NULL,
-    `UserActivityTypeID` VARCHAR(20) NOT NULL,
+    `UserActivityTypeID` VARCHAR(20) NULL,
     `UserActivityTypeName` VARCHAR(100) NULL,
     `FlagCancel` VARCHAR(1) NULL,
     `HWID` VARCHAR(20) NULL,
     `DataHash` BIGINT NULL,
 
-    UNIQUE INDEX `UserActivityType_UserActivityTypeID_key`(`UserActivityTypeID`),
+    UNIQUE INDEX `IX_WeightType_1`(`UserActivityTypeID`),
     INDEX `IdxDataCenter`(`DataCenter`),
     INDEX `IdxUserActivityTypeName`(`UserActivityTypeName`),
     INDEX `IdxFlagCancel`(`FlagCancel`),
@@ -483,5 +483,36 @@ CREATE TABLE `WeightUnit` (
     INDEX `IdxDataCenter`(`DataCenter`),
     INDEX `IX_WeightUnit_2`(`WeightUnitName`),
     INDEX `WeightUnit_IX_WeightUnit`(`FlagCancel`),
+    PRIMARY KEY (`DataID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `WeightType` (
+    `DataID` VARCHAR(48) NOT NULL,
+    `DataCenter` VARCHAR(255) NULL,
+    `WeightTypeID` VARCHAR(20) NULL,
+    `WeightTypeName` VARCHAR(100) NULL,
+    `FileRegisterTicketIn` VARCHAR(255) NULL,
+    `FileRegisterTicketOut` VARCHAR(255) NULL,
+    `FileAutoRegisterTicketIn` VARCHAR(255) NULL,
+    `FileAutoRegisterTicketOut` VARCHAR(255) NULL,
+    `FileTicketIn` VARCHAR(255) NULL,
+    `FileTicketOut` VARCHAR(255) NULL,
+    `FileAutoTicketIn` VARCHAR(255) NULL,
+    `FileAutoTicketOut` VARCHAR(255) NULL,
+    `FileTicketRFIDTag` VARCHAR(255) NULL,
+    `SequenceRegisterIn` VARCHAR(10) NULL,
+    `SequenceRegisterOut` VARCHAR(10) NULL,
+    `SequenceWeightIn` VARCHAR(10) NULL,
+    `SequenceWeightOut` VARCHAR(10) NULL,
+    `FlagPayment` VARCHAR(1) NULL,
+    `FlagCancel` VARCHAR(1) NULL,
+    `HWID` VARCHAR(20) NULL,
+    `DataHash` BIGINT NULL,
+
+    UNIQUE INDEX `IX_WeightType_1`(`WeightTypeID`),
+    INDEX `WeightType_IX_WeightType`(`FlagCancel`),
+    INDEX `IX_WeightType_2`(`WeightTypeName`),
+    INDEX `IdxDataCenter`(`DataCenter`),
     PRIMARY KEY (`DataID`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

@@ -1,17 +1,17 @@
-export interface NavbarProps {
+export type NavbarProps = {
   onToggleSidebar: () => void;
   sidebarOpen?: boolean;
-}
+};
 
-export interface UserMenuProps {
+export type UserMenuProps = {
   anchorEl: HTMLElement | null;
   handleClose: () => void;
-}
+};
 
-export interface NavbarNotificationsProps {
+export type NavbarNotificationsProps = {
   notificationCount?: number;
-}
+};
 
-export interface NavbarUserProps {
+export type NavbarUserProps = {
   handleMenu: (event: React.MouseEvent<HTMLElement>) => void;
-}
+};

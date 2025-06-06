@@ -10,26 +10,20 @@ import {
   Link,
   InputAdornment,
   IconButton,
-  Alert,
   CircularProgress,
   Stack,
   Typography,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { signInSchema, type SignInFormData } from './schema';
-import { MAX_LOGIN_ATTEMPTS } from '@/client/hooks/useLoginAttempts';
 
 export type SignInFormProps = {
   onSubmit: (data: SignInFormData) => void;
-  isLocked: boolean;
-  unlockTime: string;
-  loginAttempts: number;
-  error: string | null;
   isPending: boolean;
   errorApi: string | null;
 };
 
-export const SignInForm = ({ onSubmit, loginAttempts, error, isPending, errorApi }: SignInFormProps) => {
+export const SignInForm = ({ onSubmit, isPending, errorApi }: SignInFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -47,18 +41,6 @@ export const SignInForm = ({ onSubmit, loginAttempts, error, isPending, errorApi
 
   return (
     <Box component='form' onSubmit={handleSubmit(onSubmit)} noValidate>
-      {error && (
-        <Alert severity='error' sx={{ mb: 3, borderRadius: 1 }}>
-          {error}
-        </Alert>
-      )}
-
-      {loginAttempts > 0 && (
-        <Alert severity='warning' sx={{ mb: 3, borderRadius: 1 }}>
-          ใส่รหัสผ่านผิด {loginAttempts} ครั้ง (สูงสุด {MAX_LOGIN_ATTEMPTS} ครั้ง)
-        </Alert>
-      )}
-
       <TextField
         {...register('LogInName')}
         margin='normal'

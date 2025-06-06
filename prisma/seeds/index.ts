@@ -7,6 +7,7 @@ import { Seed_Driver } from './driver';
 import { Seed_Customer } from './customer';
 import { Seed_Product } from './product';
 import { Seed_Transporter } from './transporter';
+import { Seed_WeightType } from './weight-type';
 
 const main = async () => {
   try {
@@ -18,6 +19,7 @@ const main = async () => {
     await Seed_Transporter();
     await Seed_UserLogIn();
     await Seed_WeightReport();
+    await Seed_WeightType();
   } catch (error) {
     console.error('Error seeding database:', error);
   } finally {

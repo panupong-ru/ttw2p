@@ -1,14 +1,14 @@
 'use client';
 
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Box, Container, Paper, useTheme } from '@mui/material';
 import Image from 'next/image';
 
-interface AuthLayoutProps {
+type AuthLayoutProps = {
   children: ReactNode;
   headerComponent: ReactNode;
   pageTitle?: string;
-}
+};
 
 export const AuthLayout = ({ children, headerComponent, pageTitle = 'Authentication' }: AuthLayoutProps) => {
   const theme = useTheme();
@@ -44,7 +44,7 @@ export const AuthLayout = ({ children, headerComponent, pageTitle = 'Authenticat
           }}
           role='banner'
         >
-          <Image src='/images/logo.png' alt='MCOT Logo' width={50} height={50} priority sizes='50px' quality={90} />
+          <Image src='/images/logo.ico' alt='MCOT Logo' width={50} height={50} priority sizes='50px' quality={90} />
         </Box>
 
         <Box

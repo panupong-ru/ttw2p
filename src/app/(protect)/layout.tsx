@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Box, CssBaseline } from '@mui/material';
 import Navbar from '@/client/components/navbar';
 import Sidebar from '@/client/components/sidebar';
+import { DRAWER_WIDTH, COLLAPSED_DRAWER_WIDTH } from '@/client/components/sidebar/constants';
 
 export default function ProtectedLayout({
   children,
@@ -36,7 +37,7 @@ export default function ProtectedLayout({
     );
   }
 
-  const drawerWidth = sidebarOpen ? 240 : 70;
+  const drawerWidth = sidebarOpen ? DRAWER_WIDTH : COLLAPSED_DRAWER_WIDTH;
 
   return (
     <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
@@ -53,7 +54,7 @@ export default function ProtectedLayout({
           bottom: 0,
         }}
       >
-        <Sidebar open={sidebarOpen} onClose={closeSidebar} />
+        <Sidebar open={sidebarOpen} onCloseAction={closeSidebar} />
       </Box>
 
       <Box

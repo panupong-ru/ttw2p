@@ -7,7 +7,7 @@ export const ForgetPasswordHeader = () => {
   return (
     <Box sx={{ mb: 4, mt: 2, textAlign: 'center' }}>
       <Image
-        src='/images/logo.png'
+        src='/images/logo.ico'
         alt='Logo'
         width={60}
         height={60}
