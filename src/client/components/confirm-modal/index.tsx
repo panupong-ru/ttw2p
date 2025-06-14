@@ -29,8 +29,8 @@ function ConfirmModal({
   isOpen = false,
   onClose = () => {},
   onSubmit = () => {},
-  cancelButtonText = 'CANCEL',
-  submitButtonText = 'OK',
+  cancelButtonText = 'ยกเลิก',
+  submitButtonText = 'ตกลง',
   maxWidth = 'sm',
   isLoading = false,
 }: FormModalProps) {

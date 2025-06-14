@@ -4,5 +4,5 @@ export const ROUTE = {
   SIGN_IN: '/sign-in',
   FORGET_PASSWORD: '/forget-password',
   // Home force
-  HOME: '/dashboard',
+  HOME: '/weight-type',
 };

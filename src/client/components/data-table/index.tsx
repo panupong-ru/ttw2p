@@ -129,7 +129,7 @@ function DataTableComponent<T extends GridValidRowModel>({
       flexDirection={'column'}
       sx={{
         width: '100%',
-        height: 400,
+        height: 625,
         ...(data?.length > 0 ? {} : { minHeight: 320 }),
       }}
     >

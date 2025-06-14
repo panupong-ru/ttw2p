@@ -17,8 +17,8 @@ const sarabun = Sarabun({
 });
 
 export const metadata: Metadata = {
-  description: 'Mcot',
-  title: 'Mcot',
+  description: 'ttw2',
+  title: 'ttw2',
 };
 
 export default function RootLayout({

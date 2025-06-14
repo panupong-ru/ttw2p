@@ -120,7 +120,7 @@ function WeightType() {
         isOpen={deleteInfo.isOpen}
         onClose={() => setDeleteInfo({ isOpen: false })}
         onSubmit={handleDelete}
-        subTitle="กรุณายืนยันการลบข้อมูลประเภทชั่งนี้โดยการกด 'OK' หากไม่แน่ใจกด 'CANCEL'"
+        subTitle="กรุณายืนยันการลบข้อมูลประเภทชั่งนี้โดยการกด 'ตกลง' หากไม่แน่ใจกด 'ยกเลิก'"
         title='ต้องการลบข้อมูลประเภทชั่งนี้หรือไม่?'
       />
     </Stack>
