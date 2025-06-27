@@ -8,10 +8,14 @@ import type {
   GridValidRowModel,
 } from '@mui/x-data-grid';
 
-import { Box, CircularProgress } from '@mui/material';
+import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { DataGrid } from '@mui/x-data-grid';
-import { Suspense, useCallback, useEffect, useState } from 'react';
+import { DataGrid, useGridSelector } from '@mui/x-data-grid';
+import { useCallback, useEffect, useState } from 'react';
+import Pagination from '@mui/material/Pagination';
+import { useGridApiContext, gridPageSelector, gridPageCountSelector, gridPageSizeSelector } from '@mui/x-data-grid';
+import Stack from '@mui/material/Stack';
+import TablePagination from '@mui/material/TablePagination';
 
 const StyledGridOverlay = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -42,6 +46,7 @@ type TableProps<T extends GridValidRowModel> = {
   isLoading?: boolean;
   onRowSelect?: (value: GridRowSelectionModel) => void;
   rowSelect?: GridRowSelectionModel;
+  actionButtons?: React.ReactNode;
 };
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -80,21 +85,7 @@ function CustomNoRowsOverlay() {
   );
 }
 
-function DataTable<T extends GridValidRowModel>(props: TableProps<T>) {
-  return (
-    <Suspense
-      fallback={
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', p: 8 }}>
-          <CircularProgress />
-        </Box>
-      }
-    >
-      <DataTableComponent {...props} />
-    </Suspense>
-  );
-}
-
-function DataTableComponent<T extends GridValidRowModel>({
+function DataTable<T extends GridValidRowModel>({
   columns = [],
   data = [],
   isLoading = false,
@@ -103,6 +94,7 @@ function DataTableComponent<T extends GridValidRowModel>({
   rowSelect,
   hideFooter = false,
   initialState,
+  actionButtons,
 }: TableProps<T>) {
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: 0,
@@ -123,13 +115,89 @@ function DataTableComponent<T extends GridValidRowModel>({
     }
   }, [rowSelect, rowSelectionModel]);
 
+  function CustomPaginationWithPageSize() {
+    const apiRef = useGridApiContext();
+    const page = useGridSelector(apiRef, gridPageSelector);
+    const pageCount = useGridSelector(apiRef, gridPageCountSelector);
+    const pageSize = useGridSelector(apiRef, gridPageSizeSelector);
+    const rowCount = apiRef.current.getRowsCount();
+
+    const pageSizeOptions = [5, 10, 25, 50, 100];
+
+    return (
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        alignItems={{ xs: 'center', sm: 'center' }}
+        justifyContent={{ xs: 'center', sm: 'space-between' }}
+        spacing={2}
+        sx={{ width: '100%', py: 1 }}
+      >
+        <Box
+          sx={{
+            width: { xs: '100%', sm: 'auto' },
+            mb: { xs: 1, sm: 0 },
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          {actionButtons}
+        </Box>
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          alignItems='center'
+          spacing={2}
+          sx={{ width: { xs: '100%', sm: 'auto' }, minWidth: 0, flexWrap: 'wrap' }}
+        >
+          <TablePagination
+            component='div'
+            count={rowCount}
+            page={page}
+            onPageChange={() => {}}
+            rowsPerPage={pageSize}
+            onRowsPerPageChange={(e) => apiRef.current.setPageSize(Number(e.target.value))}
+            rowsPerPageOptions={pageSizeOptions}
+            labelRowsPerPage='จำนวนแถวต่อหน้า'
+            ActionsComponent={() => <></>}
+            sx={{
+              width: { xs: '100%', sm: 'auto' },
+              mb: { xs: 1, sm: 0 },
+              '.MuiTablePagination-toolbar': { p: 0, justifyContent: { xs: 'center', sm: 'flex-start' } },
+            }}
+          />
+          <Box
+            sx={{
+              width: { xs: '100%', sm: 'auto' },
+              display: 'flex',
+              justifyContent: { xs: 'center', sm: 'flex-end' },
+              alignSelf: 'center',
+              minWidth: 0,
+            }}
+          >
+            <Pagination
+              color='primary'
+              count={pageCount}
+              page={page + 1}
+              onChange={(_, value) => apiRef.current.setPage(value - 1)}
+              showFirstButton
+              showLastButton
+              siblingCount={1}
+              boundaryCount={1}
+              sx={{ width: { xs: '100%', sm: 'auto' } }}
+            />
+          </Box>
+        </Stack>
+      </Stack>
+    );
+  }
+
   return (
     <Box
       display={'flex'}
       flexDirection={'column'}
       sx={{
         width: '100%',
-        height: 625,
+        height: '100%',
         ...(data?.length > 0 ? {} : { minHeight: 320 }),
       }}
     >
@@ -151,10 +219,15 @@ function DataTableComponent<T extends GridValidRowModel>({
         paginationModel={paginationModel}
         rows={data}
         rowSelectionModel={rowSelectionModel}
-        slots={{ noRowsOverlay: CustomNoRowsOverlay }}
+        slots={{
+          noRowsOverlay: CustomNoRowsOverlay,
+          pagination: CustomPaginationWithPageSize,
+        }}
         sortingMode='client'
         sx={{
           border: 0,
+          '& .MuiDataGrid-selectedRowCount': { display: 'none' },
+          '& .MuiDataGrid-footerContainer': { justifyContent: 'right !important' },
           '& .MuiDataGrid-virtualScroller': {
             overflow: 'auto',
           },
