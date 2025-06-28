@@ -20,7 +20,7 @@ export function safeJSONResponse(data: any, status: number = 200) {
  * @returns NextResponse with success message and data
  */
 export function successResponse(data: any, status: number = 200) {
-  return safeJSONResponse({ message: 'success', data }, status);
+  return safeJSONResponse({ message: 'success', result: data }, status);
 }
 
 /**

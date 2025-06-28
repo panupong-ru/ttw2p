@@ -10,12 +10,16 @@ import type {
 
 import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { DataGrid, useGridSelector } from '@mui/x-data-grid';
-import { useCallback, useEffect, useState } from 'react';
-import Pagination from '@mui/material/Pagination';
-import { useGridApiContext, gridPageSelector, gridPageCountSelector, gridPageSizeSelector } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
+import { useEffect, useState } from 'react';
 import Stack from '@mui/material/Stack';
 import TablePagination from '@mui/material/TablePagination';
+import TextField from '@mui/material/TextField';
+import IconButton from '@mui/material/IconButton';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import LastPageIcon from '@mui/icons-material/LastPage';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 const StyledGridOverlay = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -47,6 +51,10 @@ type TableProps<T extends GridValidRowModel> = {
   onRowSelect?: (value: GridRowSelectionModel) => void;
   rowSelect?: GridRowSelectionModel;
   actionButtons?: React.ReactNode;
+  paginationMode?: 'client' | 'server';
+  paginationModel?: GridPaginationModel;
+  rowCount?: number;
+  onPaginationModelChange?: (model: GridPaginationModel) => void;
 };
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -95,19 +103,14 @@ function DataTable<T extends GridValidRowModel>({
   hideFooter = false,
   initialState,
   actionButtons,
+  paginationMode = 'client',
+  paginationModel,
+  rowCount,
+  onPaginationModelChange,
 }: TableProps<T>) {
-  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
-    page: 0,
-    pageSize: hideFooter ? -1 : DEFAULT_PAGE_SIZE,
-  });
-
   const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>(
     rowSelect || { type: 'include', ids: new Set() }
   );
-
-  const onPaginationChange = useCallback(({ page, pageSize }: GridPaginationModel) => {
-    setPaginationModel({ page, pageSize });
-  }, []);
 
   useEffect(() => {
     if (rowSelect && rowSelect !== rowSelectionModel) {
@@ -116,11 +119,61 @@ function DataTable<T extends GridValidRowModel>({
   }, [rowSelect, rowSelectionModel]);
 
   function CustomPaginationWithPageSize() {
-    const apiRef = useGridApiContext();
-    const page = useGridSelector(apiRef, gridPageSelector);
-    const pageCount = useGridSelector(apiRef, gridPageCountSelector);
-    const pageSize = useGridSelector(apiRef, gridPageSizeSelector);
-    const rowCount = apiRef.current.getRowsCount();
+    // Use parent props instead of DataGrid selectors
+    const currentPaginationModel =
+      paginationMode === 'server'
+        ? paginationModel
+        : {
+            page: 0,
+            pageSize: hideFooter ? -1 : DEFAULT_PAGE_SIZE,
+          };
+    const page = currentPaginationModel?.page ?? 0;
+    const pageSize = currentPaginationModel?.pageSize ?? DEFAULT_PAGE_SIZE;
+    const totalRows = rowCount ?? data.length;
+    const pageCount = Math.ceil(totalRows / pageSize);
+
+    // Use stable state management
+    const [inputValue, setInputValue] = useState(() => String(page + 1));
+    const [isUserEditing, setIsUserEditing] = useState(false);
+
+    // Update input value when page changes externally (only if user is not editing)
+    if (!isUserEditing && String(page + 1) !== inputValue) {
+      setInputValue(String(page + 1));
+    }
+
+    const handlePageChange = (newPageInput: string) => {
+      const newPage = parseInt(newPageInput, 10);
+      const newModel = { page: 0, pageSize };
+
+      if (newPage > 0 && newPage <= pageCount) {
+        newModel.page = newPage - 1;
+        setInputValue(String(newPage));
+      } else if (newPage > pageCount) {
+        newModel.page = pageCount - 1;
+        setInputValue(String(pageCount));
+      } else if (newPage < 1) {
+        newModel.page = 0;
+        setInputValue('1');
+      }
+
+      // Call parent pagination handler
+      onPaginationModelChange?.(newModel);
+      setIsUserEditing(false);
+    };
+
+    const handleIconButtonClick = (newPage: number) => {
+      const newModel = { page: newPage, pageSize };
+      onPaginationModelChange?.(newModel);
+      setInputValue(String(newPage + 1));
+      setIsUserEditing(false);
+    };
+
+    const handlePageSizeChange = (newPageSize: number) => {
+      const newModel = { page: 0, pageSize: newPageSize };
+      onPaginationModelChange?.(newModel);
+      setInputValue('1');
+      setIsUserEditing(false);
+    };
 
     const pageSizeOptions = [5, 10, 25, 50, 100];
 
@@ -151,11 +204,11 @@ function DataTable<T extends GridValidRowModel>({
         >
           <TablePagination
             component='div'
-            count={rowCount}
+            count={totalRows}
             page={page}
             onPageChange={() => {}}
             rowsPerPage={pageSize}
-            onRowsPerPageChange={(e) => apiRef.current.setPageSize(Number(e.target.value))}
+            onRowsPerPageChange={(e) => handlePageSizeChange(Number(e.target.value))}
             rowsPerPageOptions={pageSizeOptions}
             labelRowsPerPage='จำนวนแถวต่อหน้า'
             ActionsComponent={() => <></>}
@@ -172,19 +225,68 @@ function DataTable<T extends GridValidRowModel>({
               justifyContent: { xs: 'center', sm: 'flex-end' },
               alignSelf: 'center',
               minWidth: 0,
+              gap: 1,
+              alignItems: 'center',
             }}
           >
-            <Pagination
-              color='primary'
-              count={pageCount}
-              page={page + 1}
-              onChange={(_, value) => apiRef.current.setPage(value - 1)}
-              showFirstButton
-              showLastButton
-              siblingCount={1}
-              boundaryCount={1}
-              sx={{ width: { xs: '100%', sm: 'auto' } }}
+            <IconButton onClick={() => handleIconButtonClick(0)} disabled={page === 0} size='small'>
+              <FirstPageIcon />
+            </IconButton>
+            <IconButton onClick={() => handleIconButtonClick(page - 1)} disabled={page === 0} size='small'>
+              <ArrowBackIosNewIcon fontSize='small' />
+            </IconButton>
+            <TextField
+              type='number'
+              size='small'
+              value={inputValue}
+              onChange={(e) => {
+                setIsUserEditing(true);
+                setInputValue(e.target.value);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handlePageChange(inputValue);
+                  (e.target as HTMLInputElement).blur();
+                }
+              }}
+              onFocus={() => {
+                setIsUserEditing(true);
+              }}
+              onBlur={() => {
+                const currentValue = parseInt(inputValue, 10);
+                if (isNaN(currentValue) || currentValue < 1 || currentValue > pageCount) {
+                  setInputValue(String(page + 1));
+                }
+                setIsUserEditing(false);
+              }}
+              sx={{
+                input: {
+                  textAlign: 'center',
+                  width: '50px',
+                },
+              }}
+              slotProps={{
+                input: {
+                  inputProps: {
+                    min: 1,
+                    max: pageCount,
+                  },
+                },
+              }}
             />
+            <Box component='span' sx={{ mx: 0.5 }}>
+              / {pageCount}
+            </Box>
+            <IconButton onClick={() => handleIconButtonClick(page + 1)} disabled={page === pageCount - 1} size='small'>
+              <ArrowForwardIosIcon fontSize='small' />
+            </IconButton>
+            <IconButton
+              onClick={() => handleIconButtonClick(pageCount - 1)}
+              disabled={page === pageCount - 1}
+              size='small'
+            >
+              <LastPageIcon />
+            </IconButton>
           </Box>
         </Stack>
       </Stack>
@@ -192,44 +294,41 @@ function DataTable<T extends GridValidRowModel>({
   }
 
   return (
-    <Box
-      display={'flex'}
-      flexDirection={'column'}
-      sx={{
-        width: '100%',
-        height: '100%',
-        ...(data?.length > 0 ? {} : { minHeight: 320 }),
-      }}
-    >
+    <Box sx={{ width: '100%', height: '100%', position: 'relative' }}>
       <DataGrid
+        rows={data}
         columns={columns}
-        disableColumnFilter
-        disableRowSelectionOnClick={disableRowSelectionOnClick}
-        getRowId={(row) => row.DataID}
-        hideFooter={hideFooter}
-        initialState={initialState}
         loading={isLoading}
-        onPaginationModelChange={onPaginationChange}
+        getRowId={(row) => row.DataID}
+        disableRowSelectionOnClick={disableRowSelectionOnClick}
         onRowSelectionModelChange={(newRowSelectionModel) => {
           setRowSelectionModel(newRowSelectionModel);
           onRowSelect?.(newRowSelectionModel);
         }}
-        pageSizeOptions={[{ value: -1, label: 'All' }, 5, DEFAULT_PAGE_SIZE, 25, 50, 100]}
-        paginationMode='client'
-        paginationModel={paginationModel}
-        rows={data}
         rowSelectionModel={rowSelectionModel}
+        hideFooter={hideFooter}
+        initialState={initialState}
         slots={{
           noRowsOverlay: CustomNoRowsOverlay,
-          pagination: CustomPaginationWithPageSize,
+          footer: actionButtons ? CustomPaginationWithPageSize : undefined,
         }}
-        sortingMode='client'
         sx={{
-          border: 0,
-          '& .MuiDataGrid-selectedRowCount': { display: 'none' },
-          '& .MuiDataGrid-footerContainer': { justifyContent: 'right !important' },
+          border: 'none',
+          '& .MuiDataGrid-columnHeaders': {
+            backgroundColor: '#F5F5F5',
+            borderRadius: '8px',
+          },
           '& .MuiDataGrid-virtualScroller': {
-            overflow: 'auto',
+            marginTop: '10px !important',
+          },
+          '& .MuiDataGrid-row': {
+            cursor: 'pointer',
+          },
+          '& .MuiDataGrid-cell:focus': {
+            outline: 'none',
+          },
+          '& .MuiDataGrid-cell:focus-within': {
+            outline: 'none',
           },
         }}
       />

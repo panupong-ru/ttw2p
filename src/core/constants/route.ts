@@ -4,5 +4,14 @@ export const ROUTE = {
   SIGN_IN: '/sign-in',
   FORGET_PASSWORD: '/forget-password',
   // Home force
-  HOME: '/weight-type',
+  HOME: '/master-data/weight-type',
+
+  MASTER_DATA: {
+    WEIGHT_TYPE: '/master-data/weight-type',
+    CUSTOMER: '/master-data/customer',
+    PRODUCT: '/master-data/product',
+    TRANSPORTER: '/master-data/transporter',
+    DRIVER: '/master-data/driver',
+    WEIGHT_UNIT: '/master-data/weight-unit',
+  },
 };

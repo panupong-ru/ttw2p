@@ -2,6 +2,7 @@
 
 import { Person, Group, Visibility } from '@mui/icons-material';
 import type { MenuCategoryType } from './types';
+import { ROUTE } from '@/core/constants/route';
 export const MENU_CATEGORIES: MenuCategoryType[] = [
   // {
   //   title: '',
@@ -15,14 +16,14 @@ export const MENU_CATEGORIES: MenuCategoryType[] = [
         icon: <Person />,
         href: '',
         subItems: [
-          { text: 'ข้อมูลประเภทชั่ง', icon: <Group />, href: '' },
-          { text: 'ข้อมูลคู่ค้า', icon: <Visibility />, href: '' },
-          { text: 'ข้อมูลสินค้า', icon: <Visibility />, href: '' },
-          { text: 'ข้อมูลผู้ขนส่ง', icon: <Visibility />, href: '' },
-          { text: 'ข้อมูลพนักงานขับรถ', icon: <Visibility />, href: '' },
+          { text: 'ข้อมูลประเภทชั่ง', icon: <Group />, href: ROUTE.MASTER_DATA.WEIGHT_TYPE },
+          { text: 'ข้อมูลคู่ค้า', icon: <Visibility />, href: ROUTE.MASTER_DATA.CUSTOMER },
+          { text: 'ข้อมูลสินค้า', icon: <Visibility />, href: ROUTE.MASTER_DATA.PRODUCT },
+          { text: 'ข้อมูลผู้ขนส่ง', icon: <Visibility />, href: ROUTE.MASTER_DATA.TRANSPORTER },
+          { text: 'ข้อมูลพนักงานขับรถ', icon: <Visibility />, href: ROUTE.MASTER_DATA.DRIVER },
           { text: 'ข้อมูลบัตร RFID', icon: <Visibility />, href: '' },
           { text: 'ข้อมูลรถบรรทุก', icon: <Visibility />, href: '' },
-          { text: 'ข้อมูลหน่วยราคา', icon: <Visibility />, href: '' },
+          { text: 'ข้อมูลหน่วยราคา', icon: <Visibility />, href: ROUTE.MASTER_DATA.WEIGHT_UNIT },
           { text: 'ข้อมูลรถค้างชั่ง', icon: <Visibility />, href: '' },
           { text: 'ข้อมูลชั่งน้ำหนัก', icon: <Visibility />, href: '' },
         ],
