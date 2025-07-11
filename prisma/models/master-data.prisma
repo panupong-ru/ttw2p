@@ -56,6 +56,10 @@ model Customer {
   HWID              String? @db.VarChar(20)
   DataHash          BigInt?
 
+  // Relations
+  Truck   Truck[]   @relation("CustomerTrucks")
+  RFIDTag RFIDTag[] @relation("CustomerRFIDTags")
+
   @@index([DataCenter], name: "IdxDataCenter")
   @@index([CustomerName], name: "IX_Customer_2")
   @@index([FlagCancel], name: "Customer_IX_Customer")
@@ -73,6 +77,10 @@ model Driver {
   FlagCancel        String? @db.VarChar(1)
   HWID              String? @db.VarChar(20)
   DataHash          BigInt?
+
+  // Relations
+  Truck   Truck[]   @relation("DriverTrucks")
+  RFIDTag RFIDTag[] @relation("DriverRFIDTags")
 
   @@index([DataCenter], name: "IdxDataCenter")
   @@index([DriverName], name: "IX_Driver_2")
@@ -125,6 +133,10 @@ model Product {
   FlagCancel        String? @db.VarChar(1)
   HWID              String? @db.VarChar(20)
   DataHash          BigInt?
+
+  // Relations
+  Truck   Truck[]   @relation("ProductTrucks")
+  RFIDTag RFIDTag[] @relation("ProductRFIDTags")
 
   @@index([DataCenter], name: "IdxDataCenter")
   @@index([ProductName], name: "IX_Product_2")
@@ -186,9 +198,27 @@ model RFIDTag {
   HWID                String?   @db.VarChar(20)
   DataHash            BigInt?
 
+  // Relations
+  WeightType   WeightType?  @relation("WeightTypeRFIDTags", fields: [WeightTypeDataID], references: [DataID])
+  Customer     Customer?    @relation("CustomerRFIDTags", fields: [CustomerDataID], references: [DataID])
+  Product      Product?     @relation("ProductRFIDTags", fields: [ProductDataID], references: [DataID])
+  Transporter  Transporter? @relation("TransporterRFIDTags", fields: [TransporterDataID], references: [DataID])
+  Driver       Driver?      @relation("DriverRFIDTags", fields: [DriverDataID], references: [DataID])
+  ProductUnit  WeightUnit?  @relation("WeightUnitRFIDTags", fields: [ProductUnitDataID], references: [DataID])
+  UserLogInIn  UserLogIn?   @relation("UserLogInRFIDTagsIn", fields: [UserLogInDataIDIn], references: [DataID])
+  UserLogInOut UserLogIn?   @relation("UserLogInRFIDTagsOut", fields: [UserLogInDataIDOut], references: [DataID])
+
   @@index([DataCenter], name: "IdxDataCenter")
   @@index([CarRegister], name: "IX_RFID_3")
   @@index([FlagCancel], name: "RFID_IX_RFID")
+  @@index([WeightTypeDataID])
+  @@index([CustomerDataID])
+  @@index([ProductDataID])
+  @@index([TransporterDataID])
+  @@index([DriverDataID])
+  @@index([ProductUnitDataID])
+  @@index([UserLogInDataIDIn])
+  @@index([UserLogInDataIDOut])
 }
 
 model Transporter {
@@ -203,6 +233,10 @@ model Transporter {
   FlagCancel        String? @db.VarChar(1)
   HWID              String? @db.VarChar(20)
   DataHash          BigInt?
+
+  // Relations
+  Truck   Truck[]   @relation("TransporterTrucks")
+  RFIDTag RFIDTag[] @relation("TransporterRFIDTags")
 
   @@index([DataCenter], name: "IdxDataCenter")
   @@index([TransporterName], name: "IX_Transporter_2")
@@ -220,9 +254,9 @@ model Truck {
   TransporterDataID      String?   @db.VarChar(48)
   DriverDataID           String?   @db.VarChar(48)
   SequenceWeight         String?   @db.VarChar(10)
-  WeightDate             DateTime?
-  WeightTime             DateTime?
-  Weight                 Float?    @db.Double
+  WeightDate             DateTime? @default(now())
+  WeightTime             DateTime? @default(now())
+  Weight                 Float?    @default(0.0) @db.Double
   UserLogInDataID        String?   @db.VarChar(48)
   WeightScaleID          String?   @db.VarChar(20)
   WeightAdjKey1          Float?    @db.Double
@@ -250,9 +284,25 @@ model Truck {
   HWID                   String?   @db.VarChar(20)
   DataHash               BigInt?
 
+  // Relations (ใช้ relation names เพื่อป้องกันชื่อซ้ำ)
+  WeightType  WeightType?  @relation("WeightTypeTrucks", fields: [WeightTypeDataID], references: [DataID])
+  Customer    Customer?    @relation("CustomerTrucks", fields: [CustomerDataID], references: [DataID])
+  Product     Product?     @relation("ProductTrucks", fields: [ProductDataID], references: [DataID])
+  Transporter Transporter? @relation("TransporterTrucks", fields: [TransporterDataID], references: [DataID])
+  Driver      Driver?      @relation("DriverTrucks", fields: [DriverDataID], references: [DataID])
+  ProductUnit WeightUnit?  @relation("WeightUnitTrucks", fields: [ProductUnitDataID], references: [DataID])
+  UserLogIn   UserLogIn?   @relation("UserLogInTrucks", fields: [UserLogInDataID], references: [DataID])
+
   @@index([CarRegister])
   @@index([DataCenter])
   @@index([FlagCancel])
+  @@index([WeightTypeDataID])
+  @@index([CustomerDataID])
+  @@index([ProductDataID])
+  @@index([TransporterDataID])
+  @@index([DriverDataID])
+  @@index([ProductUnitDataID])
+  @@index([UserLogInDataID])
 }
 
 model UserActivityType {
@@ -279,6 +329,11 @@ model UserLogIn {
   FlagCancel    String? @db.VarChar(1)
   HWID          String? @db.VarChar(20)
   DataHash      BigInt?
+
+  // Relations
+  Truck      Truck[]   @relation("UserLogInTrucks")
+  RFIDTagIn  RFIDTag[] @relation("UserLogInRFIDTagsIn")
+  RFIDTagOut RFIDTag[] @relation("UserLogInRFIDTagsOut")
 
   @@index([DataCenter], name: "IdxDataCenter")
   @@index([FlagCancel], name: "UserLogIn_IX_UserLogIn")
@@ -437,6 +492,10 @@ model WeightUnit {
   HWID           String? @db.VarChar(20)
   DataHash       BigInt?
 
+  // Relations
+  Truck   Truck[]   @relation("WeightUnitTrucks")
+  RFIDTag RFIDTag[] @relation("WeightUnitRFIDTags")
+
   @@index([DataCenter], name: "IdxDataCenter")
   @@index([WeightUnitName], name: "IX_WeightUnit_2")
   @@index([FlagCancel], name: "WeightUnit_IX_WeightUnit")
@@ -464,6 +523,10 @@ model WeightType {
   FlagCancel                String? @db.VarChar(1)
   HWID                      String? @db.VarChar(20)
   DataHash                  BigInt?
+
+  // Relations
+  Truck   Truck[]   @relation("WeightTypeTrucks")
+  RFIDTag RFIDTag[] @relation("WeightTypeRFIDTags")
 
   @@index([FlagCancel], name: "WeightType_IX_WeightType")
   @@index([WeightTypeName], name: "IX_WeightType_2")

@@ -13,5 +13,7 @@ export const ROUTE = {
     TRANSPORTER: '/master-data/transporter',
     DRIVER: '/master-data/driver',
     WEIGHT_UNIT: '/master-data/weight-unit',
+    TRUCK: '/master-data/truck',
+    RFID_TAG: '/master-data/rfid-tag',
   },
 };

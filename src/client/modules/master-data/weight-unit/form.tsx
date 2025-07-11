@@ -28,8 +28,6 @@ function WeightUnitForm({ info, onClose, onSubmit = (_data) => {}, isLoading = f
     resolver: zodResolver(createWeightUnitSchema),
   });
 
-  const productUnitData = [{ value: 'Kg' }, { value: 'Ton' }];
-
   useEffect(() => {
     if (info.data) {
       const { ...formData } = info.data;

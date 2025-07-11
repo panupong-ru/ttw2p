@@ -14,6 +14,6 @@ generator client {
 
 datasource db {
   provider     = "mysql"
-  relationMode = "foreignKeys"
+  relationMode = "prisma"
   url          = env("DATABASE_URL")
 }

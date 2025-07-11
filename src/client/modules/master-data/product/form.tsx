@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Autocomplete, Box, Checkbox, FormControlLabel, Stack, TextField, Typography } from '@mui/material';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { FormModal } from '@/client/components/form-modal';
@@ -33,7 +33,13 @@ function ProductForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fals
 
   const { data: weightUnitData } = useGetWeightUnits(1, 1000);
 
-  const productUnitData = weightUnitData?.result?.data?.map((item) => ({ value: item.WeightUnitID }));
+  const productUnitData = useMemo(() => {
+    return (
+      weightUnitData?.result?.data?.map((item: { WeightUnitID: string }) => ({
+        value: item.WeightUnitID,
+      })) ?? []
+    );
+  }, [weightUnitData]);
 
   useEffect(() => {
     if (info.data) {
