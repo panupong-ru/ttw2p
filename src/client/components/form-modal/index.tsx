@@ -40,7 +40,12 @@ function FormModal({
       component='form'
       fullWidth
       maxWidth={maxWidth}
-      onClose={onClose}
+      onClose={(event, reason) => {
+        if (reason === 'backdropClick') {
+          return;
+        }
+        onClose();
+      }}
       onSubmit={(event) => {
         event.preventDefault();
         onSubmit();

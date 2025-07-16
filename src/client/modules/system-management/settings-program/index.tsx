@@ -3,14 +3,10 @@
 import { Typography, Box, Stack, Tab } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { useTab } from '@/client/hook/useTab';
-import { Filter } from './filter';
-import { Table } from './table';
+import { System } from './system';
 
-function Weight() {
-  const tabs = [
-    { label: 'ค้นหาข้อมูล', value: 'filter', content: <Filter /> },
-    { label: 'ตารางข้อมูล', value: 'table', content: <Table /> },
-  ];
+function SettingsProgram() {
+  const tabs = [{ label: 'ตั้งค่าระบบ', value: 'system', content: <System /> }];
 
   const { tab, handleChangeTab } = useTab(tabs);
 
@@ -27,7 +23,7 @@ function Weight() {
       }}
     >
       <Typography fontSize={{ xs: 20, sm: 24 }} fontWeight={700} sx={{ color: '#24237A' }}>
-        ข้อมูลชั่งน้ำหนัก
+        ตั้งค่าโปรแกรม
       </Typography>
 
       <Box
@@ -71,4 +67,4 @@ function Weight() {
   );
 }
 
-export { Weight };
+export { SettingsProgram };

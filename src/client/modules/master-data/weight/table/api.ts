@@ -5,11 +5,11 @@ import { useMemo } from 'react';
 import { baseHttpClient } from '@/core/libs/axios';
 
 import {
-  createWeightSchema,
-  updateWeightSchema,
-  type WeightSchema,
-  type CreateWeightSchema,
-  type UpdateWeightSchema,
+  createRFIDTagSchema,
+  updateRFIDTagSchema,
+  type RFIDTagSchema,
+  type CreateRFIDTagSchema,
+  type UpdateRFIDTagSchema,
 } from './schema';
 
 type PaginatedResponse<T> = {
@@ -22,15 +22,15 @@ type APIResponse<T> = {
   result: T;
 };
 
-function useWeightAPI() {
+function useRFIDTagAPI() {
   const queryClient = useQueryClient();
-  const getWeightQueryKey = useMemo(() => ['getWeight'], []);
-  const api = baseHttpClient['/master-data/weight'];
+  const getRFIDTagQueryKey = useMemo(() => ['getRFIDTag'], []);
+  const api = baseHttpClient['/master-data/rfid-tag'];
 
   // GET all weight types with pagination
-  const useGetWeights = (page: number = 1, pageSize: number = 10) =>
-    useQuery<APIResponse<PaginatedResponse<WeightSchema>>>({
-      queryKey: [...getWeightQueryKey, page, pageSize],
+  const useGetRFIDTags = (page: number = 1, pageSize: number = 10) =>
+    useQuery<APIResponse<PaginatedResponse<RFIDTagSchema>>>({
+      queryKey: [...getRFIDTagQueryKey, page, pageSize],
       queryFn: async () => {
         const response = await api.get({
           params: { page, pageSize },
@@ -40,9 +40,9 @@ function useWeightAPI() {
     });
 
   // GET single weight type by ID
-  const useGetWeightById = (id: string) => {
-    return useQuery<{ data: WeightSchema }>({
-      queryKey: [...getWeightQueryKey, id],
+  const useGetRFIDTagById = (id: string) => {
+    return useQuery<{ data: RFIDTagSchema }>({
+      queryKey: [...getRFIDTagQueryKey, id],
       queryFn: async () => {
         const { data } = await api.get({ params: { id } });
         return data;
@@ -52,9 +52,9 @@ function useWeightAPI() {
   };
 
   // POST new weight type
-  const createWeight = useMutation<WeightSchema, Error, CreateWeightSchema>({
+  const createRFIDTag = useMutation<RFIDTagSchema, Error, CreateRFIDTagSchema>({
     mutationFn: async (newData) => {
-      const validatedData = createWeightSchema.parse(newData);
+      const validatedData = createRFIDTagSchema.parse(newData);
       const formData = new FormData();
 
       Object.entries(validatedData).forEach(([key, value]) => {
@@ -69,14 +69,14 @@ function useWeightAPI() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getWeightQueryKey });
+      queryClient.invalidateQueries({ queryKey: getRFIDTagQueryKey });
     },
   });
 
   // PUT update truck
-  const updateWeight = useMutation<WeightSchema, Error, { id: string; data: UpdateWeightSchema }>({
+  const updateRFIDTag = useMutation<RFIDTagSchema, Error, { id: string; data: UpdateRFIDTagSchema }>({
     mutationFn: async ({ id, data }) => {
-      const validatedData = updateWeightSchema.parse(data);
+      const validatedData = updateRFIDTagSchema.parse(data);
       const formData = new FormData();
 
       // Append all fields to FormData
@@ -94,30 +94,30 @@ function useWeightAPI() {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getWeightQueryKey });
+      queryClient.invalidateQueries({ queryKey: getRFIDTagQueryKey });
     },
   });
 
   // DELETE weight type
-  const deleteWeight = useMutation<WeightSchema, Error, string>({
+  const deleteRFIDTag = useMutation<RFIDTagSchema, Error, string>({
     mutationFn: async (id) => {
       const response = await api.delete({ params: { id } });
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getWeightQueryKey });
+      queryClient.invalidateQueries({ queryKey: getRFIDTagQueryKey });
     },
   });
 
   return {
     // Queries
-    useGetWeights,
-    useGetWeightById,
+    useGetRFIDTags,
+    useGetRFIDTagById,
     // Mutations
-    createWeight,
-    updateWeight,
-    deleteWeight,
+    createRFIDTag,
+    updateRFIDTag,
+    deleteRFIDTag,
   };
 }
 
-export { useWeightAPI };
+export { useRFIDTagAPI };

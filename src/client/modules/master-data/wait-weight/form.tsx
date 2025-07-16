@@ -17,8 +17,8 @@ import { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { FormModal } from '@/client/components/form-modal';
-import type { WeightSchema, CreateWeightSchema } from './schema';
-import { createWeightSchema } from './schema';
+import type { WaitWeightSchema, CreateWaitWeightSchema } from './schema';
+import { createWaitWeightSchema } from './schema';
 import { useCustomerAPI } from '../customer/api';
 import { useProductAPI } from '../product/api';
 import { useDriverAPI } from '../driver/api';
@@ -28,23 +28,23 @@ import { NumberInput } from '@/client/components/number-input';
 import { useWeightUnitAPI } from '../weight-unit/api';
 import { useRFIDTagAPI } from '../rfid-tag/api';
 
-type WeightFormProps = {
+type WaitWeightFormProps = {
   info: {
     isOpen: boolean;
-    data?: WeightSchema;
+    data?: WaitWeightSchema;
   };
   isLoading?: boolean;
   onClose: () => void;
-  onSubmit?: (data: CreateWeightSchema) => void;
+  onSubmit?: (data: CreateWaitWeightSchema) => void;
 };
-function WeightForm({ info, onClose, onSubmit = (_data) => {}, isLoading = false }: WeightFormProps) {
+function WaitWeightForm({ info, onClose, onSubmit = (_data) => {}, isLoading = false }: WaitWeightFormProps) {
   const {
     control,
     reset,
     handleSubmit,
     formState: { errors },
-  } = useForm<CreateWeightSchema>({
-    resolver: zodResolver(createWeightSchema),
+  } = useForm<CreateWaitWeightSchema>({
+    resolver: zodResolver(createWaitWeightSchema),
   });
   const { useGetRFIDTags } = useRFIDTagAPI();
   const { useGetWeightTypes } = useWeightTypeAPI();
@@ -699,4 +699,4 @@ function WeightForm({ info, onClose, onSubmit = (_data) => {}, isLoading = false
   );
 }
 
-export { WeightForm };
+export { WaitWeightForm };
