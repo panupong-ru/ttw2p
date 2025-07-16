@@ -211,6 +211,14 @@ CREATE TABLE `RFIDTag` (
     INDEX `IdxDataCenter`(`DataCenter`),
     INDEX `IX_RFID_3`(`CarRegister`),
     INDEX `RFID_IX_RFID`(`FlagCancel`),
+    INDEX `RFIDTag_WeightTypeDataID_idx`(`WeightTypeDataID`),
+    INDEX `RFIDTag_CustomerDataID_idx`(`CustomerDataID`),
+    INDEX `RFIDTag_ProductDataID_idx`(`ProductDataID`),
+    INDEX `RFIDTag_TransporterDataID_idx`(`TransporterDataID`),
+    INDEX `RFIDTag_DriverDataID_idx`(`DriverDataID`),
+    INDEX `RFIDTag_ProductUnitDataID_idx`(`ProductUnitDataID`),
+    INDEX `RFIDTag_UserLogInDataIDIn_idx`(`UserLogInDataIDIn`),
+    INDEX `RFIDTag_UserLogInDataIDOut_idx`(`UserLogInDataIDOut`),
     PRIMARY KEY (`DataID`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -247,9 +255,9 @@ CREATE TABLE `Truck` (
     `TransporterDataID` VARCHAR(48) NULL,
     `DriverDataID` VARCHAR(48) NULL,
     `SequenceWeight` VARCHAR(10) NULL,
-    `WeightDate` DATETIME(3) NULL,
-    `WeightTime` DATETIME(3) NULL,
-    `Weight` DOUBLE NULL,
+    `WeightDate` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `WeightTime` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `Weight` DOUBLE NULL DEFAULT 0.0,
     `UserLogInDataID` VARCHAR(48) NULL,
     `WeightScaleID` VARCHAR(20) NULL,
     `WeightAdjKey1` DOUBLE NULL,
@@ -280,6 +288,13 @@ CREATE TABLE `Truck` (
     INDEX `Truck_CarRegister_idx`(`CarRegister`),
     INDEX `Truck_DataCenter_idx`(`DataCenter`),
     INDEX `Truck_FlagCancel_idx`(`FlagCancel`),
+    INDEX `Truck_WeightTypeDataID_idx`(`WeightTypeDataID`),
+    INDEX `Truck_CustomerDataID_idx`(`CustomerDataID`),
+    INDEX `Truck_ProductDataID_idx`(`ProductDataID`),
+    INDEX `Truck_TransporterDataID_idx`(`TransporterDataID`),
+    INDEX `Truck_DriverDataID_idx`(`DriverDataID`),
+    INDEX `Truck_ProductUnitDataID_idx`(`ProductUnitDataID`),
+    INDEX `Truck_UserLogInDataID_idx`(`UserLogInDataID`),
     PRIMARY KEY (`DataID`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -432,6 +447,15 @@ CREATE TABLE `Weight` (
     INDEX `IX_Weight_7`(`WeightTimeOut`),
     INDEX `IX_Weight_8`(`CarRegister`),
     INDEX `IX_Weight_9`(`WeightTypeDataID`),
+    INDEX `IX_Weight_ProductUnit`(`ProductUnitDataID`),
+    INDEX `IX_Weight_Truck`(`TruckDataID`),
+    INDEX `IX_Weight_RFIDTag`(`RFIDTagDataID`),
+    INDEX `IX_Weight_UserLogInIn`(`UserLogInDataIDIn`),
+    INDEX `IX_Weight_UserLogInOut`(`UserLogInDataIDOut`),
+    INDEX `IX_Weight_UserLogInRegisterIn`(`UserLogInDataIDRegisterIn`),
+    INDEX `IX_Weight_UserLogInRegisterOut`(`UserLogInDataIDRegisterOut`),
+    INDEX `IX_Weight_PaymentUserLogIn`(`PaymentUserLogInDataID`),
+    INDEX `IX_Weight_WeightNetApproveUserLogIn`(`WeightNetApproveUserLogInDataID`),
     PRIMARY KEY (`DataID`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

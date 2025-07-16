@@ -12,6 +12,13 @@ export const MENU_CATEGORIES: MenuCategoryType[] = [
     title: 'เมนู',
     items: [
       {
+        text: 'Register',
+        icon: <Person />,
+        href: ROUTE.REGISTER,
+        subItems: [],
+        isOpen: false,
+      },
+      {
         text: 'ข้อมูล',
         icon: <Person />,
         href: '',
@@ -24,7 +31,7 @@ export const MENU_CATEGORIES: MenuCategoryType[] = [
           { text: 'ข้อมูลบัตร RFID', icon: <Visibility />, href: ROUTE.MASTER_DATA.RFID_TAG },
           { text: 'ข้อมูลรถบรรทุก', icon: <Visibility />, href: ROUTE.MASTER_DATA.TRUCK },
           { text: 'ข้อมูลหน่วยราคา', icon: <Visibility />, href: ROUTE.MASTER_DATA.WEIGHT_UNIT },
-          { text: 'ข้อมูลรถค้างชั่ง', icon: <Visibility />, href: '' },
+          { text: 'ข้อมูลรถค้างชั่ง', icon: <Visibility />, href: ROUTE.MASTER_DATA.WEIGHT },
           { text: 'ข้อมูลชั่งน้ำหนัก', icon: <Visibility />, href: '' },
         ],
         isOpen: false,

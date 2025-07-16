@@ -5,6 +5,7 @@ export const MENU_CATEGORIES_COLLAPSED: MenuCategoryType[] = [
   {
     title: '',
     items: [
+      { text: 'Register', icon: <Person />, href: '' },
       { text: 'ข้อมูล', icon: <Person />, href: '' },
       { text: 'รายงาน', icon: <Apps />, href: '' },
       { text: 'จัดการระบบ', icon: <Person />, href: '' },

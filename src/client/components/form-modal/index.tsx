@@ -6,6 +6,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 type FormModalProps = {
   cancelButtonText?: string;
@@ -47,28 +48,62 @@ function FormModal({
       open={isOpen}
       transitionDuration={{ exit: 0 }}
     >
-      <DialogContent sx={{ paddingBottom: '8px' }}>
-        <Stack gap={1} sx={{ paddingY: '8px' }}>
-          <Typography fontSize={18} fontWeight={600}>
-            {title}
-          </Typography>
-          <Typography fontSize={14}>{subTitle}</Typography>
-          {headerChildren}
-        </Stack>
+      <Box sx={{ display: 'flex', flexDirection: 'column', maxHeight: '90vh' }}>
+        {/* Header */}
+        <Box sx={{ px: 3, pt: 2 }}>
+          <Stack gap={1}>
+            <Typography fontSize={18} fontWeight={600}>
+              {title}
+            </Typography>
+            <Typography fontSize={14}>{subTitle}</Typography>
+            {headerChildren}
+          </Stack>
+        </Box>
 
-        <Stack gap={2} sx={{ paddingX: '16px', paddingY: '16px' }}>
-          {children}
-        </Stack>
+        {/* Scrollable Content */}
+        <DialogContent
+          sx={{
+            flex: 1,
+            overflowY: 'auto',
+            p: 2,
+            '&::-webkit-scrollbar': {
+              width: '8px',
+            },
+            '&::-webkit-scrollbar-track': {
+              background: '#f1f1f1',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: '#888',
+              borderRadius: '4px',
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+              background: '#555',
+            },
+          }}
+        >
+          <Stack gap={2} sx={{ px: 2 }}>
+            {children}
+          </Stack>
+        </DialogContent>
 
-        <Stack direction='row' gap={1} justifyContent='end' sx={{ paddingY: '8px' }}>
-          <Button color='inherit' disabled={isLoading} onClick={onClose} sx={{ color: '#707070' }} type='button'>
-            {cancelButtonText}
-          </Button>
-          <LoadingButton loading={isLoading} type='submit'>
-            {submitButtonText}
-          </LoadingButton>
-        </Stack>
-      </DialogContent>
+        {/* Fixed Footer */}
+        <Box
+          sx={{
+            p: 2,
+            borderTop: '1px solid #e0e0e0',
+            backgroundColor: 'background.paper',
+          }}
+        >
+          <Stack direction='row' gap={1} justifyContent='end'>
+            <Button color='inherit' disabled={isLoading} onClick={onClose} sx={{ color: '#707070' }} type='button'>
+              {cancelButtonText}
+            </Button>
+            <LoadingButton loading={isLoading} type='submit'>
+              {submitButtonText}
+            </LoadingButton>
+          </Stack>
+        </Box>
+      </Box>
     </Dialog>
   );
 }

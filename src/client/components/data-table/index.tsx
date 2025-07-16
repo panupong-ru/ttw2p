@@ -42,6 +42,7 @@ const StyledGridOverlay = styled('div')(({ theme }) => ({
 }));
 
 type TableProps<T extends GridValidRowModel> = {
+  height?: string;
   columns?: GridColDef<T>[];
   data?: T[];
   disableRowSelectionOnClick?: boolean;
@@ -94,6 +95,7 @@ function CustomNoRowsOverlay() {
 }
 
 function DataTable<T extends GridValidRowModel>({
+  height = '100%',
   columns = [],
   data = [],
   isLoading = false,
@@ -294,7 +296,7 @@ function DataTable<T extends GridValidRowModel>({
   }
 
   return (
-    <Box sx={{ width: '100%', height: '100%', position: 'relative' }}>
+    <Box sx={{ width: '100%', height, position: 'relative' }}>
       <DataGrid
         rows={data}
         columns={columns}

@@ -37,7 +37,7 @@ const ConfigLocal = [
     DataID: 'CFG005',
     DataCenter: 'DC001',
     ConfigName: 'DefaultWeightUnit',
-    ConfigValue: 'KG',
+    ConfigValue: 'Kg',
     HWID: 'BFEBFBFF000406E3',
     DataHash: BigInt('5678901234567890123'),
   },

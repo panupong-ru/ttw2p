@@ -5,6 +5,7 @@ export const ROUTE = {
   FORGET_PASSWORD: '/forget-password',
   // Home force
   HOME: '/master-data/weight-type',
+  REGISTER: '/register',
 
   MASTER_DATA: {
     WEIGHT_TYPE: '/master-data/weight-type',
@@ -15,5 +16,6 @@ export const ROUTE = {
     WEIGHT_UNIT: '/master-data/weight-unit',
     TRUCK: '/master-data/truck',
     RFID_TAG: '/master-data/rfid-tag',
+    WEIGHT: '/master-data/weight',
   },
 };
