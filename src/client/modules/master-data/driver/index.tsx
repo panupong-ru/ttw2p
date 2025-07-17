@@ -16,7 +16,7 @@ function Driver() {
     pageSize: 10,
   });
 
-  const { data: driverData, isLoading } = useGetDrivers(paginationModel.page + 1, paginationModel.pageSize);
+  const { data: driverData, isLoading } = useGetDrivers({}, paginationModel.page + 1, paginationModel.pageSize);
 
   const [selectedRow, setSelectedRow] = useState<DriverSchema | null>(null);
   const [formInfo, setFormInfo] = useState<{ isOpen: boolean; data?: DriverSchema }>({

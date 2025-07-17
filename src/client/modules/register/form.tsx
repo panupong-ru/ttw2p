@@ -16,11 +16,11 @@ import {
   TableRow,
   Paper,
 } from '@mui/material';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, forwardRef, useImperativeHandle, useState, useCallback } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-import type { WeightSchema, CreateWeightSchema } from './schema';
-import { createWeightSchema } from './schema';
+import type { WeightSchema, CreateWeightSchema } from '@/client/modules/master-data/weight/schema';
+import { createWeightSchema } from '@/client/modules/master-data/weight/schema';
 import { useCustomerAPI } from '@/client/modules/master-data/customer/api';
 import { useProductAPI } from '@/client/modules/master-data/product/api';
 import { useDriverAPI } from '@/client/modules/master-data/driver/api';
@@ -29,17 +29,25 @@ import { useWeightTypeAPI } from '@/client/modules/master-data/weight-type/api';
 import { NumberInput } from '@/client/components/number-input';
 import { useWeightUnitAPI } from '@/client/modules/master-data/weight-unit/api';
 import { useRFIDTagAPI } from '../master-data/rfid-tag/api';
+import { useWeightAPI } from '@/client/modules/master-data/weight/api';
 
 type RegisterFormProps = {
   info: {
     isOpen: boolean;
     data?: WeightSchema;
   };
-  isLoading?: boolean;
-  onClose: () => void;
   onSubmit?: (data: CreateWeightSchema) => void;
 };
-function RegisterForm({ info, onClose, onSubmit = (_data) => {}, isLoading = false }: RegisterFormProps) {
+
+export type RegisterFormRef = {
+  submitForm: () => void;
+  resetForm: () => void;
+};
+
+const RegisterForm = forwardRef<RegisterFormRef, RegisterFormProps>(function RegisterForm(
+  { info, onSubmit = (_data) => {} },
+  ref
+) {
   const {
     control,
     reset,
@@ -49,6 +57,10 @@ function RegisterForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fal
   } = useForm<CreateWeightSchema>({
     resolver: zodResolver(createWeightSchema),
   });
+
+  const [weightFilters, setWeightFilters] = useState<Record<string, any>>({});
+  const [isCarRegister2Disabled, setIsCarRegister2Disabled] = useState(false);
+
   const { useGetRFIDTags } = useRFIDTagAPI();
   const { useGetWeightTypes } = useWeightTypeAPI();
   const { useGetCustomers } = useCustomerAPI();
@@ -56,20 +68,234 @@ function RegisterForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fal
   const { useGetDrivers } = useDriverAPI();
   const { useGetTransporters } = useTransporterAPI();
   const { useGetWeightUnits } = useWeightUnitAPI();
-  const { data: rfidTagData } = useGetRFIDTags(1, 100000);
-  const { data: weightTypeData } = useGetWeightTypes(1, 100000);
-  const { data: customerData } = useGetCustomers(1, 100000);
-  const { data: productData } = useGetProducts(1, 100000);
-  const { data: driverData } = useGetDrivers(1, 100000);
-  const { data: transporterData } = useGetTransporters(1, 100000);
-  const { data: weightUnitData } = useGetWeightUnits(1, 100000);
+  const { useGetWeights } = useWeightAPI();
+
+  const { data: weightData } = useGetWeights(weightFilters, 1, 1, !!weightFilters?.CarRegister);
+  const { data: rfidTagData } = useGetRFIDTags({}, 1, 100000);
+  const { data: weightTypeData } = useGetWeightTypes({}, 1, 100000);
+  const { data: customerData } = useGetCustomers({}, 1, 100000);
+  const { data: productData } = useGetProducts({}, 1, 100000);
+  const { data: driverData } = useGetDrivers({}, 1, 100000);
+  const { data: transporterData } = useGetTransporters({}, 1, 100000);
+  const { data: weightUnitData } = useGetWeightUnits({}, 1, 100000);
+
+  const populateForm = useCallback(
+    (formData: WeightSchema) => {
+      // Set values for all fields except RFIDTagDataID
+      setValue('DataID', formData.DataID ?? '');
+      setValue('DataCenter', formData.DataCenter ?? '');
+      setValue('DocID', formData.DocID ?? '');
+      setValue('DocNoIn', formData.DocNoIn ?? '');
+      setValue('DocNoOut', formData.DocNoOut ?? '');
+      setValue('WeightModeDataID', formData.WeightModeDataID ?? '');
+      setValue('TruckDataID', formData.TruckDataID ?? '');
+      setValue('WeightTypeDataID', formData.WeightTypeDataID ?? '');
+      setValue('CustomerDataID', formData.CustomerDataID ?? '');
+      setValue('ProductDataID', formData.ProductDataID ?? '');
+      setValue('TransporterDataID', formData.TransporterDataID ?? '');
+      setValue('DriverDataID', formData.DriverDataID ?? '');
+      setValue('SequenceWeightIn', formData.SequenceWeightIn ?? '');
+      setValue('WeightDateIn', formData.WeightDateIn ?? null);
+      setValue('WeightTimeIn', formData.WeightTimeIn ?? null);
+      setValue('WeightIn', formData.WeightIn ?? 0);
+      setValue('UserLogInDataIDIn', formData.UserLogInDataIDIn ?? '');
+      setValue('WeightScaleIDIn', formData.WeightScaleIDIn ?? '');
+      setValue('TicketPrintCountIn', formData.TicketPrintCountIn ?? 0);
+      setValue('SequenceWeightOut', formData.SequenceWeightOut ?? '');
+      setValue('WeightDateOut', formData.WeightDateOut ?? null);
+      setValue('WeightTimeOut', formData.WeightTimeOut ?? null);
+      setValue('WeightOut', formData.WeightOut ?? 0);
+      setValue('UserLogInDataIDOut', formData.UserLogInDataIDOut ?? '');
+      setValue('WeightScaleIDOut', formData.WeightScaleIDOut ?? '');
+      setValue('TicketPrintCountOut', formData.TicketPrintCountOut ?? 0);
+      setValue('Weight', formData.Weight ?? 0);
+      setValue('WeightAdjust', formData.WeightAdjust ?? 0);
+      setValue('AdjustPercent', formData.AdjustPercent ?? 0);
+      setValue('AdjustPercentWeight', formData.AdjustPercentWeight ?? 0);
+      setValue('WeightAdjKey1', formData.WeightAdjKey1 ?? 0);
+      setValue('WeightAdjCal1', formData.WeightAdjCal1 ?? 0);
+      setValue('WeightAdjKey2', formData.WeightAdjKey2 ?? 0);
+      setValue('WeightAdjCal2', formData.WeightAdjCal2 ?? 0);
+      setValue('WeightAdjKey3', formData.WeightAdjKey3 ?? 0);
+      setValue('WeightAdjCal3', formData.WeightAdjCal3 ?? 0);
+      setValue('WeightNet', formData.WeightNet ?? 0);
+      setValue('Price', formData.Price ?? 0);
+      setValue('Tax', formData.Tax ?? 0);
+      setValue('ProductUnitDataID', formData.ProductUnitDataID ?? '');
+      setValue('KgToUnit', formData.KgToUnit ?? 0);
+      setValue('Amount', formData.Amount ?? 0);
+      setValue('AmountAdjKey1', formData.AmountAdjKey1 ?? 0);
+      setValue('AmountAdjCal1', formData.AmountAdjCal1 ?? 0);
+      setValue('AmountAdjKey2', formData.AmountAdjKey2 ?? 0);
+      setValue('AmountAdjCal2', formData.AmountAdjCal2 ?? 0);
+      setValue('AmountAdjKey3', formData.AmountAdjKey3 ?? 0);
+      setValue('AmountAdjCal3', formData.AmountAdjCal3 ?? 0);
+      setValue('AmountNet', formData.AmountNet ?? 0);
+      setValue('Remark1', formData.Remark1 ?? '');
+      setValue('Remark2', formData.Remark2 ?? '');
+      setValue('Remark3', formData.Remark3 ?? '');
+      setValue('Remark4', formData.Remark4 ?? '');
+      setValue('SequenceRegisterIn', formData.SequenceRegisterIn ?? '');
+      setValue('RegisterDateIn', formData.RegisterDateIn ?? null);
+      setValue('RegisterTimeIn', formData.RegisterTimeIn ?? null);
+      setValue('UserLogInDataIDRegisterIn', formData.UserLogInDataIDRegisterIn ?? '');
+      setValue('RegisterStationIDIn', formData.RegisterStationIDIn ?? '');
+      setValue('SequenceRegisterOut', formData.SequenceRegisterOut ?? '');
+      setValue('RegisterDateOut', formData.RegisterDateOut ?? new Date());
+      setValue('RegisterTimeOut', formData.RegisterTimeOut ?? new Date());
+      setValue('UserLogInDataIDRegisterOut', formData.UserLogInDataIDRegisterOut ?? '');
+      setValue('RegisterStationIDOut', formData.RegisterStationIDOut ?? '');
+      setValue('FlagRegisterStatus', formData.FlagRegisterStatus ?? 'N');
+      setValue('FlagAutoSaveIn', formData.FlagAutoSaveIn ?? '');
+      setValue('FlagAutoSaveOut', formData.FlagAutoSaveOut ?? '');
+      setValue('FlagPlatformEdgeSensorIn', formData.FlagPlatformEdgeSensorIn ?? '');
+      setValue('FlagPlatformEdgeSensorOut', formData.FlagPlatformEdgeSensorOut ?? '');
+      setValue('FlagStatus', formData.FlagStatus ?? '');
+      setValue('FlagComplete', formData.FlagComplete ?? '');
+      setValue('FlagPayment', formData.FlagPayment ?? '');
+      setValue('PaymentDataID', formData.PaymentDataID ?? '');
+      setValue('PaymentDate', formData.PaymentDate ?? null);
+      setValue('PaymentTime', formData.PaymentTime ?? null);
+      setValue('PaymentUserLogInDataID', formData.PaymentUserLogInDataID ?? '');
+      setValue('WeightNetStandard', formData.WeightNetStandard ?? 0);
+      setValue('WeightNetTolerancePositive', formData.WeightNetTolerancePositive ?? 0);
+      setValue('WeightNetToleranceNegative', formData.WeightNetToleranceNegative ?? 0);
+      setValue('WeightNetApproveUserLogInDataID', formData.WeightNetApproveUserLogInDataID ?? '');
+      setValue('FlagCancel', formData.FlagCancel ?? 'N');
+      setValue('HWID', formData.HWID ?? '');
+      setValue('ExtendedData', formData.ExtendedData ?? '');
+      setValue('DataHash', formData.DataHash ?? null);
+      setValue('FlagUploadIn', formData.FlagUploadIn ?? '');
+      setValue('FlagUploadOut', formData.FlagUploadOut ?? '');
+      if (formData.CarRegister2) {
+        setIsCarRegister2Disabled(true);
+      } else {
+        setIsCarRegister2Disabled(false);
+      }
+    },
+    [setValue]
+  );
+
+  useImperativeHandle(ref, () => ({
+    submitForm: () => {
+      handleSubmit(onSubmit)();
+    },
+    resetForm: () => {
+      setIsCarRegister2Disabled(false);
+      // Reset form to initial empty state
+      const initialData = {
+        DataID: '',
+        DataCenter: '',
+        DocID: '',
+        DocNoIn: '',
+        DocNoOut: '',
+        WeightModeDataID: '',
+        CarRegister: '',
+        CarRegister2: '',
+        TruckDataID: '',
+        RFIDTagDataID: '',
+        WeightTypeDataID: '',
+        CustomerDataID: '',
+        ProductDataID: '',
+        TransporterDataID: '',
+        DriverDataID: '',
+        SequenceWeightIn: '',
+        WeightDateIn: null,
+        WeightTimeIn: null,
+        WeightIn: 0,
+        UserLogInDataIDIn: '',
+        WeightScaleIDIn: '',
+        TicketPrintCountIn: 0,
+        SequenceWeightOut: '',
+        WeightDateOut: null,
+        WeightTimeOut: null,
+        WeightOut: 0,
+        UserLogInDataIDOut: '',
+        WeightScaleIDOut: '',
+        TicketPrintCountOut: 0,
+        Weight: 0,
+        WeightAdjust: 0,
+        AdjustPercent: 0,
+        AdjustPercentWeight: 0,
+        WeightAdjKey1: 0,
+        WeightAdjCal1: 0,
+        WeightAdjKey2: 0,
+        WeightAdjCal2: 0,
+        WeightAdjKey3: 0,
+        WeightAdjCal3: 0,
+        WeightNet: 0,
+        Price: 0,
+        Tax: 0,
+        ProductUnitDataID: '',
+        KgToUnit: 0,
+        Amount: 0,
+        AmountAdjKey1: 0,
+        AmountAdjCal1: 0,
+        AmountAdjKey2: 0,
+        AmountAdjCal2: 0,
+        AmountAdjKey3: 0,
+        AmountAdjCal3: 0,
+        AmountNet: 0,
+        Remark1: '',
+        Remark2: '',
+        Remark3: '',
+        Remark4: '',
+        SequenceRegisterIn: '',
+        RegisterDateIn: null,
+        RegisterTimeIn: null,
+        UserLogInDataIDRegisterIn: '',
+        RegisterStationIDIn: '',
+        SequenceRegisterOut: '',
+        RegisterDateOut: new Date(),
+        RegisterTimeOut: new Date(),
+        UserLogInDataIDRegisterOut: '',
+        RegisterStationIDOut: '',
+        FlagRegisterStatus: '',
+        FlagAutoSaveIn: '',
+        FlagAutoSaveOut: '',
+        FlagPlatformEdgeSensorIn: '',
+        FlagPlatformEdgeSensorOut: '',
+        FlagStatus: '',
+        FlagComplete: '',
+        FlagPayment: '',
+        PaymentDataID: '',
+        PaymentDate: null,
+        PaymentTime: null,
+        PaymentUserLogInDataID: '',
+        WeightNetStandard: 0,
+        WeightNetTolerancePositive: 0,
+        WeightNetToleranceNegative: 0,
+        WeightNetApproveUserLogInDataID: '',
+        FlagCancel: '',
+        HWID: '',
+        ExtendedData: '',
+        DataHash: null,
+        FlagUploadIn: '',
+        FlagUploadOut: '',
+      };
+
+      reset(initialData);
+    },
+  }));
+
+  useEffect(() => {
+    if (weightData?.result?.data?.[0]) {
+      populateForm(weightData.result.data[0]);
+    } else {
+      populateForm({} as WeightSchema);
+    }
+  }, [weightData, populateForm]);
 
   const rfidTagDataOptions = useMemo(() => {
     return (
-      rfidTagData?.result?.data?.map((item: { RFIDTagID: string | null }) => ({
-        value: item.RFIDTagID ?? '',
-        label: item.RFIDTagID ?? '',
-      })) ?? []
+      rfidTagData?.result?.data?.map(
+        (item: { RFIDTagID: string | null; CarRegister: string | null; CarRegister2: string | null }) => ({
+          value: item.RFIDTagID ?? '',
+          label: item.RFIDTagID ?? '',
+          carRegister: item.CarRegister ?? '',
+          carRegister2: item.CarRegister2 ?? '',
+        })
+      ) ?? []
     );
   }, [rfidTagData]);
 
@@ -139,68 +365,104 @@ function RegisterForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fal
   useEffect(() => {
     if (info.data) {
       // Omit DataID, HWID, and DataHash when setting form data
-      const { ...formData } = info.data;
-
-      // สร้าง object สำหรับ reset form
-      const resetData = {
-        DataID: formData.DataID ?? '',
-        DataCenter: formData.DataCenter ?? '',
-        DocID: formData.DocID ?? '',
-        DocNoIn: formData.DocNoIn ?? '',
-        DocNoOut: formData.DocNoOut ?? '',
-        WeightModeDataID: formData.WeightModeDataID ?? '',
-        CarRegister: formData.CarRegister ?? '',
-        CarRegister2: formData.CarRegister2 ?? '',
-        WeightTypeDataID: formData.WeightTypeDataID ?? '',
-        CustomerDataID: formData.CustomerDataID ?? '',
-        ProductDataID: formData.ProductDataID ?? '',
-        TransporterDataID: formData.TransporterDataID ?? '',
-        DriverDataID: formData.DriverDataID ?? '',
-        WeightAdjKey1: formData.WeightAdjKey1 ?? 0,
-        WeightAdjCal1: formData.WeightAdjCal1 ?? 0,
-        WeightAdjKey2: formData.WeightAdjKey2 ?? 0,
-        WeightAdjCal2: formData.WeightAdjCal2 ?? 0,
-        WeightAdjKey3: formData.WeightAdjKey3 ?? 0,
-        WeightAdjCal3: formData.WeightAdjCal3 ?? 0,
-        AmountAdjCal1: formData.AmountAdjCal1 ?? 0,
-        AmountAdjCal2: formData.AmountAdjCal2 ?? 0,
-        AmountAdjCal3: formData.AmountAdjCal3 ?? 0,
-        Remark1: formData.Remark1 ?? '',
-        Remark2: formData.Remark2 ?? '',
-        Remark3: formData.Remark3 ?? '',
-      };
-
-      reset(resetData);
+      populateForm(info.data);
       return;
     }
 
     // Reset form to initial empty state
     const initialData = {
-      RFIDTagID: '',
-      RFIDTagSerialNo: '',
+      DataID: '',
+      DataCenter: '',
+      DocID: '',
+      DocNoIn: '',
+      DocNoOut: '',
+      WeightModeDataID: '',
       CarRegister: '',
       CarRegister2: '',
+      TruckDataID: '',
+      RFIDTagDataID: '',
       WeightTypeDataID: '',
       CustomerDataID: '',
       ProductDataID: '',
       TransporterDataID: '',
       DriverDataID: '',
+      SequenceWeightIn: '',
+      WeightDateIn: new Date(),
+      WeightTimeIn: new Date(),
+      WeightIn: 0,
+      UserLogInDataIDIn: '',
+      WeightScaleIDIn: '',
+      TicketPrintCountIn: 0,
+      SequenceWeightOut: '',
+      WeightDateOut: null,
+      WeightTimeOut: null,
+      WeightOut: 0,
+      UserLogInDataIDOut: '',
+      WeightScaleIDOut: '',
+      TicketPrintCountOut: 0,
+      Weight: 0,
+      WeightAdjust: 0,
+      AdjustPercent: 0,
+      AdjustPercentWeight: 0,
       WeightAdjKey1: 0,
       WeightAdjCal1: 0,
       WeightAdjKey2: 0,
       WeightAdjCal2: 0,
       WeightAdjKey3: 0,
       WeightAdjCal3: 0,
+      WeightNet: 0,
+      Price: 0,
+      Tax: 0,
+      ProductUnitDataID: '',
+      KgToUnit: 0,
+      Amount: 0,
+      AmountAdjKey1: 0,
       AmountAdjCal1: 0,
+      AmountAdjKey2: 0,
       AmountAdjCal2: 0,
+      AmountAdjKey3: 0,
       AmountAdjCal3: 0,
+      AmountNet: 0,
       Remark1: '',
       Remark2: '',
       Remark3: '',
+      Remark4: '',
+      SequenceRegisterIn: '',
+      RegisterDateIn: null,
+      RegisterTimeIn: null,
+      UserLogInDataIDRegisterIn: '',
+      RegisterStationIDIn: '',
+      SequenceRegisterOut: '',
+      RegisterDateOut: null,
+      RegisterTimeOut: null,
+      UserLogInDataIDRegisterOut: '',
+      RegisterStationIDOut: '',
+      FlagRegisterStatus: '',
+      FlagAutoSaveIn: '',
+      FlagAutoSaveOut: '',
+      FlagPlatformEdgeSensorIn: '',
+      FlagPlatformEdgeSensorOut: '',
+      FlagStatus: '',
+      FlagComplete: '',
+      FlagPayment: '',
+      PaymentDataID: '',
+      PaymentDate: null,
+      PaymentTime: null,
+      PaymentUserLogInDataID: '',
+      WeightNetStandard: 0,
+      WeightNetTolerancePositive: 0,
+      WeightNetToleranceNegative: 0,
+      WeightNetApproveUserLogInDataID: '',
+      FlagCancel: '',
+      HWID: '',
+      ExtendedData: '',
+      DataHash: null,
+      FlagUploadIn: '',
+      FlagUploadOut: '',
     };
 
     reset(initialData);
-  }, [info, reset]);
+  }, [info, reset, populateForm]);
 
   return (
     <Stack sx={{ width: '100%', gap: 2, pt: 2 }}>
@@ -216,6 +478,12 @@ function RegisterForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fal
               getOptionLabel={(option) => `${option.value}`}
               onChange={(_, data) => {
                 onChange(data?.value ?? '');
+                const rfidTag = rfidTagDataOptions.find((item) => item.value === data?.value);
+                if (rfidTag) {
+                  setValue('CarRegister', rfidTag.carRegister ?? '');
+                  setValue('CarRegister2', rfidTag.carRegister2 ?? '');
+                  setWeightFilters({ CarRegister: rfidTag.carRegister ?? '' });
+                }
               }}
               options={rfidTagDataOptions ?? []}
               renderInput={(params) => (
@@ -261,6 +529,7 @@ function RegisterForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fal
           render={({ field }) => (
             <TextField
               {...field}
+              value={field.value || ''}
               fullWidth
               size='small'
               label='ทะเบียนรถ'
@@ -276,11 +545,13 @@ function RegisterForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fal
           render={({ field }) => (
             <TextField
               {...field}
+              value={field.value || ''}
               size='small'
               label='ทะเบียนรถพวง'
               error={!!errors.CarRegister2}
               helperText={errors.CarRegister2?.message}
               sx={{ width: '50%' }}
+              disabled={isCarRegister2Disabled}
             />
           )}
         />
@@ -460,7 +731,7 @@ function RegisterForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fal
           name='WeightAdjKey1'
           render={({ field }) => (
             <NumberInput
-              disabled
+              disabled={true}
               value={field.value}
               onChange={field.onChange}
               label='หักน้ำหนัก 1'
@@ -482,9 +753,9 @@ function RegisterForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fal
               fullWidth
               size='small'
               label='หมายเหตุ 1'
+              value={field.value ?? ''}
               error={!!errors.Remark1}
               helperText={errors.Remark1?.message}
-              sx={{ width: '47%' }}
             />
           )}
         />
@@ -496,7 +767,7 @@ function RegisterForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fal
           name='WeightAdjKey2'
           render={({ field }) => (
             <NumberInput
-              disabled
+              disabled={true}
               value={field.value}
               onChange={field.onChange}
               label='หักน้ำหนัก 2'
@@ -518,9 +789,9 @@ function RegisterForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fal
               fullWidth
               size='small'
               label='หมายเหตุ 2'
+              value={field.value ?? ''}
               error={!!errors.Remark2}
               helperText={errors.Remark2?.message}
-              sx={{ width: '47%' }}
             />
           )}
         />
@@ -532,7 +803,7 @@ function RegisterForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fal
           name='WeightAdjKey3'
           render={({ field }) => (
             <NumberInput
-              disabled
+              disabled={true}
               value={field.value}
               onChange={field.onChange}
               label='หักน้ำหนัก 3'
@@ -554,20 +825,21 @@ function RegisterForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fal
               fullWidth
               size='small'
               label='หมายเหตุ 3'
+              value={field.value ?? ''}
               error={!!errors.Remark3}
               helperText={errors.Remark3?.message}
-              sx={{ width: '47%' }}
             />
           )}
         />
       </Box>
+
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <Controller
           control={control}
           name='Price'
           render={({ field }) => (
             <NumberInput
-              disabled
+              disabled={true}
               value={field.value}
               onChange={field.onChange}
               label='ราคาต่อหน่วย'
@@ -587,6 +859,7 @@ function RegisterForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fal
           render={({ field: { value, onChange, ...rest } }) => (
             <Autocomplete
               {...rest}
+              disabled={true}
               fullWidth
               getOptionLabel={(option) => `${option.value}`}
               onChange={(_, data) => {
@@ -606,7 +879,6 @@ function RegisterForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fal
                   }}
                 />
               )}
-              disabled
               size='small'
               value={productUnitData?.find((item) => item.value === value) ?? null}
               sx={{ width: '25%' }}
@@ -618,13 +890,13 @@ function RegisterForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fal
           name='KgToUnit'
           render={({ field }) => (
             <NumberInput
+              disabled={true}
               value={field.value}
               onChange={field.onChange}
               label=''
               error={!!errors.KgToUnit}
               helperText={errors.KgToUnit?.message}
               sx={{ width: '20%' }}
-              disabled
             />
           )}
         />
@@ -818,6 +1090,6 @@ function RegisterForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fal
       </TableContainer>
     </Stack>
   );
-}
+});
 
 export { RegisterForm };

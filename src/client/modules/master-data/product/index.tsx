@@ -16,7 +16,7 @@ function Product() {
     pageSize: 10,
   });
 
-  const { data: productData, isLoading } = useGetProducts(paginationModel.page + 1, paginationModel.pageSize);
+  const { data: productData, isLoading } = useGetProducts({}, paginationModel.page + 1, paginationModel.pageSize);
 
   const [selectedRow, setSelectedRow] = useState<ProductSchema | null>(null);
   const [formInfo, setFormInfo] = useState<{ isOpen: boolean; data?: ProductSchema }>({

@@ -5,11 +5,11 @@ import { useMemo } from 'react';
 import { baseHttpClient } from '@/core/libs/axios';
 
 import {
-  createWaitWeightSchema,
-  updateWaitWeightSchema,
-  type WaitWeightSchema,
-  type CreateWaitWeightSchema,
-  type UpdateWaitWeightSchema,
+  createWeightSchema,
+  updateWeightSchema,
+  type WeightSchema,
+  type CreateWeightSchema,
+  type UpdateWeightSchema,
 } from './schema';
 
 type PaginatedResponse<T> = {
@@ -22,39 +22,33 @@ type APIResponse<T> = {
   result: T;
 };
 
-function useWaitWeightAPI() {
+function useWeightAPI() {
   const queryClient = useQueryClient();
-  const getWaitWeightQueryKey = useMemo(() => ['getWaitWeight'], []);
-  const api = baseHttpClient['/master-data/wait-weight'];
+  const getWeightQueryKey = useMemo(() => ['getWeight'], []);
+  const api = baseHttpClient['/master-data/weight'];
 
   // GET all weight types with pagination
-  const useGetWaitWeights = (page: number = 1, pageSize: number = 10) =>
-    useQuery<APIResponse<PaginatedResponse<WaitWeightSchema>>>({
-      queryKey: [...getWaitWeightQueryKey, page, pageSize],
+  const useGetRFIDTags = (
+    filters: Record<string, WeightSchema>,
+    page: number = 1,
+    pageSize: number = 10,
+    enabled: boolean = true
+  ) =>
+    useQuery<APIResponse<PaginatedResponse<WeightSchema>>>({
+      queryKey: [...getWeightQueryKey, filters, page, pageSize],
       queryFn: async () => {
         const response = await api.get({
-          params: { page, pageSize },
+          params: { ...filters, page, pageSize },
         });
         return response.data;
       },
+      enabled,
     });
-
-  // GET single weight type by ID
-  const useGetWaitWeightById = (id: string) => {
-    return useQuery<{ data: WaitWeightSchema }>({
-      queryKey: [...getWaitWeightQueryKey, id],
-      queryFn: async () => {
-        const { data } = await api.get({ params: { id } });
-        return data;
-      },
-      enabled: !!id,
-    });
-  };
 
   // POST new weight type
-  const createWaitWeight = useMutation<WaitWeightSchema, Error, CreateWaitWeightSchema>({
+  const createWeight = useMutation<WeightSchema, Error, CreateWeightSchema>({
     mutationFn: async (newData) => {
-      const validatedData = createWaitWeightSchema.parse(newData);
+      const validatedData = createWeightSchema.parse(newData);
       const formData = new FormData();
 
       Object.entries(validatedData).forEach(([key, value]) => {
@@ -69,14 +63,14 @@ function useWaitWeightAPI() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getWaitWeightQueryKey });
+      queryClient.invalidateQueries({ queryKey: getWeightQueryKey });
     },
   });
 
   // PUT update truck
-  const updateWaitWeight = useMutation<WaitWeightSchema, Error, { id: string; data: UpdateWaitWeightSchema }>({
+  const updateWeight = useMutation<WeightSchema, Error, { id: string; data: UpdateWeightSchema }>({
     mutationFn: async ({ id, data }) => {
-      const validatedData = updateWaitWeightSchema.parse(data);
+      const validatedData = updateWeightSchema.parse(data);
       const formData = new FormData();
 
       // Append all fields to FormData
@@ -94,30 +88,29 @@ function useWaitWeightAPI() {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getWaitWeightQueryKey });
+      queryClient.invalidateQueries({ queryKey: getWeightQueryKey });
     },
   });
 
   // DELETE weight type
-  const deleteWaitWeight = useMutation<WaitWeightSchema, Error, string>({
+  const deleteWeight = useMutation<WeightSchema, Error, string>({
     mutationFn: async (id) => {
       const response = await api.delete({ params: { id } });
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getWaitWeightQueryKey });
+      queryClient.invalidateQueries({ queryKey: getWeightQueryKey });
     },
   });
 
   return {
     // Queries
-    useGetWaitWeights,
-    useGetWaitWeightById,
+    useGetRFIDTags,
     // Mutations
-    createWaitWeight,
-    updateWaitWeight,
-    deleteWaitWeight,
+    createWeight,
+    updateWeight,
+    deleteWeight,
   };
 }
 
-export { useWaitWeightAPI };
+export { useWeightAPI };

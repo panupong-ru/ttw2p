@@ -163,41 +163,26 @@ CREATE TABLE `RFIDTag` (
     `ProductDataID` VARCHAR(48) NULL,
     `TransporterDataID` VARCHAR(48) NULL,
     `DriverDataID` VARCHAR(48) NULL,
-    `SequenceWeightIn` VARCHAR(10) NULL,
-    `WeightDateIn` DATETIME(3) NULL,
-    `WeightTimeIn` DATETIME(3) NULL,
-    `WeightIn` DOUBLE NULL,
-    `UserLogInDataIDIn` VARCHAR(48) NULL,
-    `TicketPrintCountIn` INTEGER NULL,
-    `SequenceWeightOut` VARCHAR(10) NULL,
-    `WeightDateOut` DATETIME(3) NULL,
-    `WeightTimeOut` DATETIME(3) NULL,
-    `WeightOut` DOUBLE NULL,
-    `UserLogInDataIDOut` VARCHAR(48) NULL,
-    `TicketPrintCountOut` INTEGER NULL,
+    `SequenceWeight` VARCHAR(10) NULL,
+    `WeightDate` DATETIME(3) NULL,
+    `WeightTime` DATETIME(3) NULL,
     `Weight` DOUBLE NULL,
-    `WeightAdjust` DOUBLE NULL,
-    `AdjustPercent` DOUBLE NULL,
-    `AdjustPercentWeight` DOUBLE NULL,
+    `UserLogInDataID` VARCHAR(48) NULL,
     `WeightAdjKey1` DOUBLE NULL,
     `WeightAdjCal1` DOUBLE NULL,
     `WeightAdjKey2` DOUBLE NULL,
     `WeightAdjCal2` DOUBLE NULL,
     `WeightAdjKey3` DOUBLE NULL,
     `WeightAdjCal3` DOUBLE NULL,
-    `WeightNet` DOUBLE NULL,
     `ProductUnitDataID` VARCHAR(48) NULL,
-    `KgToUnit` DOUBLE NULL,
     `Price` DOUBLE NULL,
     `Tax` DOUBLE NULL,
-    `Amount` DOUBLE NULL,
     `AmountAdjKey1` DOUBLE NULL,
     `AmountAdjCal1` DOUBLE NULL,
     `AmountAdjKey2` DOUBLE NULL,
     `AmountAdjCal2` DOUBLE NULL,
     `AmountAdjKey3` DOUBLE NULL,
     `AmountAdjCal3` DOUBLE NULL,
-    `AmountNet` DOUBLE NULL,
     `Remark1` VARCHAR(50) NULL,
     `Remark2` VARCHAR(50) NULL,
     `Remark3` VARCHAR(50) NULL,
@@ -217,8 +202,7 @@ CREATE TABLE `RFIDTag` (
     INDEX `RFIDTag_TransporterDataID_idx`(`TransporterDataID`),
     INDEX `RFIDTag_DriverDataID_idx`(`DriverDataID`),
     INDEX `RFIDTag_ProductUnitDataID_idx`(`ProductUnitDataID`),
-    INDEX `RFIDTag_UserLogInDataIDIn_idx`(`UserLogInDataIDIn`),
-    INDEX `RFIDTag_UserLogInDataIDOut_idx`(`UserLogInDataIDOut`),
+    INDEX `RFIDTag_UserLogInDataID_idx`(`UserLogInDataID`),
     PRIMARY KEY (`DataID`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -540,3 +524,46 @@ CREATE TABLE `WeightType` (
     INDEX `IdxDataCenter`(`DataCenter`),
     PRIMARY KEY (`DataID`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- Create V_WeightData View
+DROP VIEW IF EXISTS `V_WeightData`;
+
+CREATE VIEW `V_WeightData` AS
+SELECT 
+    w.DataID,
+    w.DocID,
+    w.DocNoIn,
+    w.DocNoOut,
+    w.CarRegister,
+    w.CarRegister2,
+    wt.WeightTypeName,
+    c.CustomerName,
+    p.ProductName,
+    t.TransporterName,
+    d.DriverName,
+    w.WeightIn,
+    w.WeightOut,
+    w.WeightNet,
+    w.Price,
+    w.AmountNet,
+    w.SequenceRegisterIn,
+    w.RegisterDateIn,
+    w.RegisterTimeIn,
+    w.WeightDateIn,
+    w.WeightTimeIn,
+    w.WeightDateOut,
+    w.WeightTimeOut,
+    w.FlagCancel,
+    w.FlagComplete
+FROM 
+    `Weight` w
+LEFT JOIN 
+    `WeightType` wt ON w.WeightTypeDataID = wt.DataID
+LEFT JOIN 
+    `Customer` c ON w.CustomerDataID = c.DataID
+LEFT JOIN 
+    `Product` p ON w.ProductDataID = p.DataID
+LEFT JOIN 
+    `Transporter` t ON w.TransporterDataID = t.DataID
+LEFT JOIN 
+    `Driver` d ON w.DriverDataID = d.DataID;

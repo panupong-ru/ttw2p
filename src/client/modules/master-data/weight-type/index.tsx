@@ -16,7 +16,7 @@ function WeightType() {
     pageSize: 10,
   });
 
-  const { data: weightTypeData, isLoading } = useGetWeightTypes(paginationModel.page + 1, paginationModel.pageSize);
+  const { data: weightTypeData, isLoading } = useGetWeightTypes({}, paginationModel.page + 1, paginationModel.pageSize);
 
   const [selectedRow, setSelectedRow] = useState<WeightTypeSchema | null>(null);
   const [formInfo, setFormInfo] = useState<{ isOpen: boolean; data?: WeightTypeSchema }>({

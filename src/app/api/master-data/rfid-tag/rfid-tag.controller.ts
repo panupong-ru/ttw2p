@@ -13,16 +13,12 @@ export class RFIDTagController {
     this.service = new RFIDTagService();
   }
 
-  async getAll(page: number = 1, pageSize: number = 10): Promise<PaginatedResponse> {
+  async find(filters: Record<string, string>, page: number = 1, pageSize: number = 10): Promise<PaginatedResponse> {
     const adjustedPage = page;
-    return this.service.findAll(adjustedPage, pageSize);
+    return this.service.find(filters, adjustedPage, pageSize);
   }
 
-  async getById(id: string): Promise<RFIDTag | null> {
-    return this.service.findById(id);
-  }
-
-  async create(data: Omit<RFIDTag, 'DataID'>): Promise<RFIDTag> {
+  async create(data: RFIDTag): Promise<RFIDTag> {
     return this.service.create(data);
   }
 

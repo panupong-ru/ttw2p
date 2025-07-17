@@ -17,8 +17,8 @@ import { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { FormModal } from '@/client/components/form-modal';
-import type { WaitWeightSchema, CreateWaitWeightSchema } from './schema';
-import { createWaitWeightSchema } from './schema';
+import type { WeightSchema, CreateWeightSchema } from './schema';
+import { createWeightSchema } from './schema';
 import { useCustomerAPI } from '../customer/api';
 import { useProductAPI } from '../product/api';
 import { useDriverAPI } from '../driver/api';
@@ -28,23 +28,24 @@ import { NumberInput } from '@/client/components/number-input';
 import { useWeightUnitAPI } from '../weight-unit/api';
 import { useRFIDTagAPI } from '../rfid-tag/api';
 
-type WaitWeightFormProps = {
+type WeightFormProps = {
   info: {
     isOpen: boolean;
-    data?: WaitWeightSchema;
+    data?: WeightSchema;
   };
   isLoading?: boolean;
   onClose: () => void;
-  onSubmit?: (data: CreateWaitWeightSchema) => void;
+  onSubmit?: (data: CreateWeightSchema) => void;
 };
-function WaitWeightForm({ info, onClose, onSubmit = (_data) => {}, isLoading = false }: WaitWeightFormProps) {
+function WeightForm({ info, onClose, onSubmit = (_data) => {}, isLoading = false }: WeightFormProps) {
   const {
     control,
     reset,
+    setValue,
     handleSubmit,
     formState: { errors },
-  } = useForm<CreateWaitWeightSchema>({
-    resolver: zodResolver(createWaitWeightSchema),
+  } = useForm<CreateWeightSchema>({
+    resolver: zodResolver(createWeightSchema),
   });
   const { useGetRFIDTags } = useRFIDTagAPI();
   const { useGetWeightTypes } = useWeightTypeAPI();
@@ -53,13 +54,13 @@ function WaitWeightForm({ info, onClose, onSubmit = (_data) => {}, isLoading = f
   const { useGetDrivers } = useDriverAPI();
   const { useGetTransporters } = useTransporterAPI();
   const { useGetWeightUnits } = useWeightUnitAPI();
-  const { data: rfidTagData } = useGetRFIDTags(1, 100000);
-  const { data: weightTypeData } = useGetWeightTypes(1, 100000);
-  const { data: customerData } = useGetCustomers(1, 100000);
-  const { data: productData } = useGetProducts(1, 100000);
-  const { data: driverData } = useGetDrivers(1, 100000);
-  const { data: transporterData } = useGetTransporters(1, 100000);
-  const { data: weightUnitData } = useGetWeightUnits(1, 100000);
+  const { data: rfidTagData } = useGetRFIDTags({}, 1, 100000);
+  const { data: weightTypeData } = useGetWeightTypes({}, 1, 100000);
+  const { data: customerData } = useGetCustomers({}, 1, 100000);
+  const { data: productData } = useGetProducts({}, 1, 100000);
+  const { data: driverData } = useGetDrivers({}, 1, 100000);
+  const { data: transporterData } = useGetTransporters({}, 1, 100000);
+  const { data: weightUnitData } = useGetWeightUnits({}, 1, 100000);
 
   const rfidTagDataOptions = useMemo(() => {
     return (
@@ -117,40 +118,106 @@ function WaitWeightForm({ info, onClose, onSubmit = (_data) => {}, isLoading = f
 
   const productUnitData = useMemo(() => {
     return (
-      weightUnitData?.result?.data?.map((item: { WeightUnitID: string }) => ({
+      weightUnitData?.result?.data?.map((item: { WeightUnitID: string; KgToUnit?: number | null }) => ({
         value: item.WeightUnitID,
+        kgToUnit: item.KgToUnit ?? 0,
       })) ?? []
     );
   }, [weightUnitData]);
 
   useEffect(() => {
     if (info.data) {
-      // Omit DataID, HWID, and DataHash when setting form data
       const { ...formData } = info.data;
-
-      // สร้าง object สำหรับ reset form
+      // Create a reset object for the form
       const resetData = {
-        RFIDTagDataID: formData.RFIDTagDataID ?? '',
-        FlagRegisterStatus: formData.FlagRegisterStatus ?? '',
+        DataID: formData.DataID,
+        DataCenter: formData.DataCenter ?? '',
+        DocID: formData.DocID ?? '',
+        DocNoIn: formData.DocNoIn ?? '',
+        DocNoOut: formData.DocNoOut ?? '',
+        WeightModeDataID: formData.WeightModeDataID ?? '',
         CarRegister: formData.CarRegister ?? '',
         CarRegister2: formData.CarRegister2 ?? '',
+        TruckDataID: formData.TruckDataID ?? '',
+        RFIDTagDataID: formData.RFIDTagDataID ?? '',
         WeightTypeDataID: formData.WeightTypeDataID ?? '',
         CustomerDataID: formData.CustomerDataID ?? '',
         ProductDataID: formData.ProductDataID ?? '',
         TransporterDataID: formData.TransporterDataID ?? '',
         DriverDataID: formData.DriverDataID ?? '',
+        SequenceWeightIn: formData.SequenceWeightIn ?? '',
+        WeightDateIn: formData.WeightDateIn ? new Date(formData.WeightDateIn) : null,
+        WeightTimeIn: formData.WeightTimeIn ? new Date(formData.WeightTimeIn) : null,
+        WeightIn: formData.WeightIn ?? 0,
+        UserLogInDataIDIn: formData.UserLogInDataIDIn ?? '',
+        WeightScaleIDIn: formData.WeightScaleIDIn ?? '',
+        TicketPrintCountIn: formData.TicketPrintCountIn ?? 0,
+        SequenceWeightOut: formData.SequenceWeightOut ?? '',
+        WeightDateOut: formData.WeightDateOut ? new Date(formData.WeightDateOut) : null,
+        WeightTimeOut: formData.WeightTimeOut ? new Date(formData.WeightTimeOut) : null,
+        WeightOut: formData.WeightOut ?? 0,
+        UserLogInDataIDOut: formData.UserLogInDataIDOut ?? '',
+        WeightScaleIDOut: formData.WeightScaleIDOut ?? '',
+        TicketPrintCountOut: formData.TicketPrintCountOut ?? 0,
+        Weight: formData.Weight ?? 0,
+        WeightAdjust: formData.WeightAdjust ?? 0,
+        AdjustPercent: formData.AdjustPercent ?? 0,
+        AdjustPercentWeight: formData.AdjustPercentWeight ?? 0,
         WeightAdjKey1: formData.WeightAdjKey1 ?? 0,
         WeightAdjCal1: formData.WeightAdjCal1 ?? 0,
         WeightAdjKey2: formData.WeightAdjKey2 ?? 0,
         WeightAdjCal2: formData.WeightAdjCal2 ?? 0,
         WeightAdjKey3: formData.WeightAdjKey3 ?? 0,
         WeightAdjCal3: formData.WeightAdjCal3 ?? 0,
+        WeightNet: formData.WeightNet ?? 0,
+        Price: formData.Price ?? 0,
+        Tax: formData.Tax ?? 0,
+        ProductUnitDataID: formData.ProductUnitDataID ?? '',
+        KgToUnit: formData.KgToUnit ?? 0,
+        Amount: formData.Amount ?? 0,
+        AmountAdjKey1: formData.AmountAdjKey1 ?? 0,
         AmountAdjCal1: formData.AmountAdjCal1 ?? 0,
+        AmountAdjKey2: formData.AmountAdjKey2 ?? 0,
         AmountAdjCal2: formData.AmountAdjCal2 ?? 0,
+        AmountAdjKey3: formData.AmountAdjKey3 ?? 0,
         AmountAdjCal3: formData.AmountAdjCal3 ?? 0,
+        AmountNet: formData.AmountNet ?? 0,
         Remark1: formData.Remark1 ?? '',
         Remark2: formData.Remark2 ?? '',
         Remark3: formData.Remark3 ?? '',
+        Remark4: formData.Remark4 ?? '',
+        SequenceRegisterIn: formData.SequenceRegisterIn ?? '',
+        RegisterDateIn: formData.RegisterDateIn ? new Date(formData.RegisterDateIn) : null,
+        RegisterTimeIn: formData.RegisterTimeIn ? new Date(formData.RegisterTimeIn) : null,
+        UserLogInDataIDRegisterIn: formData.UserLogInDataIDRegisterIn ?? '',
+        RegisterStationIDIn: formData.RegisterStationIDIn ?? '',
+        SequenceRegisterOut: formData.SequenceRegisterOut ?? '',
+        RegisterDateOut: formData.RegisterDateOut ? new Date(formData.RegisterDateOut) : null,
+        RegisterTimeOut: formData.RegisterTimeOut ? new Date(formData.RegisterTimeOut) : null,
+        UserLogInDataIDRegisterOut: formData.UserLogInDataIDRegisterOut ?? '',
+        RegisterStationIDOut: formData.RegisterStationIDOut ?? '',
+        FlagRegisterStatus: formData.FlagRegisterStatus ?? '',
+        FlagAutoSaveIn: formData.FlagAutoSaveIn ?? '',
+        FlagAutoSaveOut: formData.FlagAutoSaveOut ?? '',
+        FlagPlatformEdgeSensorIn: formData.FlagPlatformEdgeSensorIn ?? '',
+        FlagPlatformEdgeSensorOut: formData.FlagPlatformEdgeSensorOut ?? '',
+        FlagStatus: formData.FlagStatus ?? '',
+        FlagComplete: formData.FlagComplete ?? '',
+        FlagPayment: formData.FlagPayment ?? '',
+        PaymentDataID: formData.PaymentDataID ?? '',
+        PaymentDate: formData.PaymentDate ? new Date(formData.PaymentDate) : null,
+        PaymentTime: formData.PaymentTime ? new Date(formData.PaymentTime) : null,
+        PaymentUserLogInDataID: formData.PaymentUserLogInDataID ?? '',
+        WeightNetStandard: formData.WeightNetStandard ?? 0,
+        WeightNetTolerancePositive: formData.WeightNetTolerancePositive ?? 0,
+        WeightNetToleranceNegative: formData.WeightNetToleranceNegative ?? 0,
+        WeightNetApproveUserLogInDataID: formData.WeightNetApproveUserLogInDataID ?? '',
+        FlagCancel: formData.FlagCancel ?? '',
+        HWID: formData.HWID ?? '',
+        ExtendedData: formData.ExtendedData ?? '',
+        DataHash: formData.DataHash ?? null,
+        FlagUploadIn: formData.FlagUploadIn ?? '',
+        FlagUploadOut: formData.FlagUploadOut ?? '',
       };
 
       reset(resetData);
@@ -159,27 +226,94 @@ function WaitWeightForm({ info, onClose, onSubmit = (_data) => {}, isLoading = f
 
     // Reset form to initial empty state
     const initialData = {
-      RFIDTagID: '',
-      RFIDTagSerialNo: '',
+      DataID: '',
+      DataCenter: '',
+      DocID: '',
+      DocNoIn: '',
+      DocNoOut: '',
+      WeightModeDataID: '',
       CarRegister: '',
       CarRegister2: '',
+      TruckDataID: '',
+      RFIDTagDataID: '',
       WeightTypeDataID: '',
       CustomerDataID: '',
       ProductDataID: '',
       TransporterDataID: '',
       DriverDataID: '',
+      SequenceWeightIn: '',
+      WeightDateIn: null,
+      WeightTimeIn: null,
+      WeightIn: 0,
+      UserLogInDataIDIn: '',
+      WeightScaleIDIn: '',
+      TicketPrintCountIn: 0,
+      SequenceWeightOut: '',
+      WeightDateOut: null,
+      WeightTimeOut: null,
+      WeightOut: 0,
+      UserLogInDataIDOut: '',
+      WeightScaleIDOut: '',
+      TicketPrintCountOut: 0,
+      Weight: 0,
+      WeightAdjust: 0,
+      AdjustPercent: 0,
+      AdjustPercentWeight: 0,
       WeightAdjKey1: 0,
       WeightAdjCal1: 0,
       WeightAdjKey2: 0,
       WeightAdjCal2: 0,
       WeightAdjKey3: 0,
       WeightAdjCal3: 0,
+      WeightNet: 0,
+      Price: 0,
+      Tax: 0,
+      ProductUnitDataID: '',
+      KgToUnit: 0,
+      Amount: 0,
+      AmountAdjKey1: 0,
       AmountAdjCal1: 0,
+      AmountAdjKey2: 0,
       AmountAdjCal2: 0,
+      AmountAdjKey3: 0,
       AmountAdjCal3: 0,
+      AmountNet: 0,
       Remark1: '',
       Remark2: '',
       Remark3: '',
+      Remark4: '',
+      SequenceRegisterIn: '',
+      RegisterDateIn: null,
+      RegisterTimeIn: null,
+      UserLogInDataIDRegisterIn: '',
+      RegisterStationIDIn: '',
+      SequenceRegisterOut: '',
+      RegisterDateOut: null,
+      RegisterTimeOut: null,
+      UserLogInDataIDRegisterOut: '',
+      RegisterStationIDOut: '',
+      FlagRegisterStatus: '',
+      FlagAutoSaveIn: '',
+      FlagAutoSaveOut: '',
+      FlagPlatformEdgeSensorIn: '',
+      FlagPlatformEdgeSensorOut: '',
+      FlagStatus: '',
+      FlagComplete: '',
+      FlagPayment: '',
+      PaymentDataID: '',
+      PaymentDate: null,
+      PaymentTime: null,
+      PaymentUserLogInDataID: '',
+      WeightNetStandard: 0,
+      WeightNetTolerancePositive: 0,
+      WeightNetToleranceNegative: 0,
+      WeightNetApproveUserLogInDataID: '',
+      FlagCancel: '',
+      HWID: '',
+      ExtendedData: '',
+      DataHash: null,
+      FlagUploadIn: '',
+      FlagUploadOut: '',
     };
 
     reset(initialData);
@@ -246,6 +380,7 @@ function WaitWeightForm({ info, onClose, onSubmit = (_data) => {}, isLoading = f
           render={({ field }) => (
             <TextField
               {...field}
+              disabled
               fullWidth
               size='small'
               label='ทะเบียนรถ'
@@ -261,6 +396,7 @@ function WaitWeightForm({ info, onClose, onSubmit = (_data) => {}, isLoading = f
           render={({ field }) => (
             <TextField
               {...field}
+              disabled
               size='small'
               label='ทะเบียนรถพวง'
               error={!!errors.CarRegister2}
@@ -451,19 +587,22 @@ function WaitWeightForm({ info, onClose, onSubmit = (_data) => {}, isLoading = f
         </Typography>
         <Controller
           control={control}
-          name='WeightAdjCal1'
+          name='AmountAdjCal1'
           render={({ field }) => (
-            <TextField
+            <NumberInput
               {...field}
               fullWidth
               size='small'
               label='หักเงิน 1'
-              error={!!errors.WeightAdjCal1}
-              helperText={errors.WeightAdjCal1?.message}
+              error={!!errors.AmountAdjCal1}
+              helperText={errors.AmountAdjCal1?.message}
               sx={{ width: '47%' }}
             />
           )}
         />
+        <Typography variant='body2' color='text.secondary' sx={{ whiteSpace: 'nowrap', width: '3%' }}>
+          บาท
+        </Typography>
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -486,19 +625,22 @@ function WaitWeightForm({ info, onClose, onSubmit = (_data) => {}, isLoading = f
         </Typography>
         <Controller
           control={control}
-          name='WeightAdjCal2'
+          name='AmountAdjCal2'
           render={({ field }) => (
-            <TextField
+            <NumberInput
               {...field}
               fullWidth
               size='small'
               label='หักเงิน 2'
-              error={!!errors.WeightAdjCal2}
-              helperText={errors.WeightAdjCal2?.message}
+              error={!!errors.AmountAdjCal2}
+              helperText={errors.AmountAdjCal2?.message}
               sx={{ width: '47%' }}
             />
           )}
         />
+        <Typography variant='body2' color='text.secondary' sx={{ whiteSpace: 'nowrap', width: '3%' }}>
+          บาท
+        </Typography>
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -521,20 +663,24 @@ function WaitWeightForm({ info, onClose, onSubmit = (_data) => {}, isLoading = f
         </Typography>
         <Controller
           control={control}
-          name='WeightAdjCal3'
+          name='AmountAdjCal3'
           render={({ field }) => (
-            <TextField
+            <NumberInput
               {...field}
               fullWidth
               size='small'
               label='หักเงิน 3'
-              error={!!errors.WeightAdjCal3}
-              helperText={errors.WeightAdjCal3?.message}
+              error={!!errors.AmountAdjCal3}
+              helperText={errors.AmountAdjCal3?.message}
               sx={{ width: '47%' }}
             />
           )}
         />
+        <Typography variant='body2' color='text.secondary' sx={{ whiteSpace: 'nowrap', width: '3%' }}>
+          บาท
+        </Typography>
       </Box>
+
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <Controller
           control={control}
@@ -564,6 +710,7 @@ function WaitWeightForm({ info, onClose, onSubmit = (_data) => {}, isLoading = f
               getOptionLabel={(option) => `${option.value}`}
               onChange={(_, data) => {
                 onChange(data?.value ?? '');
+                setValue('KgToUnit', data?.kgToUnit ?? 0);
               }}
               options={productUnitData ?? []}
               renderInput={(params) => (
@@ -699,4 +846,4 @@ function WaitWeightForm({ info, onClose, onSubmit = (_data) => {}, isLoading = f
   );
 }
 
-export { WaitWeightForm };
+export { WeightForm };

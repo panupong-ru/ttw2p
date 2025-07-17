@@ -27,29 +27,22 @@ function useWeightTypeAPI() {
   const api = baseHttpClient['/master-data/weight-type'];
 
   // GET all weight types with pagination
-  const useGetWeightTypes = (page: number = 1, pageSize: number = 10) =>
+  const useGetWeightTypes = (
+    filters: Record<string, WeightTypeSchema>,
+    page: number = 1,
+    pageSize: number = 10,
+    enabled: boolean = true
+  ) =>
     useQuery<APIResponse<PaginatedResponse<WeightTypeSchema>>>({
-      queryKey: [...getWeightTypeQueryKey, page, pageSize],
+      queryKey: [...getWeightTypeQueryKey, filters, page, pageSize],
       queryFn: async () => {
         const response = await api.get({
-          params: { page, pageSize },
+          params: { ...filters, page, pageSize },
         });
         return response.data;
       },
+      enabled,
     });
-
-  // GET single weight type by ID
-  const useGetWeightTypeById = (id: string) => {
-    return useQuery<{ data: WeightTypeSchema }>({
-      queryKey: [...getWeightTypeQueryKey, id],
-      queryFn: async () => {
-        const { data } = await api.get({ params: { id } });
-        return data;
-      },
-      enabled: !!id,
-    });
-  };
-
   // POST new weight type
   const createWeightType = useMutation<WeightTypeSchema, Error, CreateWeightTypeSchema>({
     mutationFn: async (newData) => {
@@ -145,7 +138,6 @@ function useWeightTypeAPI() {
   return {
     // Queries
     useGetWeightTypes,
-    useGetWeightTypeById,
     // Mutations
     createWeightType,
     updateWeightType,

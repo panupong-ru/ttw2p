@@ -31,7 +31,7 @@ function ProductForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fals
 
   const { useGetWeightUnits } = useWeightUnitAPI();
 
-  const { data: weightUnitData } = useGetWeightUnits(1, 1000);
+  const { data: weightUnitData } = useGetWeightUnits({}, 1, 1000);
 
   const productUnitData = useMemo(() => {
     return (

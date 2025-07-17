@@ -13,13 +13,9 @@ export class WeightController {
     this.service = new WeightService();
   }
 
-  async getAll(page: number = 1, pageSize: number = 10): Promise<PaginatedResponse> {
+  async find(filters: Record<string, string>, page: number = 1, pageSize: number = 10): Promise<PaginatedResponse> {
     const adjustedPage = page;
-    return this.service.findAll(adjustedPage, pageSize);
-  }
-
-  async getById(id: string): Promise<Weight | null> {
-    return this.service.findById(id);
+    return this.service.find(filters, adjustedPage, pageSize);
   }
 
   async create(data: Omit<Weight, 'DataID'>): Promise<Weight> {

@@ -19,16 +19,17 @@ const fileUploadOptions = {
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const id = searchParams.get('id');
-
-    if (id) {
-      const weight = await controller.getById(id);
-      return successResponse(weight);
-    }
-
     const page = Number(searchParams.get('page')) || 1;
     const pageSize = Number(searchParams.get('pageSize')) || 10;
-    const result = await controller.getAll(page, pageSize);
+
+    const filters: Record<string, string> = {};
+    searchParams.forEach((value, key) => {
+      if (key !== 'page' && key !== 'pageSize') {
+        filters[key] = value;
+      }
+    });
+
+    const result = await controller.find(filters, page, pageSize);
     return successResponse(result);
   } catch (error) {
     return errorResponse(error);
@@ -47,7 +48,7 @@ export async function POST(request: NextRequest) {
       if (value instanceof File) {
         files[key] = value;
       } else {
-        data[key] = value;
+        data[key] = value === 'null' || value === '' ? null : value;
       }
     }
 
@@ -86,7 +87,7 @@ export async function PUT(request: NextRequest) {
       if (value instanceof File) {
         files[key] = value;
       } else {
-        data[key] = value;
+        data[key] = value === 'null' || value === '' ? null : value;
       }
     }
 

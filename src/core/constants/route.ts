@@ -16,8 +16,8 @@ export const ROUTE = {
     WEIGHT_UNIT: '/master-data/weight-unit',
     TRUCK: '/master-data/truck',
     RFID_TAG: '/master-data/rfid-tag',
-    WAIT_WEIGHT: '/master-data/wait-weight',
     WEIGHT: '/master-data/weight',
+    WEIGHT2: '/master-data/weight2',
   },
 
   SYSTEM_MANAGEMENT: {

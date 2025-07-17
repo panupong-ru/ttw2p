@@ -27,28 +27,22 @@ function useProductAPI() {
   const api = baseHttpClient['/master-data/product'];
 
   // GET all weight types with pagination
-  const useGetProducts = (page: number = 1, pageSize: number = 10) =>
+  const useGetProducts = (
+    filters: Record<string, ProductSchema>,
+    page: number = 1,
+    pageSize: number = 10,
+    enabled: boolean = true
+  ) =>
     useQuery<APIResponse<PaginatedResponse<ProductSchema>>>({
-      queryKey: [...getProductQueryKey, page, pageSize],
+      queryKey: [...getProductQueryKey, filters, page, pageSize],
       queryFn: async () => {
         const response = await api.get({
-          params: { page, pageSize },
+          params: { ...filters, page, pageSize },
         });
         return response.data;
       },
+      enabled,
     });
-
-  // GET single weight type by ID
-  const useGetProductById = (id: string) => {
-    return useQuery<{ data: ProductSchema }>({
-      queryKey: [...getProductQueryKey, id],
-      queryFn: async () => {
-        const { data } = await api.get({ params: { id } });
-        return data;
-      },
-      enabled: !!id,
-    });
-  };
 
   // POST new weight type
   const createProduct = useMutation<ProductSchema, Error, CreateProductSchema>({
@@ -111,7 +105,6 @@ function useProductAPI() {
   return {
     // Queries
     useGetProducts,
-    useGetProductById,
     // Mutations
     createProduct,
     updateProduct,

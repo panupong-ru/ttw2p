@@ -16,7 +16,7 @@ function Customer() {
     pageSize: 10,
   });
 
-  const { data: customerData, isLoading } = useGetCustomers(paginationModel.page + 1, paginationModel.pageSize);
+  const { data: customerData, isLoading } = useGetCustomers({}, paginationModel.page + 1, paginationModel.pageSize);
 
   const [selectedRow, setSelectedRow] = useState<CustomerSchema | null>(null);
   const [formInfo, setFormInfo] = useState<{ isOpen: boolean; data?: CustomerSchema }>({

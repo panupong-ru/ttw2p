@@ -52,7 +52,7 @@ model Customer {
   Address2          String? @db.VarChar(100)
   SequenceWeightIn  String? @db.VarChar(10)
   SequenceWeightOut String? @db.VarChar(10)
-  FlagCancel        String? @db.VarChar(1)
+  FlagCancel        String? @default("N") @db.VarChar(1)
   HWID              String? @db.VarChar(20)
   DataHash          BigInt?
 
@@ -75,7 +75,7 @@ model Driver {
   Address2          String? @db.VarChar(100)
   SequenceWeightIn  String? @db.VarChar(10)
   SequenceWeightOut String? @db.VarChar(10)
-  FlagCancel        String? @db.VarChar(1)
+  FlagCancel        String? @default("N") @db.VarChar(1)
   HWID              String? @db.VarChar(20)
   DataHash          BigInt?
 
@@ -132,7 +132,7 @@ model Product {
   Price             Float?  @db.Double
   SequenceWeightIn  String? @db.VarChar(10)
   SequenceWeightOut String? @db.VarChar(10)
-  FlagCancel        String? @db.VarChar(1)
+  FlagCancel        String? @default("N") @db.VarChar(1)
   HWID              String? @db.VarChar(20)
   DataHash          BigInt?
 
@@ -147,59 +147,44 @@ model Product {
 }
 
 model RFIDTag {
-  DataID              String    @id @db.VarChar(48)
-  DataCenter          String?   @db.VarChar(255)
-  RFIDTagID           String?   @unique @db.VarChar(10)
-  RFIDTagSerialNo     String?   @unique @db.VarChar(50)
-  CarRegister         String?   @db.VarChar(50)
-  CarRegister2        String?   @db.VarChar(50)
-  WeightTypeDataID    String?   @db.VarChar(48)
-  CustomerDataID      String?   @db.VarChar(48)
-  ProductDataID       String?   @db.VarChar(48)
-  TransporterDataID   String?   @db.VarChar(48)
-  DriverDataID        String?   @db.VarChar(48)
-  SequenceWeightIn    String?   @db.VarChar(10)
-  WeightDateIn        DateTime?
-  WeightTimeIn        DateTime?
-  WeightIn            Float?    @db.Double
-  UserLogInDataIDIn   String?   @db.VarChar(48)
-  TicketPrintCountIn  Int?
-  SequenceWeightOut   String?   @db.VarChar(10)
-  WeightDateOut       DateTime?
-  WeightTimeOut       DateTime?
-  WeightOut           Float?    @db.Double
-  UserLogInDataIDOut  String?   @db.VarChar(48)
-  TicketPrintCountOut Int?
-  Weight              Float?    @db.Double
-  WeightAdjust        Float?    @db.Double
-  AdjustPercent       Float?    @db.Double
-  AdjustPercentWeight Float?    @db.Double
-  WeightAdjKey1       Float?    @db.Double
-  WeightAdjCal1       Float?    @db.Double
-  WeightAdjKey2       Float?    @db.Double
-  WeightAdjCal2       Float?    @db.Double
-  WeightAdjKey3       Float?    @db.Double
-  WeightAdjCal3       Float?    @db.Double
-  WeightNet           Float?    @db.Double
-  ProductUnitDataID   String?   @db.VarChar(48)
-  KgToUnit            Float?    @db.Double
-  Price               Float?    @db.Double
-  Tax                 Float?    @db.Double
-  Amount              Float?    @db.Double
-  AmountAdjKey1       Float?    @db.Double
-  AmountAdjCal1       Float?    @db.Double
-  AmountAdjKey2       Float?    @db.Double
-  AmountAdjCal2       Float?    @db.Double
-  AmountAdjKey3       Float?    @db.Double
-  AmountAdjCal3       Float?    @db.Double
-  AmountNet           Float?    @db.Double
-  Remark1             String?   @db.VarChar(50)
-  Remark2             String?   @db.VarChar(50)
-  Remark3             String?   @db.VarChar(50)
-  Remark4             String?   @db.VarChar(50)
-  FlagCancel          String?   @db.VarChar(1)
-  HWID                String?   @db.VarChar(20)
-  DataHash            BigInt?
+  DataID            String    @id @db.VarChar(48)
+  DataCenter        String?   @db.VarChar(255)
+  RFIDTagID         String?   @unique @db.VarChar(10)
+  RFIDTagSerialNo   String?   @unique @db.VarChar(50)
+  CarRegister       String?   @db.VarChar(50)
+  CarRegister2      String?   @db.VarChar(50)
+  WeightTypeDataID  String?   @db.VarChar(48)
+  CustomerDataID    String?   @db.VarChar(48)
+  ProductDataID     String?   @db.VarChar(48)
+  TransporterDataID String?   @db.VarChar(48)
+  DriverDataID      String?   @db.VarChar(48)
+  SequenceWeight    String?   @db.VarChar(10)
+  WeightDate        DateTime?
+  WeightTime        DateTime?
+  Weight            Float?    @db.Double
+  UserLogInDataID   String?   @db.VarChar(48)
+  WeightAdjKey1     Float?    @db.Double
+  WeightAdjCal1     Float?    @db.Double
+  WeightAdjKey2     Float?    @db.Double
+  WeightAdjCal2     Float?    @db.Double
+  WeightAdjKey3     Float?    @db.Double
+  WeightAdjCal3     Float?    @db.Double
+  ProductUnitDataID String?   @db.VarChar(48)
+  Price             Float?    @db.Double
+  Tax               Float?    @db.Double
+  AmountAdjKey1     Float?    @db.Double
+  AmountAdjCal1     Float?    @db.Double
+  AmountAdjKey2     Float?    @db.Double
+  AmountAdjCal2     Float?    @db.Double
+  AmountAdjKey3     Float?    @db.Double
+  AmountAdjCal3     Float?    @db.Double
+  Remark1           String?   @db.VarChar(50)
+  Remark2           String?   @db.VarChar(50)
+  Remark3           String?   @db.VarChar(50)
+  Remark4           String?   @db.VarChar(50)
+  FlagCancel        String?   @default("N") @db.VarChar(1)
+  HWID              String?   @db.VarChar(20)
+  DataHash          BigInt?
 
   // Relations
   WeightType    WeightType?  @relation("WeightTypeRFIDTags", fields: [WeightTypeDataID], references: [DataID])
@@ -208,8 +193,7 @@ model RFIDTag {
   Transporter   Transporter? @relation("TransporterRFIDTags", fields: [TransporterDataID], references: [DataID])
   Driver        Driver?      @relation("DriverRFIDTags", fields: [DriverDataID], references: [DataID])
   ProductUnit   WeightUnit?  @relation("WeightUnitRFIDTags", fields: [ProductUnitDataID], references: [DataID])
-  UserLogInIn   UserLogIn?   @relation("UserLogInRFIDTagsIn", fields: [UserLogInDataIDIn], references: [DataID])
-  UserLogInOut  UserLogIn?   @relation("UserLogInRFIDTagsOut", fields: [UserLogInDataIDOut], references: [DataID])
+  UserLogIn     UserLogIn?   @relation("UserLogInRFIDTags", fields: [UserLogInDataID], references: [DataID])
   WeightRecords Weight[]     @relation("RFIDTagWeights")
 
   @@index([DataCenter], name: "IdxDataCenter")
@@ -221,8 +205,7 @@ model RFIDTag {
   @@index([TransporterDataID])
   @@index([DriverDataID])
   @@index([ProductUnitDataID])
-  @@index([UserLogInDataIDIn])
-  @@index([UserLogInDataIDOut])
+  @@index([UserLogInDataID])
 }
 
 model Transporter {
@@ -234,7 +217,7 @@ model Transporter {
   Address2          String? @db.VarChar(100)
   SequenceWeightIn  String? @db.VarChar(10)
   SequenceWeightOut String? @db.VarChar(10)
-  FlagCancel        String? @db.VarChar(1)
+  FlagCancel        String? @default("N") @db.VarChar(1)
   HWID              String? @db.VarChar(20)
   DataHash          BigInt?
 
@@ -285,7 +268,7 @@ model Truck {
   Remark4                String?   @db.VarChar(50)
   FlagAutoSave           String?   @db.VarChar(1)
   FlagPlatformEdgeSensor String?   @db.VarChar(3)
-  FlagCancel             String?   @db.VarChar(1)
+  FlagCancel             String?   @default("N") @db.VarChar(1)
   HWID                   String?   @db.VarChar(20)
   DataHash               BigInt?
 
@@ -316,7 +299,7 @@ model UserActivityType {
   DataCenter           String? @db.VarChar(255)
   UserActivityTypeID   String? @unique(map: "IX_WeightType_1") @db.VarChar(20)
   UserActivityTypeName String? @db.VarChar(100)
-  FlagCancel           String? @db.VarChar(1)
+  FlagCancel           String? @default("N") @db.VarChar(1)
   HWID                 String? @db.VarChar(20)
   DataHash             BigInt?
 
@@ -332,14 +315,13 @@ model UserLogIn {
   LogInPassword String? @db.VarChar(255)
   FullName      String? @db.VarChar(100)
   Permission    String? @db.LongText
-  FlagCancel    String? @db.VarChar(1)
+  FlagCancel    String? @default("N") @db.VarChar(1)
   HWID          String? @db.VarChar(20)
   DataHash      BigInt?
 
   // Relations
   Truck              Truck[]   @relation("UserLogInTrucks")
-  RFIDTagIn          RFIDTag[] @relation("UserLogInRFIDTagsIn")
-  RFIDTagOut         RFIDTag[] @relation("UserLogInRFIDTagsOut")
+  RFIDTags           RFIDTag[] @relation("UserLogInRFIDTags")
   WeightsIn          Weight[]  @relation("UserLogInWeightsIn")
   WeightsOut         Weight[]  @relation("UserLogInWeightsOut")
   WeightsRegisterIn  Weight[]  @relation("UserLogInWeightsRegisterIn")
@@ -418,7 +400,7 @@ model Weight {
   RegisterTimeOut                 DateTime?
   UserLogInDataIDRegisterOut      String?   @db.VarChar(48)
   RegisterStationIDOut            String?   @db.VarChar(48)
-  FlagRegisterStatus              String?   @db.VarChar(1)
+  FlagRegisterStatus              String?   @default("N") @db.VarChar(1)
   FlagAutoSaveIn                  String?   @db.VarChar(1)
   FlagAutoSaveOut                 String?   @db.VarChar(1)
   FlagPlatformEdgeSensorIn        String?   @db.VarChar(3)
@@ -434,7 +416,7 @@ model Weight {
   WeightNetTolerancePositive      Float?    @db.Double
   WeightNetToleranceNegative      Float?    @db.Double
   WeightNetApproveUserLogInDataID String?   @db.VarChar(48)
-  FlagCancel                      String?   @db.VarChar(1)
+  FlagCancel                      String?   @default("N") @db.VarChar(1)
   HWID                            String?   @db.VarChar(20)
   ExtendedData                    String?   @db.Text
   DataHash                        BigInt?
@@ -510,7 +492,7 @@ model WeightReport {
   WeightReportID       String? @unique @db.VarChar(20)
   WeightReportName     String? @db.VarChar(100)
   WeightReportFileName String? @db.VarChar(255)
-  FlagCancel           String? @db.VarChar(1)
+  FlagCancel           String? @default("N") @db.VarChar(1)
   HWID                 String? @db.VarChar(20)
   DataHash             BigInt?
 
@@ -525,7 +507,7 @@ model WeightUnit {
   WeightUnitID   String? @unique @db.VarChar(20)
   WeightUnitName String? @db.VarChar(100)
   KgToUnit       Float?  @db.Double
-  FlagCancel     String? @db.VarChar(1)
+  FlagCancel     String? @default("N") @db.VarChar(1)
   HWID           String? @db.VarChar(20)
   DataHash       BigInt?
 
@@ -558,7 +540,7 @@ model WeightType {
   SequenceWeightIn          String? @db.VarChar(10)
   SequenceWeightOut         String? @db.VarChar(10)
   FlagPayment               String? @db.VarChar(1)
-  FlagCancel                String? @db.VarChar(1)
+  FlagCancel                String? @default("N") @db.VarChar(1)
   HWID                      String? @db.VarChar(20)
   DataHash                  BigInt?
 
@@ -570,4 +552,34 @@ model WeightType {
   @@index([FlagCancel], name: "WeightType_IX_WeightType")
   @@index([WeightTypeName], name: "IX_WeightType_2")
   @@index([DataCenter], name: "IdxDataCenter")
+}
+
+model V_WeightData {
+  DataID             String    @id @db.VarChar(48)
+  DocID              String?   @db.VarChar(48)
+  DocNoIn            String?   @db.VarChar(10)
+  DocNoOut           String?   @db.VarChar(10)
+  CarRegister        String?   @db.VarChar(50)
+  CarRegister2       String?   @db.VarChar(50)
+  WeightTypeName     String?   @db.VarChar(100)
+  CustomerName       String?   @db.VarChar(100)
+  ProductName        String?   @db.VarChar(100)
+  TransporterName    String?   @db.VarChar(100)
+  DriverName         String?   @db.VarChar(100)
+  WeightIn           Float?
+  WeightOut          Float?
+  WeightNet          Float?
+  Price              Float?
+  AmountNet          Float?
+  SequenceRegisterIn String?   @db.VarChar(10)
+  RegisterDateIn     DateTime?
+  RegisterTimeIn     DateTime?
+  WeightDateIn       DateTime?
+  WeightTimeIn       DateTime?
+  WeightDateOut      DateTime?
+  WeightTimeOut      DateTime?
+  FlagCancel         String?   @default("N") @db.VarChar(1)
+  FlagComplete       String?   @db.VarChar(1)
+
+  @@map("V_WeightData")
 }

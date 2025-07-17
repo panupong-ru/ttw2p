@@ -242,6 +242,11 @@ export const formatDateRange = (
   return `${start}${separator}${end}`;
 };
 
+export const parseDate = (value: unknown): Date | null => {
+  if (!value) return null;
+  return new Date(value as string | Date);
+};
+
 // Export commonly used formats for easy access
 export const formatters = {
   date: (date: Date | string | null | undefined) => formatDate(date, DATE_FORMATS.DATE_ONLY),

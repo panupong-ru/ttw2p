@@ -27,28 +27,22 @@ function useTransporterAPI() {
   const api = baseHttpClient['/master-data/transporter'];
 
   // GET all weight types with pagination
-  const useGetTransporters = (page: number = 1, pageSize: number = 10) =>
+  const useGetTransporters = (
+    filters: Record<string, TransporterSchema>,
+    page: number = 1,
+    pageSize: number = 10,
+    enabled: boolean = true
+  ) =>
     useQuery<APIResponse<PaginatedResponse<TransporterSchema>>>({
-      queryKey: [...getTransporterQueryKey, page, pageSize],
+      queryKey: [...getTransporterQueryKey, filters, page, pageSize],
       queryFn: async () => {
         const response = await api.get({
-          params: { page, pageSize },
+          params: { ...filters, page, pageSize },
         });
         return response.data;
       },
+      enabled,
     });
-
-  // GET single weight type by ID
-  const useGetTransporterById = (id: string) => {
-    return useQuery<{ data: TransporterSchema }>({
-      queryKey: [...getTransporterQueryKey, id],
-      queryFn: async () => {
-        const { data } = await api.get({ params: { id } });
-        return data;
-      },
-      enabled: !!id,
-    });
-  };
 
   // POST new weight type
   const createTransporter = useMutation<TransporterSchema, Error, CreateTransporterSchema>({
@@ -111,7 +105,6 @@ function useTransporterAPI() {
   return {
     // Queries
     useGetTransporters,
-    useGetTransporterById,
     // Mutations
     createTransporter,
     updateTransporter,

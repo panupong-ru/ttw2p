@@ -37,11 +37,11 @@ function TruckForm({ info, onClose, onSubmit = (_data) => {}, isLoading = false 
   const { useGetDrivers } = useDriverAPI();
   const { useGetTransporters } = useTransporterAPI();
 
-  const { data: weightTypeData } = useGetWeightTypes(1, 100000);
-  const { data: customerData } = useGetCustomers(1, 100000);
-  const { data: productData } = useGetProducts(1, 100000);
-  const { data: driverData } = useGetDrivers(1, 100000);
-  const { data: transporterData } = useGetTransporters(1, 100000);
+  const { data: weightTypeData } = useGetWeightTypes({}, 1, 100000);
+  const { data: customerData } = useGetCustomers({}, 1, 100000);
+  const { data: productData } = useGetProducts({}, 1, 100000);
+  const { data: driverData } = useGetDrivers({}, 1, 100000);
+  const { data: transporterData } = useGetTransporters({}, 1, 100000);
 
   const weightTypeOptions = useMemo(() => {
     return (

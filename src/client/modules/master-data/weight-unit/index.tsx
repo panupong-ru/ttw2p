@@ -16,7 +16,7 @@ function WeightUnit() {
     pageSize: 10,
   });
 
-  const { data: weightUnitData, isLoading } = useGetWeightUnits(paginationModel.page + 1, paginationModel.pageSize);
+  const { data: weightUnitData, isLoading } = useGetWeightUnits({}, paginationModel.page + 1, paginationModel.pageSize);
 
   const [selectedRow, setSelectedRow] = useState<WeightUnitSchema | null>(null);
   const [formInfo, setFormInfo] = useState<{ isOpen: boolean; data?: WeightUnitSchema }>({

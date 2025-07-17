@@ -28,28 +28,22 @@ function useRFIDTagAPI() {
   const api = baseHttpClient['/master-data/rfid-tag'];
 
   // GET all weight types with pagination
-  const useGetRFIDTags = (page: number = 1, pageSize: number = 10) =>
+  const useGetRFIDTags = (
+    filters: Record<string, RFIDTagSchema>,
+    page: number = 1,
+    pageSize: number = 10,
+    enabled: boolean = true
+  ) =>
     useQuery<APIResponse<PaginatedResponse<RFIDTagSchema>>>({
-      queryKey: [...getRFIDTagQueryKey, page, pageSize],
+      queryKey: [...getRFIDTagQueryKey, filters, page, pageSize],
       queryFn: async () => {
         const response = await api.get({
-          params: { page, pageSize },
+          params: { ...filters, page, pageSize },
         });
         return response.data;
       },
+      enabled,
     });
-
-  // GET single weight type by ID
-  const useGetRFIDTagById = (id: string) => {
-    return useQuery<{ data: RFIDTagSchema }>({
-      queryKey: [...getRFIDTagQueryKey, id],
-      queryFn: async () => {
-        const { data } = await api.get({ params: { id } });
-        return data;
-      },
-      enabled: !!id,
-    });
-  };
 
   // POST new weight type
   const createRFIDTag = useMutation<RFIDTagSchema, Error, CreateRFIDTagSchema>({
@@ -112,7 +106,6 @@ function useRFIDTagAPI() {
   return {
     // Queries
     useGetRFIDTags,
-    useGetRFIDTagById,
     // Mutations
     createRFIDTag,
     updateRFIDTag,

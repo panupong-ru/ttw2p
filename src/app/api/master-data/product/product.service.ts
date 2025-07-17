@@ -2,27 +2,52 @@ import { prisma } from '@/core/libs/prisma';
 import type { Product } from '@/../prisma-client';
 
 export class ProductService {
-  async findAll(page: number = 1, pageSize: number = 10): Promise<{ data: Product[]; total: number }> {
+  async find(
+    filters: Record<string, string>,
+    page: number = 1,
+    pageSize: number = 10
+  ): Promise<{ data: Product[]; total: number }> {
     const skip = (page - 1) * pageSize;
+    const where = this.buildWhereClause(filters);
 
     const [data, total] = await Promise.all([
       prisma.product.findMany({
+        where,
         skip,
         take: pageSize,
         orderBy: {
           ProductID: 'asc',
         },
       }),
-      prisma.product.count(),
+      prisma.product.count({ where }),
     ]);
 
     return { data, total };
   }
 
-  async findById(id: string): Promise<Product | null> {
-    return prisma.product.findUnique({
-      where: { DataID: id },
-    });
+  private buildWhereClause(filters: Record<string, string>): any {
+    const where: any = {};
+    const numberFields = ['Price'];
+
+    for (const key in filters) {
+      if (Object.prototype.hasOwnProperty.call(filters, key)) {
+        const value = filters[key];
+        if (value === null || value === undefined || value === '') {
+          continue;
+        }
+
+        if (key.endsWith('ID')) {
+          where[key] = value;
+        } else if (numberFields.includes(key)) {
+          where[key] = parseFloat(value);
+        } else {
+          where[key] = {
+            contains: value,
+          };
+        }
+      }
+    }
+    return where;
   }
 
   async create(data: Omit<Product, 'DataID'>): Promise<Product> {

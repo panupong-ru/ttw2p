@@ -1,14 +1,14 @@
 import { z } from 'zod';
 
 // Base schema for Weight
-const waitWeightSchema = z.object({
+const WeightSchema = z.object({
   DataID: z.string(),
   DataCenter: z.string().nullable(),
   DocID: z.string().nullable(),
   DocNoIn: z.string().nullable(),
   DocNoOut: z.string().nullable(),
   WeightModeDataID: z.string().nullable(),
-  CarRegister: z.string().min(1, 'ทะเบียนรถไม่สามารถเว้นว่างได้'),
+  CarRegister: z.string().nullable(),
   CarRegister2: z.string().nullable(),
   TruckDataID: z.string().nullable(),
   RFIDTagDataID: z.string().nullable(),
@@ -92,38 +92,13 @@ const waitWeightSchema = z.object({
   FlagUploadOut: z.string().nullable(),
 });
 
-// Form schema - เฉพาะฟิลด์ที่ Form มี
-const waitWeightFormSchema = z.object({
-  RFIDTagDataID: z.string().nullable(),
-  FlagRegisterStatus: z.string().nullable(),
-  CarRegister: z.string().min(1, 'ทะเบียนรถไม่สามารถเว้นว่างได้'),
-  CarRegister2: z.string().nullable(),
-  WeightTypeDataID: z.string().nullable(),
-  CustomerDataID: z.string().nullable(),
-  ProductDataID: z.string().nullable(),
-  TransporterDataID: z.string().nullable(),
-  DriverDataID: z.string().nullable(),
-  WeightAdjKey1: z.number().nullable(),
-  WeightAdjCal1: z.number().nullable(),
-  WeightAdjKey2: z.number().nullable(),
-  WeightAdjCal2: z.number().nullable(),
-  WeightAdjKey3: z.number().nullable(),
-  WeightAdjCal3: z.number().nullable(),
-  Remark1: z.string().nullable(),
-  Remark2: z.string().nullable(),
-  Remark3: z.string().nullable(),
-  Price: z.number().nullable(),
-  ProductUnitDataID: z.string().nullable(),
-  KgToUnit: z.number().nullable(),
-});
-
 // Schema for creating new Weight
-export const createWaitWeightSchema = waitWeightFormSchema;
+export const createWeightSchema = WeightSchema;
 
 // Schema for updating Weight
-export const updateWaitWeightSchema = waitWeightSchema.partial();
+export const updateWeightSchema = WeightSchema.partial();
 
 // Type inference
-export type WaitWeightSchema = z.infer<typeof waitWeightSchema>;
-export type CreateWaitWeightSchema = z.infer<typeof createWaitWeightSchema>;
-export type UpdateWaitWeightSchema = z.infer<typeof updateWaitWeightSchema>;
+export type WeightSchema = z.infer<typeof WeightSchema>;
+export type CreateWeightSchema = z.infer<typeof createWeightSchema>;
+export type UpdateWeightSchema = z.infer<typeof updateWeightSchema>;

@@ -27,28 +27,22 @@ function useCustomerAPI() {
   const api = baseHttpClient['/master-data/customer'];
 
   // GET all weight types with pagination
-  const useGetCustomers = (page: number = 1, pageSize: number = 10) =>
+  const useGetCustomers = (
+    filters: Record<string, CustomerSchema>,
+    page: number = 1,
+    pageSize: number = 10,
+    enabled: boolean = true
+  ) =>
     useQuery<APIResponse<PaginatedResponse<CustomerSchema>>>({
-      queryKey: [...getCustomerQueryKey, page, pageSize],
+      queryKey: [...getCustomerQueryKey, filters, page, pageSize],
       queryFn: async () => {
         const response = await api.get({
-          params: { page, pageSize },
+          params: { ...filters, page, pageSize },
         });
         return response.data;
       },
+      enabled,
     });
-
-  // GET single weight type by ID
-  const useGetCustomerById = (id: string) => {
-    return useQuery<{ data: CustomerSchema }>({
-      queryKey: [...getCustomerQueryKey, id],
-      queryFn: async () => {
-        const { data } = await api.get({ params: { id } });
-        return data;
-      },
-      enabled: !!id,
-    });
-  };
 
   // POST new weight type
   const createCustomer = useMutation<CustomerSchema, Error, CreateCustomerSchema>({
@@ -111,7 +105,6 @@ function useCustomerAPI() {
   return {
     // Queries
     useGetCustomers,
-    useGetCustomerById,
     // Mutations
     createCustomer,
     updateCustomer,

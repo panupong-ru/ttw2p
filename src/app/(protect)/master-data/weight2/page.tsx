@@ -1,9 +1,9 @@
 import { Box, CircularProgress } from '@mui/material';
 import { Suspense } from 'react';
 
-import { WaitWeight } from '@/client/modules/master-data/wait-weight';
+import { Weight2 } from '@/client/modules/master-data/weight2';
 
-export default function WeightPage() {
+export default function Weight2Page() {
   return (
     <Suspense
       fallback={
@@ -12,7 +12,7 @@ export default function WeightPage() {
         </Box>
       }
     >
-      <WaitWeight />
+      <Weight2 />
     </Suspense>
   );
 }

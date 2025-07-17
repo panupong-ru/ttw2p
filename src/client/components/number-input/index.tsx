@@ -12,6 +12,12 @@ type NumberInputProps = {
   delay?: number;
 } & Omit<TextFieldProps, 'value' | 'onChange'>;
 
+export const parseNumber = (value: unknown): number | null => {
+  if (value === null || value === undefined || value === '' || value === 0) return null;
+  const parsed = parseFloat(String(value));
+  return isNaN(parsed) ? null : parsed;
+};
+
 export const NumberInput: React.FC<NumberInputProps> = ({ value, onChange, delay = 500, ...textFieldProps }) => {
   const [displayValue, setDisplayValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);

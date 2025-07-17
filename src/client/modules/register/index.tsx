@@ -1,21 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Typography, Box, Stack, Button } from '@mui/material';
 import type { GridPaginationModel, GridColDef } from '@mui/x-data-grid';
-import type { WeightSchema, CreateWeightSchema } from './schema';
-import { useWeightAPI } from './api';
-import { RegisterForm } from './form';
+import type { WeightSchema, CreateWeightSchema } from '@/client/modules/master-data/weight/schema';
+import { useWeightAPI } from '@/client/modules/master-data/weight/api';
+import { RegisterForm, type RegisterFormRef } from './form';
 import { DataTable } from '@/client/components/data-table';
 
 function Register() {
-  const { useGetRFIDTags, createWeight, updateWeight, deleteWeight } = useWeightAPI();
+  const { useGetWeights, createWeight, updateWeight } = useWeightAPI();
+  const registerFormRef = useRef<RegisterFormRef>(null);
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: 0,
     pageSize: 10,
   });
 
-  const { data: weightData, isLoading } = useGetRFIDTags(paginationModel.page + 1, paginationModel.pageSize);
+  const { data: weightData, isLoading } = useGetWeights({}, paginationModel.page + 1, paginationModel.pageSize);
 
   const [formInfo, setFormInfo] = useState<{ isOpen: boolean; data?: WeightSchema }>({
     isOpen: false,
@@ -23,85 +24,90 @@ function Register() {
 
   const columns: GridColDef<WeightSchema>[] = [
     {
-      field: 'DataID',
-      headerName: 'รหัส',
+      field: 'CarRegister',
+      headerName: 'Truck Id',
       width: 150,
     },
     {
-      field: 'RFIDTagDataID',
-      headerName: 'รหัสบัตร RFID',
-      width: 200,
-    },
-    {
-      field: 'FlagRegisterStatus',
-      headerName: 'สถานะการลงทะเบียน',
-      width: 200,
-    },
-    {
-      field: 'CarRegister',
-      headerName: 'ทะเบียนรถ',
-      width: 200,
-    },
-    {
-      field: 'CarRegister2',
-      headerName: 'ทะเบียนรถ 2',
-      width: 200,
-    },
-    {
-      field: 'WeightTypeDataID',
-      headerName: 'รหัสประเภทชั่ง',
-      width: 200,
-    },
-    {
-      field: 'WeightTypeDataName',
-      headerName: 'ชื่อประเภทชั่ง',
+      field: 'RegisterTimeIn',
+      headerName: 'Time In',
       width: 200,
     },
     {
       field: 'CustomerDataID',
-      headerName: 'รหัสคู่ค้า',
+      headerName: 'Customer Id',
       width: 200,
     },
     {
       field: 'CustomerDataName',
-      headerName: 'ชื่อคู่ค้า',
+      headerName: 'Customer Name',
       width: 200,
     },
     {
       field: 'ProductDataID',
-      headerName: 'รหัสสินค้า',
+      headerName: 'Product Id',
       width: 200,
     },
     {
       field: 'ProductDataName',
-      headerName: 'ชื่อสินค้า',
+      headerName: 'Product Name',
+      width: 200,
+    },
+    {
+      field: 'WeightTypeDataID',
+      headerName: 'Weight Type Id',
+      width: 200,
+    },
+    {
+      field: 'WeightTypeDataName',
+      headerName: 'Weight Type Name',
       width: 200,
     },
     {
       field: 'TransporterDataID',
-      headerName: 'รหัสผู้ขนส่ง',
+      headerName: 'Transporter Id',
       width: 200,
     },
     {
       field: 'TransporterDataName',
-      headerName: 'ชื่อผู้ขนส่ง',
+      headerName: 'Transporter Name',
       width: 200,
     },
     {
       field: 'DriverDataID',
-      headerName: 'รหัสพนักงานขับรถ',
+      headerName: 'Driver Id',
+      width: 200,
+    },
+    {
+      field: 'DriverDataName',
+      headerName: 'Driver Name',
+      width: 200,
+    },
+    {
+      field: 'Remark1',
+      headerName: 'Remark 1',
+      width: 200,
+    },
+    {
+      field: 'Remark2',
+      headerName: 'Remark 2',
       width: 200,
     },
 
     {
-      field: 'DriverDataName',
-      headerName: 'ชื่อพนักงานขับรถ',
+      field: 'Remark3',
+      headerName: 'Remark 3',
       width: 200,
     },
   ];
 
   const handleAdd = () => {
-    setFormInfo({ isOpen: true });
+    registerFormRef.current?.submitForm();
+  };
+
+  const handleCancel = () => {
+    registerFormRef.current?.resetForm();
+    setFormInfo({ isOpen: false, data: undefined });
   };
 
   const handleFormSubmit = async (data: CreateWeightSchema) => {
@@ -148,49 +154,44 @@ function Register() {
             minHeight: 0,
           }}
         >
-          <RegisterForm
-            info={formInfo}
-            isLoading={createWeight.isPending || updateWeight.isPending}
-            onClose={() => setFormInfo({ isOpen: false })}
-            onSubmit={handleFormSubmit}
-          />
-          <Stack direction='row' spacing={2} justifyContent='flex-end' py={2}>
-            <Button
-              variant='contained'
-              color='primary'
-              onClick={handleAdd}
-              fullWidth={false}
-              sx={{
-                minWidth: { xs: '100%', sm: 'auto' },
-                order: { xs: 2, sm: 0 },
-              }}
-            >
-              เพิ่ม
-            </Button>
-            <Button
-              variant='contained'
-              color='error'
-              onClick={() => setFormInfo({ isOpen: false, data: undefined })}
-              fullWidth={false}
-              sx={{
-                minWidth: { xs: '100%', sm: 'auto' },
-                order: { xs: 1, sm: 0 },
-              }}
-            >
-              ยกเลิก
-            </Button>
-          </Stack>
-          <DataTable
-            height='20%'
-            columns={columns}
-            data={weightData?.result?.data ?? []}
-            isLoading={isLoading}
-            disableRowSelectionOnClick={false}
-            paginationMode='server'
-            paginationModel={paginationModel}
-            rowCount={weightData?.result?.total ?? 0}
-          />
+          <RegisterForm info={formInfo} onSubmit={handleFormSubmit} ref={registerFormRef} />
         </Box>
+        <Stack direction='row' spacing={2} justifyContent='flex-end' py={2}>
+          <Button
+            variant='contained'
+            color='primary'
+            onClick={handleAdd}
+            fullWidth={false}
+            sx={{
+              minWidth: { xs: '100%', sm: 'auto' },
+              order: { xs: 2, sm: 0 },
+            }}
+          >
+            บันทึก
+          </Button>
+          <Button
+            variant='contained'
+            color='error'
+            onClick={handleCancel}
+            fullWidth={false}
+            sx={{
+              minWidth: { xs: '100%', sm: 'auto' },
+              order: { xs: 1, sm: 0 },
+            }}
+          >
+            ยกเลิก
+          </Button>
+        </Stack>
+        <DataTable
+          height='20%'
+          columns={columns}
+          data={weightData?.result?.data ?? []}
+          isLoading={isLoading}
+          disableRowSelectionOnClick={false}
+          paginationMode='server'
+          paginationModel={paginationModel}
+          rowCount={weightData?.result?.total ?? 0}
+        />
       </Box>
     </Stack>
   );

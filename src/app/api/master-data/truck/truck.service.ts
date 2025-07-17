@@ -36,16 +36,19 @@ type TruckDisplay = TruckWithRelations & {
 };
 
 export class TruckService {
-  async findAll(page: number = 1, pageSize: number = 10): Promise<{ data: TruckDisplay[]; total: number }> {
+  async find(
+    filters: Record<string, string>,
+    page: number = 1,
+    pageSize: number = 10
+  ): Promise<{ data: TruckDisplay[]; total: number }> {
     const skip = (page - 1) * pageSize;
+    const where = this.buildWhereClause(filters);
 
     const [data, total] = await Promise.all([
       prisma.truck.findMany({
+        where,
         skip,
         take: pageSize,
-        where: {
-          FlagCancel: { not: '1' },
-        },
         include: {
           WeightType: true,
           Customer: true,
@@ -59,11 +62,7 @@ export class TruckService {
           CarRegister: 'asc',
         },
       }),
-      prisma.truck.count({
-        where: {
-          FlagCancel: { not: '1' },
-        },
-      }),
+      prisma.truck.count({ where }),
     ]);
 
     const enhancedData = data.map((truck) => ({
@@ -83,19 +82,50 @@ export class TruckService {
     };
   }
 
-  async findById(id: string): Promise<TruckWithRelations | null> {
-    return prisma.truck.findUnique({
-      where: { DataID: id },
-      include: {
-        WeightType: true,
-        Customer: true,
-        Product: true,
-        Transporter: true,
-        Driver: true,
-        ProductUnit: true,
-        UserLogIn: true,
-      },
-    });
+  private buildWhereClause(filters: Record<string, string>): any {
+    const where: any = {
+      FlagCancel: { not: '1' },
+    };
+    const dateFields = ['WeightDate', 'WeightTime'];
+    const numberFields = [
+      'Weight',
+      'WeightAdjKey1',
+      'WeightAdjCal1',
+      'WeightAdjKey2',
+      'WeightAdjCal2',
+      'WeightAdjKey3',
+      'WeightAdjCal3',
+      'Price',
+      'Tax',
+      'AmountAdjKey1',
+      'AmountAdjCal1',
+      'AmountAdjKey2',
+      'AmountAdjCal2',
+      'AmountAdjKey3',
+      'AmountAdjCal3',
+    ];
+
+    for (const key in filters) {
+      if (Object.prototype.hasOwnProperty.call(filters, key)) {
+        const value = filters[key];
+        if (value === null || value === undefined || value === '') {
+          continue;
+        }
+
+        if (key.endsWith('ID')) {
+          where[key] = value;
+        } else if (dateFields.includes(key)) {
+          where[key] = new Date(value);
+        } else if (numberFields.includes(key)) {
+          where[key] = parseFloat(value);
+        } else {
+          where[key] = {
+            contains: value,
+          };
+        }
+      }
+    }
+    return where;
   }
 
   async create(data: Omit<Truck, 'DataID'>): Promise<Truck> {

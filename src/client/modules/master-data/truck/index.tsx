@@ -18,7 +18,7 @@ function Truck() {
     pageSize: 10,
   });
 
-  const { data: truckData, isLoading } = useGetTrucks(paginationModel.page + 1, paginationModel.pageSize);
+  const { data: truckData, isLoading } = useGetTrucks({}, paginationModel.page + 1, paginationModel.pageSize);
 
   const [selectedRow, setSelectedRow] = useState<TruckSchema | null>(null);
   const [formInfo, setFormInfo] = useState<{ isOpen: boolean; data?: TruckSchema }>({

@@ -27,6 +27,7 @@ function RFIDTagForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fals
     control,
     reset,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<CreateRFIDTagSchema>({
     resolver: zodResolver(createRFIDTagSchema),
@@ -37,11 +38,11 @@ function RFIDTagForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fals
   const { useGetDrivers } = useDriverAPI();
   const { useGetTransporters } = useTransporterAPI();
 
-  const { data: weightTypeData } = useGetWeightTypes(1, 100000);
-  const { data: customerData } = useGetCustomers(1, 100000);
-  const { data: productData } = useGetProducts(1, 100000);
-  const { data: driverData } = useGetDrivers(1, 100000);
-  const { data: transporterData } = useGetTransporters(1, 100000);
+  const { data: weightTypeData } = useGetWeightTypes({}, 1, 100000);
+  const { data: customerData } = useGetCustomers({}, 1, 100000);
+  const { data: productData } = useGetProducts({}, 1, 100000);
+  const { data: driverData } = useGetDrivers({}, 1, 100000);
+  const { data: transporterData } = useGetTransporters({}, 1, 100000);
 
   const weightTypeOptions = useMemo(() => {
     return (
@@ -63,10 +64,19 @@ function RFIDTagForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fals
 
   const productOptions = useMemo(() => {
     return (
-      productData?.result?.data?.map((item: { ProductID: string; ProductName: string }) => ({
-        value: item.ProductID,
-        label: item.ProductName,
-      })) ?? []
+      productData?.result?.data?.map(
+        (item: {
+          ProductID: string;
+          ProductName: string;
+          ProductUnitDataID?: string | null;
+          Price?: number | null;
+        }) => ({
+          value: item.ProductID,
+          label: item.ProductName,
+          productUnitDataID: item.ProductUnitDataID ?? '',
+          price: item.Price ?? 0,
+        })
+      ) ?? []
     );
   }, [productData]);
 
@@ -90,40 +100,54 @@ function RFIDTagForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fals
 
   useEffect(() => {
     if (info.data) {
-      // Omit DataID, HWID, and DataHash when setting form data
-      const { ...formData } = info.data;
-
-      // สร้าง object สำหรับ reset form
       const resetData = {
-        RFIDTagID: formData.RFIDTagID ?? '',
-        RFIDTagSerialNo: formData.RFIDTagSerialNo ?? '',
-        CarRegister: formData.CarRegister ?? '',
-        CarRegister2: formData.CarRegister2 ?? '',
-        WeightTypeDataID: formData.WeightTypeDataID ?? '',
-        CustomerDataID: formData.CustomerDataID ?? '',
-        ProductDataID: formData.ProductDataID ?? '',
-        TransporterDataID: formData.TransporterDataID ?? '',
-        DriverDataID: formData.DriverDataID ?? '',
-        WeightAdjKey1: formData.WeightAdjKey1 ?? 0,
-        WeightAdjCal1: formData.WeightAdjCal1 ?? 0,
-        WeightAdjKey2: formData.WeightAdjKey2 ?? 0,
-        WeightAdjCal2: formData.WeightAdjCal2 ?? 0,
-        WeightAdjKey3: formData.WeightAdjKey3 ?? 0,
-        WeightAdjCal3: formData.WeightAdjCal3 ?? 0,
-        AmountAdjCal1: formData.AmountAdjCal1 ?? 0,
-        AmountAdjCal2: formData.AmountAdjCal2 ?? 0,
-        AmountAdjCal3: formData.AmountAdjCal3 ?? 0,
-        Remark1: formData.Remark1 ?? '',
-        Remark2: formData.Remark2 ?? '',
-        Remark3: formData.Remark3 ?? '',
+        DataID: info.data.DataID ?? '',
+        DataCenter: info.data.DataCenter ?? null,
+        RFIDTagID: info.data.RFIDTagID ?? '',
+        RFIDTagSerialNo: info.data.RFIDTagSerialNo ?? '',
+        CarRegister: info.data.CarRegister ?? '',
+        CarRegister2: info.data.CarRegister2 ?? '',
+        WeightTypeDataID: info.data.WeightTypeDataID ?? '',
+        CustomerDataID: info.data.CustomerDataID ?? '',
+        ProductDataID: info.data.ProductDataID ?? '',
+        TransporterDataID: info.data.TransporterDataID ?? '',
+        DriverDataID: info.data.DriverDataID ?? '',
+        SequenceWeight: info.data.SequenceWeight ?? '',
+        WeightDate: info.data.WeightDate ? new Date(info.data.WeightDate) : null,
+        WeightTime: info.data.WeightTime ? new Date(info.data.WeightTime) : null,
+        Weight: info.data.Weight ?? 0,
+        UserLogInDataID: info.data.UserLogInDataID ?? '',
+        WeightAdjKey1: info.data.WeightAdjKey1 ?? 0,
+        WeightAdjCal1: info.data.WeightAdjCal1 ?? 0,
+        WeightAdjKey2: info.data.WeightAdjKey2 ?? 0,
+        WeightAdjCal2: info.data.WeightAdjCal2 ?? 0,
+        WeightAdjKey3: info.data.WeightAdjKey3 ?? 0,
+        WeightAdjCal3: info.data.WeightAdjCal3 ?? 0,
+        ProductUnitDataID: info.data.ProductUnitDataID ?? '',
+        Price: info.data.Price ?? 0,
+        Tax: info.data.Tax ?? 0,
+        AmountAdjKey1: info.data.AmountAdjKey1 ?? 0,
+        AmountAdjCal1: info.data.AmountAdjCal1 ?? 0,
+        AmountAdjKey2: info.data.AmountAdjKey2 ?? 0,
+        AmountAdjCal2: info.data.AmountAdjCal2 ?? 0,
+        AmountAdjKey3: info.data.AmountAdjKey3 ?? 0,
+        AmountAdjCal3: info.data.AmountAdjCal3 ?? 0,
+        Remark1: info.data.Remark1 ?? '',
+        Remark2: info.data.Remark2 ?? '',
+        Remark3: info.data.Remark3 ?? '',
+        Remark4: info.data.Remark4 ?? '',
+        FlagCancel: info.data.FlagCancel ?? 'N',
+        HWID: info.data.HWID ?? null,
+        DataHash: info.data.DataHash ?? null,
       };
-
       reset(resetData);
       return;
     }
 
     // Reset form to initial empty state
     const initialData = {
+      DataID: '',
+      DataCenter: null,
       RFIDTagID: '',
       RFIDTagSerialNo: '',
       CarRegister: '',
@@ -133,22 +157,36 @@ function RFIDTagForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fals
       ProductDataID: '',
       TransporterDataID: '',
       DriverDataID: '',
+      SequenceWeight: '',
+      WeightDate: null,
+      WeightTime: null,
+      Weight: 0,
+      UserLogInDataID: '',
       WeightAdjKey1: 0,
       WeightAdjCal1: 0,
       WeightAdjKey2: 0,
       WeightAdjCal2: 0,
       WeightAdjKey3: 0,
       WeightAdjCal3: 0,
+      ProductUnitDataID: '',
+      Price: 0,
+      Tax: 0,
+      AmountAdjKey1: 0,
       AmountAdjCal1: 0,
+      AmountAdjKey2: 0,
       AmountAdjCal2: 0,
+      AmountAdjKey3: 0,
       AmountAdjCal3: 0,
       Remark1: '',
       Remark2: '',
       Remark3: '',
+      Remark4: '',
+      FlagCancel: 'N',
+      HWID: null,
+      DataHash: null,
     };
-
     reset(initialData);
-  }, [info, reset]);
+  }, [info.data, reset]);
 
   return (
     <FormModal
@@ -235,7 +273,7 @@ function RFIDTagForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fals
         />
       </Box>
 
-      <Controller
+      {/* <Controller
         control={control}
         name='Remark4'
         render={({ field }) => (
@@ -248,7 +286,7 @@ function RFIDTagForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fals
             sx={{ width: '48%' }}
           />
         )}
-      />
+      /> */}
 
       <Controller
         control={control}
@@ -325,6 +363,8 @@ function RFIDTagForm({ info, onClose, onSubmit = (_data) => {}, isLoading = fals
             getOptionLabel={(option) => `${option.value} : ${option.label}`}
             onChange={(_, data) => {
               onChange(data?.value ?? '');
+              setValue('ProductUnitDataID', data?.productUnitDataID ?? '');
+              setValue('Price', data?.price ?? 0);
             }}
             options={productOptions ?? []}
             renderInput={(params) => (

@@ -16,7 +16,11 @@ function Transporter() {
     pageSize: 10,
   });
 
-  const { data: transporterData, isLoading } = useGetTransporters(paginationModel.page + 1, paginationModel.pageSize);
+  const { data: transporterData, isLoading } = useGetTransporters(
+    {},
+    paginationModel.page + 1,
+    paginationModel.pageSize
+  );
 
   const [selectedRow, setSelectedRow] = useState<TransporterSchema | null>(null);
   const [formInfo, setFormInfo] = useState<{ isOpen: boolean; data?: TransporterSchema }>({

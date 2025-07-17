@@ -16,7 +16,7 @@ function RFIDTag() {
     pageSize: 10,
   });
 
-  const { data: rfidTagData, isLoading } = useGetRFIDTags(paginationModel.page + 1, paginationModel.pageSize);
+  const { data: rfidTagData, isLoading } = useGetRFIDTags({}, paginationModel.page + 1, paginationModel.pageSize);
 
   const [selectedRow, setSelectedRow] = useState<RFIDTagSchema | null>(null);
   const [formInfo, setFormInfo] = useState<{ isOpen: boolean; data?: RFIDTagSchema }>({

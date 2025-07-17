@@ -8,16 +8,17 @@ const controller = new WeightUnitController();
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const id = searchParams.get('id');
-
-    if (id) {
-      const weightUnit = await controller.getById(id);
-      return successResponse(weightUnit);
-    }
-
     const page = Number(searchParams.get('page')) || 1;
     const pageSize = Number(searchParams.get('pageSize')) || 10;
-    const result = await controller.getAll(page, pageSize);
+
+    const filters: Record<string, string> = {};
+    searchParams.forEach((value, key) => {
+      if (key !== 'page' && key !== 'pageSize') {
+        filters[key] = value;
+      }
+    });
+
+    const result = await controller.find(filters, page, pageSize);
     return successResponse(result);
   } catch (error) {
     return errorResponse(error);

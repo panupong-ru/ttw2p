@@ -27,28 +27,22 @@ function useWeightUnitAPI() {
   const api = baseHttpClient['/master-data/weight-unit'];
 
   // GET all weight types with pagination
-  const useGetWeightUnits = (page: number = 1, pageSize: number = 10) =>
+  const useGetWeightUnits = (
+    filters: Record<string, WeightUnitSchema>,
+    page: number = 1,
+    pageSize: number = 10,
+    enabled: boolean = true
+  ) =>
     useQuery<APIResponse<PaginatedResponse<WeightUnitSchema>>>({
-      queryKey: [...getWeightUnitQueryKey, page, pageSize],
+      queryKey: [...getWeightUnitQueryKey, filters, page, pageSize],
       queryFn: async () => {
         const response = await api.get({
-          params: { page, pageSize },
+          params: { ...filters, page, pageSize },
         });
         return response.data;
       },
+      enabled,
     });
-
-  // GET single weight type by ID
-  const useGetWeightUnitById = (id: string) => {
-    return useQuery<{ data: WeightUnitSchema }>({
-      queryKey: [...getWeightUnitQueryKey, id],
-      queryFn: async () => {
-        const { data } = await api.get({ params: { id } });
-        return data;
-      },
-      enabled: !!id,
-    });
-  };
 
   // POST new weight type
   const createWeightUnit = useMutation<WeightUnitSchema, Error, CreateWeightUnitSchema>({
@@ -111,7 +105,6 @@ function useWeightUnitAPI() {
   return {
     // Queries
     useGetWeightUnits,
-    useGetWeightUnitById,
     // Mutations
     createWeightUnit,
     updateWeightUnit,

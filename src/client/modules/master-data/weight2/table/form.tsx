@@ -73,13 +73,13 @@ function Form({ info, onClose, onSubmit = (_data) => {}, isLoading = false }: Fo
   const { useGetWeightUnits } = useWeightUnitAPI();
   // const { createWeight, updateWeight } = useWeightAPI();
 
-  const { data: rfidTagData } = useGetRFIDTags(1, 100000);
-  const { data: weightTypeData } = useGetWeightTypes(1, 100000);
-  const { data: customerData } = useGetCustomers(1, 100000);
-  const { data: productData } = useGetProducts(1, 100000);
-  const { data: driverData } = useGetDrivers(1, 100000);
-  const { data: transporterData } = useGetTransporters(1, 100000);
-  const { data: weightUnitData } = useGetWeightUnits(1, 100000);
+  const { data: rfidTagData } = useGetRFIDTags({}, 1, 100000);
+  const { data: weightTypeData } = useGetWeightTypes({}, 1, 100000);
+  const { data: customerData } = useGetCustomers({}, 1, 100000);
+  const { data: productData } = useGetProducts({}, 1, 100000);
+  const { data: driverData } = useGetDrivers({}, 1, 100000);
+  const { data: transporterData } = useGetTransporters({}, 1, 100000);
+  const { data: weightUnitData } = useGetWeightUnits({}, 1, 100000);
 
   const rfidTagDataOptions = useMemo(() => {
     return (

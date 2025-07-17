@@ -1,28 +1,28 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Typography, Box, Stack, Button } from '@mui/material';
+import { Box, Stack, Button } from '@mui/material';
 import { DataTable } from '@/client/components/data-table';
 import type { GridColDef, GridRowSelectionModel, GridPaginationModel } from '@mui/x-data-grid';
-import type { WaitWeightSchema, CreateWaitWeightSchema } from './schema';
+import type { WeightSchema } from './schema';
 import { ConfirmModal } from '@/client/components/confirm-modal';
-import { useWaitWeightAPI } from './api';
-import { WaitWeightForm } from './form';
+import { useRFIDTagAPI } from './api';
+import { Form } from './form';
 
-function WaitWeight() {
-  const { useGetWaitWeights, createWaitWeight, updateWaitWeight, deleteWaitWeight } = useWaitWeightAPI();
+function Table() {
+  const { useGetRFIDTags, createWeight, updateWeight, deleteWeight } = useRFIDTagAPI();
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: 0,
     pageSize: 10,
   });
 
-  const { data: waitWeightData, isLoading } = useGetWaitWeights(paginationModel.page + 1, paginationModel.pageSize);
+  const { data: rfidTagData, isLoading } = useGetRFIDTags({}, paginationModel.page + 1, paginationModel.pageSize);
 
-  const [selectedRow, setSelectedRow] = useState<WaitWeightSchema | null>(null);
-  const [formInfo, setFormInfo] = useState<{ isOpen: boolean; data?: WaitWeightSchema }>({
+  const [selectedRow, setSelectedRow] = useState<WeightSchema | null>(null);
+  const [formInfo, setFormInfo] = useState<{ isOpen: boolean; data?: WeightSchema }>({
     isOpen: false,
   });
-  const [deleteInfo, setDeleteInfo] = useState<{ isOpen: boolean; data?: WaitWeightSchema }>({
+  const [deleteInfo, setDeleteInfo] = useState<{ isOpen: boolean; data?: WeightSchema }>({
     isOpen: false,
   });
 
@@ -31,7 +31,7 @@ function WaitWeight() {
   const handleRowSelectionModelChange = (selectionModel: GridRowSelectionModel) => {
     const selectedId = Array.from(selectionModel.ids)[0];
     const selected =
-      selectedId !== undefined ? waitWeightData?.result?.data?.find((row) => row.DataID === selectedId) : undefined;
+      selectedId !== undefined ? rfidTagData?.result?.data?.find((row) => row.DataID === selectedId) : undefined;
     setSelectedRow(selected || null);
     setRowSelect(selectionModel);
   };
@@ -45,10 +45,6 @@ function WaitWeight() {
     });
   }, []);
 
-  const handleAdd = () => {
-    setFormInfo({ isOpen: true });
-  };
-
   const handleEdit = () => {
     if (selectedRow) {
       setFormInfo({ isOpen: true, data: selectedRow });
@@ -57,49 +53,39 @@ function WaitWeight() {
 
   const handleDelete = async () => {
     if (deleteInfo.data?.DataID) {
-      await deleteWaitWeight.mutateAsync(String(deleteInfo.data.DataID));
+      await deleteWeight.mutateAsync(String(deleteInfo.data.DataID));
       setDeleteInfo({ isOpen: false });
       setSelectedRow(null);
       setRowSelect({ type: 'include', ids: new Set() });
     }
   };
 
-  const handleFormSubmit = async (data: CreateWaitWeightSchema) => {
+  const handleFormSubmit = async (data: any) => {
     if (formInfo.data) {
-      await updateWaitWeight.mutateAsync({
+      await updateWeight.mutateAsync({
         id: String(formInfo.data.DataID),
         data,
       });
     } else {
-      await createWaitWeight.mutateAsync(data);
+      await createWeight.mutateAsync(data);
     }
     setFormInfo({ isOpen: false });
   };
 
-  const columns: GridColDef<WaitWeightSchema>[] = [
+  const columns: GridColDef<any>[] = [
     {
-      field: 'DataID',
+      field: 'RFIDTagID',
       headerName: 'รหัส',
       width: 150,
     },
     {
-      field: 'RFIDTagDataID',
-      headerName: 'รหัสบัตร RFID',
-      width: 200,
-    },
-    {
-      field: 'FlagRegisterStatus',
-      headerName: 'สถานะการลงทะเบียน',
+      field: 'RFIDTagSerialNo',
+      headerName: 'Serial No.',
       width: 200,
     },
     {
       field: 'CarRegister',
       headerName: 'ทะเบียนรถ',
-      width: 200,
-    },
-    {
-      field: 'CarRegister2',
-      headerName: 'ทะเบียนรถ 2',
       width: 200,
     },
     {
@@ -147,7 +133,6 @@ function WaitWeight() {
       headerName: 'รหัสพนักงานขับรถ',
       width: 200,
     },
-
     {
       field: 'DriverDataName',
       headerName: 'ชื่อพนักงานขับรถ',
@@ -163,10 +148,6 @@ function WaitWeight() {
         p: { xs: 1, sm: 2 },
       }}
     >
-      <Typography fontSize={{ xs: 20, sm: 24 }} fontWeight={700} sx={{ color: '#24237A' }}>
-        ข้อมูลรถค้างชั่ง
-      </Typography>
-
       <Box
         sx={{
           width: '100%',
@@ -189,29 +170,17 @@ function WaitWeight() {
         >
           <DataTable
             columns={columns}
-            data={waitWeightData?.result?.data ?? []}
+            data={rfidTagData?.result?.data ?? []}
             isLoading={isLoading}
             onRowSelect={handleRowSelectionModelChange}
             rowSelect={rowSelect}
             disableRowSelectionOnClick={false}
             paginationMode='server'
             paginationModel={paginationModel}
-            rowCount={waitWeightData?.result?.total ?? 0}
+            rowCount={rfidTagData?.result?.total ?? 0}
             onPaginationModelChange={handlePaginationModelChange}
             actionButtons={
               <Stack direction='row' spacing={2} justifyContent='flex-end' p={2}>
-                <Button
-                  variant='contained'
-                  color='primary'
-                  onClick={handleAdd}
-                  fullWidth={false}
-                  sx={{
-                    minWidth: { xs: '100%', sm: 'auto' },
-                    order: { xs: 1, sm: 0 },
-                  }}
-                >
-                  เพิ่ม
-                </Button>
                 <Button
                   variant='contained'
                   color='warning'
@@ -244,23 +213,23 @@ function WaitWeight() {
         </Box>
       </Box>
 
-      <WaitWeightForm
+      <Form
         info={formInfo}
-        isLoading={createWaitWeight.isPending || updateWaitWeight.isPending}
+        isLoading={createWeight.isPending || updateWeight.isPending}
         onClose={() => setFormInfo({ isOpen: false })}
         onSubmit={handleFormSubmit}
       />
 
       <ConfirmModal
-        isLoading={deleteWaitWeight.isPending}
+        isLoading={deleteWeight.isPending}
         isOpen={deleteInfo.isOpen}
         onClose={() => setDeleteInfo({ isOpen: false })}
         onSubmit={handleDelete}
-        subTitle="กรุณายืนยันการลบข้อมูลรถค้างชั่ง นี้โดยการกด 'ตกลง' หากไม่แน่ใจกด 'ยกเลิก'"
-        title='ต้องการลบข้อมูลรถค้างชั่ง นี้หรือไม่?'
+        subTitle="กรุณายืนยันการลบข้อมูลบัตร RFID นี้โดยการกด 'ตกลง' หากไม่แน่ใจกด 'ยกเลิก'"
+        title='ต้องการลบข้อมูลบัตร RFID นี้หรือไม่?'
       />
     </Stack>
   );
 }
 
-export { WaitWeight };
+export { Table };

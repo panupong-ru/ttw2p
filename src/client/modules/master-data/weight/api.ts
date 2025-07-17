@@ -28,28 +28,22 @@ function useWeightAPI() {
   const api = baseHttpClient['/master-data/weight'];
 
   // GET all weight types with pagination
-  const useGetRFIDTags = (page: number = 1, pageSize: number = 10) =>
+  const useGetWeights = (
+    filters: Record<string, WeightSchema>,
+    page: number = 1,
+    pageSize: number = 10,
+    enabled: boolean = true
+  ) =>
     useQuery<APIResponse<PaginatedResponse<WeightSchema>>>({
-      queryKey: [...getWeightQueryKey, page, pageSize],
+      queryKey: [...getWeightQueryKey, filters, page, pageSize],
       queryFn: async () => {
         const response = await api.get({
-          params: { page, pageSize },
+          params: { ...filters, page, pageSize },
         });
         return response.data;
       },
+      enabled,
     });
-
-  // GET single weight type by ID
-  const useGetWeightById = (id: string) => {
-    return useQuery<{ data: WeightSchema }>({
-      queryKey: [...getWeightQueryKey, id],
-      queryFn: async () => {
-        const { data } = await api.get({ params: { id } });
-        return data;
-      },
-      enabled: !!id,
-    });
-  };
 
   // POST new weight type
   const createWeight = useMutation<WeightSchema, Error, CreateWeightSchema>({
@@ -111,8 +105,7 @@ function useWeightAPI() {
 
   return {
     // Queries
-    useGetRFIDTags,
-    useGetWeightById,
+    useGetWeights,
     // Mutations
     createWeight,
     updateWeight,

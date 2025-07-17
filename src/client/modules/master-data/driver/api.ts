@@ -27,28 +27,22 @@ function useDriverAPI() {
   const api = baseHttpClient['/master-data/driver'];
 
   // GET all weight types with pagination
-  const useGetDrivers = (page: number = 1, pageSize: number = 10) =>
+  const useGetDrivers = (
+    filters: Record<string, DriverSchema>,
+    page: number = 1,
+    pageSize: number = 10,
+    enabled: boolean = true
+  ) =>
     useQuery<APIResponse<PaginatedResponse<DriverSchema>>>({
-      queryKey: [...getDriverQueryKey, page, pageSize],
+      queryKey: [...getDriverQueryKey, filters, page, pageSize],
       queryFn: async () => {
         const response = await api.get({
-          params: { page, pageSize },
+          params: { ...filters, page, pageSize },
         });
         return response.data;
       },
+      enabled,
     });
-
-  // GET single weight type by ID
-  const useGetDriverById = (id: string) => {
-    return useQuery<{ data: DriverSchema }>({
-      queryKey: [...getDriverQueryKey, id],
-      queryFn: async () => {
-        const { data } = await api.get({ params: { id } });
-        return data;
-      },
-      enabled: !!id,
-    });
-  };
 
   // POST new weight type
   const createDriver = useMutation<DriverSchema, Error, CreateDriverSchema>({
@@ -111,7 +105,6 @@ function useDriverAPI() {
   return {
     // Queries
     useGetDrivers,
-    useGetDriverById,
     // Mutations
     createDriver,
     updateDriver,
