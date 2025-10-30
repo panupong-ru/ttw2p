@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { baseHttpClient } from '@/core/libs/axios';
+import { objectToFormData } from '@/core/utils/date-format';
 
 import {
   createWeightSchema,
@@ -49,11 +50,7 @@ function useWeightAPI() {
   const createWeight = useMutation<WeightSchema, Error, CreateWeightSchema>({
     mutationFn: async (newData) => {
       const validatedData = createWeightSchema.parse(newData);
-      const formData = new FormData();
-
-      Object.entries(validatedData).forEach(([key, value]) => {
-        formData.append(key, value as string);
-      });
+      const formData = objectToFormData(validatedData);
 
       const { data } = await api.post(formData, {
         headers: {
@@ -71,13 +68,7 @@ function useWeightAPI() {
   const updateWeight = useMutation<WeightSchema, Error, { id: string; data: UpdateWeightSchema }>({
     mutationFn: async ({ id, data }) => {
       const validatedData = updateWeightSchema.parse(data);
-      const formData = new FormData();
-
-      // Append all fields to FormData
-      Object.entries(validatedData).forEach(([key, value]) => {
-        // Check if it's a file field
-        formData.append(key, value as string);
-      });
+      const formData = objectToFormData(validatedData);
 
       const response = await api.put(formData, {
         params: { id },

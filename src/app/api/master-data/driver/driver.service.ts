@@ -1,5 +1,6 @@
 import { prisma } from '@/core/libs/prisma';
 import type { Driver } from '@/../prisma-client';
+import { getHWID } from '@/core/utils/hardware';
 
 export class DriverService {
   async find(
@@ -52,6 +53,7 @@ export class DriverService {
       data: {
         DataID: data.DriverID || crypto.randomUUID(),
         ...data,
+        HWID: getHWID(),
       },
     });
   }
@@ -59,7 +61,10 @@ export class DriverService {
   async update(id: string, data: Partial<Driver>): Promise<Driver> {
     return prisma.driver.update({
       where: { DataID: id },
-      data,
+      data: {
+        ...data,
+        HWID: getHWID(),
+      },
     });
   }
 

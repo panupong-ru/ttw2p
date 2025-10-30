@@ -4,6 +4,7 @@ import type { PrismaPromise } from '@/../prisma-client';
 
 import { Prisma, PrismaClient } from '@/../prisma-client';
 import { Logger } from '@/core/utils/logger';
+import { getThaiDate } from '@/core/utils/date-format';
 
 const logger = new Logger('DB');
 
@@ -40,7 +41,7 @@ const prismaClientSingleton = () => {
           const context = Prisma.getExtensionContext(this) as any;
           const { where = {}, data = {}, ...rest } = args || {};
 
-          Object.assign(data, { deletedAt: new Date() });
+          Object.assign(data, { deletedAt: getThaiDate() });
 
           const result = context.update({
             ...(rest ? { ...rest } : {}),

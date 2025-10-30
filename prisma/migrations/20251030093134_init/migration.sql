@@ -59,7 +59,7 @@ CREATE TABLE `Customer` (
     `Address2` VARCHAR(100) NULL,
     `SequenceWeightIn` VARCHAR(10) NULL,
     `SequenceWeightOut` VARCHAR(10) NULL,
-    `FlagCancel` VARCHAR(1) NULL,
+    `FlagCancel` VARCHAR(1) NULL DEFAULT 'N',
     `HWID` VARCHAR(20) NULL,
     `DataHash` BIGINT NULL,
 
@@ -80,7 +80,7 @@ CREATE TABLE `Driver` (
     `Address2` VARCHAR(100) NULL,
     `SequenceWeightIn` VARCHAR(10) NULL,
     `SequenceWeightOut` VARCHAR(10) NULL,
-    `FlagCancel` VARCHAR(1) NULL,
+    `FlagCancel` VARCHAR(1) NULL DEFAULT 'N',
     `HWID` VARCHAR(20) NULL,
     `DataHash` BIGINT NULL,
 
@@ -95,7 +95,7 @@ CREATE TABLE `Driver` (
 CREATE TABLE `LogUserActivity` (
     `DataID` VARCHAR(48) NOT NULL,
     `DataCenter` VARCHAR(255) NULL,
-    `EventTime` DATETIME(3) NULL,
+    `EventTime` TIMESTAMP(0) NULL,
     `UserActivityTypeDataID` VARCHAR(48) NULL,
     `UserLogInDataID` VARCHAR(48) NULL,
     `HostName` VARCHAR(255) NULL,
@@ -118,7 +118,7 @@ CREATE TABLE `LogUserActivity` (
 CREATE TABLE `NotificationQueue` (
     `DataID` VARCHAR(48) NOT NULL,
     `DataCenter` VARCHAR(255) NULL,
-    `NotificationTime` DATETIME(3) NULL,
+    `NotificationTime` TIMESTAMP(0) NULL,
     `NotificationMessage` LONGTEXT NULL,
     `NotificationObject` LONGBLOB NULL,
     `HWID` VARCHAR(20) NULL,
@@ -139,7 +139,7 @@ CREATE TABLE `Product` (
     `Price` DOUBLE NULL,
     `SequenceWeightIn` VARCHAR(10) NULL,
     `SequenceWeightOut` VARCHAR(10) NULL,
-    `FlagCancel` VARCHAR(1) NULL,
+    `FlagCancel` VARCHAR(1) NULL DEFAULT 'N',
     `HWID` VARCHAR(20) NULL,
     `DataHash` BIGINT NULL,
 
@@ -164,8 +164,8 @@ CREATE TABLE `RFIDTag` (
     `TransporterDataID` VARCHAR(48) NULL,
     `DriverDataID` VARCHAR(48) NULL,
     `SequenceWeight` VARCHAR(10) NULL,
-    `WeightDate` DATETIME(3) NULL,
-    `WeightTime` DATETIME(3) NULL,
+    `WeightDate` TIMESTAMP(0) NULL,
+    `WeightTime` TIMESTAMP(0) NULL,
     `Weight` DOUBLE NULL,
     `UserLogInDataID` VARCHAR(48) NULL,
     `WeightAdjKey1` DOUBLE NULL,
@@ -187,7 +187,7 @@ CREATE TABLE `RFIDTag` (
     `Remark2` VARCHAR(50) NULL,
     `Remark3` VARCHAR(50) NULL,
     `Remark4` VARCHAR(50) NULL,
-    `FlagCancel` VARCHAR(1) NULL,
+    `FlagCancel` VARCHAR(1) NULL DEFAULT 'N',
     `HWID` VARCHAR(20) NULL,
     `DataHash` BIGINT NULL,
 
@@ -216,7 +216,7 @@ CREATE TABLE `Transporter` (
     `Address2` VARCHAR(100) NULL,
     `SequenceWeightIn` VARCHAR(10) NULL,
     `SequenceWeightOut` VARCHAR(10) NULL,
-    `FlagCancel` VARCHAR(1) NULL,
+    `FlagCancel` VARCHAR(1) NULL DEFAULT 'N',
     `HWID` VARCHAR(20) NULL,
     `DataHash` BIGINT NULL,
 
@@ -239,8 +239,8 @@ CREATE TABLE `Truck` (
     `TransporterDataID` VARCHAR(48) NULL,
     `DriverDataID` VARCHAR(48) NULL,
     `SequenceWeight` VARCHAR(10) NULL,
-    `WeightDate` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `WeightTime` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `WeightDate` TIMESTAMP(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `WeightTime` TIMESTAMP(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
     `Weight` DOUBLE NULL DEFAULT 0.0,
     `UserLogInDataID` VARCHAR(48) NULL,
     `WeightScaleID` VARCHAR(20) NULL,
@@ -265,7 +265,7 @@ CREATE TABLE `Truck` (
     `Remark4` VARCHAR(50) NULL,
     `FlagAutoSave` VARCHAR(1) NULL,
     `FlagPlatformEdgeSensor` VARCHAR(3) NULL,
-    `FlagCancel` VARCHAR(1) NULL,
+    `FlagCancel` VARCHAR(1) NULL DEFAULT 'N',
     `HWID` VARCHAR(20) NULL,
     `DataHash` BIGINT NULL,
 
@@ -288,7 +288,7 @@ CREATE TABLE `UserActivityType` (
     `DataCenter` VARCHAR(255) NULL,
     `UserActivityTypeID` VARCHAR(20) NULL,
     `UserActivityTypeName` VARCHAR(100) NULL,
-    `FlagCancel` VARCHAR(1) NULL,
+    `FlagCancel` VARCHAR(1) NULL DEFAULT 'N',
     `HWID` VARCHAR(20) NULL,
     `DataHash` BIGINT NULL,
 
@@ -307,7 +307,7 @@ CREATE TABLE `UserLogIn` (
     `LogInPassword` VARCHAR(255) NULL,
     `FullName` VARCHAR(100) NULL,
     `Permission` LONGTEXT NULL,
-    `FlagCancel` VARCHAR(1) NULL,
+    `FlagCancel` VARCHAR(1) NULL DEFAULT 'N',
     `HWID` VARCHAR(20) NULL,
     `DataHash` BIGINT NULL,
 
@@ -335,15 +335,15 @@ CREATE TABLE `Weight` (
     `TransporterDataID` VARCHAR(48) NULL,
     `DriverDataID` VARCHAR(48) NULL,
     `SequenceWeightIn` VARCHAR(10) NULL,
-    `WeightDateIn` DATETIME(3) NULL,
-    `WeightTimeIn` DATETIME(3) NULL,
+    `WeightDateIn` TIMESTAMP(0) NULL,
+    `WeightTimeIn` TIMESTAMP(0) NULL,
     `WeightIn` DOUBLE NULL,
     `UserLogInDataIDIn` VARCHAR(48) NULL,
     `WeightScaleIDIn` VARCHAR(20) NULL,
     `TicketPrintCountIn` INTEGER NULL,
     `SequenceWeightOut` VARCHAR(10) NULL,
-    `WeightDateOut` DATETIME(3) NULL,
-    `WeightTimeOut` DATETIME(3) NULL,
+    `WeightDateOut` TIMESTAMP(0) NULL,
+    `WeightTimeOut` TIMESTAMP(0) NULL,
     `WeightOut` DOUBLE NULL,
     `UserLogInDataIDOut` VARCHAR(48) NULL,
     `WeightScaleIDOut` VARCHAR(20) NULL,
@@ -376,16 +376,16 @@ CREATE TABLE `Weight` (
     `Remark3` VARCHAR(50) NULL,
     `Remark4` VARCHAR(50) NULL,
     `SequenceRegisterIn` VARCHAR(10) NULL,
-    `RegisterDateIn` DATETIME(3) NULL,
-    `RegisterTimeIn` DATETIME(3) NULL,
+    `RegisterDateIn` TIMESTAMP(0) NULL,
+    `RegisterTimeIn` TIMESTAMP(0) NULL,
     `UserLogInDataIDRegisterIn` VARCHAR(48) NULL,
     `RegisterStationIDIn` VARCHAR(48) NULL,
     `SequenceRegisterOut` VARCHAR(10) NULL,
-    `RegisterDateOut` DATETIME(3) NULL,
-    `RegisterTimeOut` DATETIME(3) NULL,
+    `RegisterDateOut` TIMESTAMP(0) NULL,
+    `RegisterTimeOut` TIMESTAMP(0) NULL,
     `UserLogInDataIDRegisterOut` VARCHAR(48) NULL,
     `RegisterStationIDOut` VARCHAR(48) NULL,
-    `FlagRegisterStatus` VARCHAR(1) NULL,
+    `FlagRegisterStatus` VARCHAR(1) NULL DEFAULT 'N',
     `FlagAutoSaveIn` VARCHAR(1) NULL,
     `FlagAutoSaveOut` VARCHAR(1) NULL,
     `FlagPlatformEdgeSensorIn` VARCHAR(3) NULL,
@@ -394,14 +394,14 @@ CREATE TABLE `Weight` (
     `FlagComplete` VARCHAR(1) NULL,
     `FlagPayment` VARCHAR(1) NULL,
     `PaymentDataID` VARCHAR(48) NULL,
-    `PaymentDate` DATETIME(3) NULL,
-    `PaymentTime` DATETIME(3) NULL,
+    `PaymentDate` TIMESTAMP(0) NULL,
+    `PaymentTime` TIMESTAMP(0) NULL,
     `PaymentUserLogInDataID` VARCHAR(48) NULL,
     `WeightNetStandard` DOUBLE NULL,
     `WeightNetTolerancePositive` DOUBLE NULL,
     `WeightNetToleranceNegative` DOUBLE NULL,
     `WeightNetApproveUserLogInDataID` VARCHAR(48) NULL,
-    `FlagCancel` VARCHAR(1) NULL,
+    `FlagCancel` VARCHAR(1) NULL DEFAULT 'N',
     `HWID` VARCHAR(20) NULL,
     `ExtendedData` TEXT NULL,
     `DataHash` BIGINT NULL,
@@ -465,7 +465,7 @@ CREATE TABLE `WeightReport` (
     `WeightReportID` VARCHAR(20) NULL,
     `WeightReportName` VARCHAR(100) NULL,
     `WeightReportFileName` VARCHAR(255) NULL,
-    `FlagCancel` VARCHAR(1) NULL,
+    `FlagCancel` VARCHAR(1) NULL DEFAULT 'N',
     `HWID` VARCHAR(20) NULL,
     `DataHash` BIGINT NULL,
 
@@ -483,7 +483,7 @@ CREATE TABLE `WeightUnit` (
     `WeightUnitID` VARCHAR(20) NULL,
     `WeightUnitName` VARCHAR(100) NULL,
     `KgToUnit` DOUBLE NULL,
-    `FlagCancel` VARCHAR(1) NULL,
+    `FlagCancel` VARCHAR(1) NULL DEFAULT 'N',
     `HWID` VARCHAR(20) NULL,
     `DataHash` BIGINT NULL,
 
@@ -514,7 +514,7 @@ CREATE TABLE `WeightType` (
     `SequenceWeightIn` VARCHAR(10) NULL,
     `SequenceWeightOut` VARCHAR(10) NULL,
     `FlagPayment` VARCHAR(1) NULL,
-    `FlagCancel` VARCHAR(1) NULL,
+    `FlagCancel` VARCHAR(1) NULL DEFAULT 'N',
     `HWID` VARCHAR(20) NULL,
     `DataHash` BIGINT NULL,
 
@@ -525,45 +525,33 @@ CREATE TABLE `WeightType` (
     PRIMARY KEY (`DataID`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- Create V_WeightData View
-DROP VIEW IF EXISTS `V_WeightData`;
+-- CreateTable
+CREATE TABLE `v_weightdata` (
+    `DataID` VARCHAR(48) NOT NULL,
+    `DocID` VARCHAR(48) NULL,
+    `DocNoIn` VARCHAR(10) NULL,
+    `DocNoOut` VARCHAR(10) NULL,
+    `CarRegister` VARCHAR(50) NULL,
+    `CarRegister2` VARCHAR(50) NULL,
+    `WeightTypeName` VARCHAR(100) NULL,
+    `CustomerName` VARCHAR(100) NULL,
+    `ProductName` VARCHAR(100) NULL,
+    `TransporterName` VARCHAR(100) NULL,
+    `DriverName` VARCHAR(100) NULL,
+    `WeightIn` DOUBLE NULL,
+    `WeightOut` DOUBLE NULL,
+    `WeightNet` DOUBLE NULL,
+    `Price` DOUBLE NULL,
+    `AmountNet` DOUBLE NULL,
+    `SequenceRegisterIn` VARCHAR(10) NULL,
+    `RegisterDateIn` TIMESTAMP(0) NULL,
+    `RegisterTimeIn` TIMESTAMP(0) NULL,
+    `WeightDateIn` TIMESTAMP(0) NULL,
+    `WeightTimeIn` TIMESTAMP(0) NULL,
+    `WeightDateOut` TIMESTAMP(0) NULL,
+    `WeightTimeOut` TIMESTAMP(0) NULL,
+    `FlagCancel` VARCHAR(1) NULL DEFAULT 'N',
+    `FlagComplete` VARCHAR(1) NULL,
 
-CREATE VIEW `V_WeightData` AS
-SELECT 
-    w.DataID,
-    w.DocID,
-    w.DocNoIn,
-    w.DocNoOut,
-    w.CarRegister,
-    w.CarRegister2,
-    wt.WeightTypeName,
-    c.CustomerName,
-    p.ProductName,
-    t.TransporterName,
-    d.DriverName,
-    w.WeightIn,
-    w.WeightOut,
-    w.WeightNet,
-    w.Price,
-    w.AmountNet,
-    w.SequenceRegisterIn,
-    w.RegisterDateIn,
-    w.RegisterTimeIn,
-    w.WeightDateIn,
-    w.WeightTimeIn,
-    w.WeightDateOut,
-    w.WeightTimeOut,
-    w.FlagCancel,
-    w.FlagComplete
-FROM 
-    `Weight` w
-LEFT JOIN 
-    `WeightType` wt ON w.WeightTypeDataID = wt.DataID
-LEFT JOIN 
-    `Customer` c ON w.CustomerDataID = c.DataID
-LEFT JOIN 
-    `Product` p ON w.ProductDataID = p.DataID
-LEFT JOIN 
-    `Transporter` t ON w.TransporterDataID = t.DataID
-LEFT JOIN 
-    `Driver` d ON w.DriverDataID = d.DataID;
+    PRIMARY KEY (`DataID`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

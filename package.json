@@ -40,6 +40,7 @@
     "axios": "^1.9.0",
     "bcrypt": "^6.0.0",
     "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
     "next": "^15.3.2",
     "next-auth": "^5.0.0-beta.28",
     "path-to-regexp": "^8.2.0",

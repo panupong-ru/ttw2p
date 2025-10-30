@@ -92,7 +92,7 @@ model Driver {
 model LogUserActivity {
   DataID                   String    @id @db.VarChar(48)
   DataCenter               String?   @db.VarChar(255)
-  EventTime                DateTime?
+  EventTime                DateTime? @db.Timestamp(0)
   UserActivityTypeDataID   String?   @db.VarChar(48)
   UserLogInDataID          String?   @db.VarChar(48)
   HostName                 String?   @db.VarChar(255)
@@ -113,7 +113,7 @@ model LogUserActivity {
 model NotificationQueue {
   DataID              String    @id @db.VarChar(48)
   DataCenter          String?   @db.VarChar(255)
-  NotificationTime    DateTime?
+  NotificationTime    DateTime? @db.Timestamp(0)
   NotificationMessage String?   @db.LongText
   NotificationObject  Bytes?    @db.LongBlob
   HWID                String?   @db.VarChar(20)
@@ -159,8 +159,8 @@ model RFIDTag {
   TransporterDataID String?   @db.VarChar(48)
   DriverDataID      String?   @db.VarChar(48)
   SequenceWeight    String?   @db.VarChar(10)
-  WeightDate        DateTime?
-  WeightTime        DateTime?
+  WeightDate        DateTime? @db.Timestamp(0)
+  WeightTime        DateTime? @db.Timestamp(0)
   Weight            Float?    @db.Double
   UserLogInDataID   String?   @db.VarChar(48)
   WeightAdjKey1     Float?    @db.Double
@@ -242,8 +242,8 @@ model Truck {
   TransporterDataID      String?   @db.VarChar(48)
   DriverDataID           String?   @db.VarChar(48)
   SequenceWeight         String?   @db.VarChar(10)
-  WeightDate             DateTime? @default(now())
-  WeightTime             DateTime? @default(now())
+  WeightDate             DateTime? @default(now()) @db.Timestamp(0)
+  WeightTime             DateTime? @default(now()) @db.Timestamp(0)
   Weight                 Float?    @default(0.0) @db.Double
   UserLogInDataID        String?   @db.VarChar(48)
   WeightScaleID          String?   @db.VarChar(20)
@@ -350,15 +350,15 @@ model Weight {
   TransporterDataID               String?   @db.VarChar(48)
   DriverDataID                    String?   @db.VarChar(48)
   SequenceWeightIn                String?   @db.VarChar(10)
-  WeightDateIn                    DateTime?
-  WeightTimeIn                    DateTime?
+  WeightDateIn                    DateTime? @db.Timestamp(0)
+  WeightTimeIn                    DateTime? @db.Timestamp(0)
   WeightIn                        Float?    @db.Double
   UserLogInDataIDIn               String?   @db.VarChar(48)
   WeightScaleIDIn                 String?   @db.VarChar(20)
   TicketPrintCountIn              Int?
   SequenceWeightOut               String?   @db.VarChar(10)
-  WeightDateOut                   DateTime?
-  WeightTimeOut                   DateTime?
+  WeightDateOut                   DateTime? @db.Timestamp(0)
+  WeightTimeOut                   DateTime? @db.Timestamp(0)
   WeightOut                       Float?    @db.Double
   UserLogInDataIDOut              String?   @db.VarChar(48)
   WeightScaleIDOut                String?   @db.VarChar(20)
@@ -391,13 +391,13 @@ model Weight {
   Remark3                         String?   @db.VarChar(50)
   Remark4                         String?   @db.VarChar(50)
   SequenceRegisterIn              String?   @db.VarChar(10)
-  RegisterDateIn                  DateTime?
-  RegisterTimeIn                  DateTime?
+  RegisterDateIn                  DateTime? @db.Timestamp(0)
+  RegisterTimeIn                  DateTime? @db.Timestamp(0)
   UserLogInDataIDRegisterIn       String?   @db.VarChar(48)
   RegisterStationIDIn             String?   @db.VarChar(48)
   SequenceRegisterOut             String?   @db.VarChar(10)
-  RegisterDateOut                 DateTime?
-  RegisterTimeOut                 DateTime?
+  RegisterDateOut                 DateTime? @db.Timestamp(0)
+  RegisterTimeOut                 DateTime? @db.Timestamp(0)
   UserLogInDataIDRegisterOut      String?   @db.VarChar(48)
   RegisterStationIDOut            String?   @db.VarChar(48)
   FlagRegisterStatus              String?   @default("N") @db.VarChar(1)
@@ -409,8 +409,8 @@ model Weight {
   FlagComplete                    String?   @db.VarChar(1)
   FlagPayment                     String?   @db.VarChar(1)
   PaymentDataID                   String?   @db.VarChar(48)
-  PaymentDate                     DateTime?
-  PaymentTime                     DateTime?
+  PaymentDate                     DateTime? @db.Timestamp(0)
+  PaymentTime                     DateTime? @db.Timestamp(0)
   PaymentUserLogInDataID          String?   @db.VarChar(48)
   WeightNetStandard               Float?    @db.Double
   WeightNetTolerancePositive      Float?    @db.Double
@@ -572,14 +572,15 @@ model V_WeightData {
   Price              Float?
   AmountNet          Float?
   SequenceRegisterIn String?   @db.VarChar(10)
-  RegisterDateIn     DateTime?
-  RegisterTimeIn     DateTime?
-  WeightDateIn       DateTime?
-  WeightTimeIn       DateTime?
-  WeightDateOut      DateTime?
-  WeightTimeOut      DateTime?
+  RegisterDateIn     DateTime? @db.Timestamp(0)
+  RegisterTimeIn     DateTime? @db.Timestamp(0)
+  WeightDateIn       DateTime? @db.Timestamp(0)
+  WeightTimeIn       DateTime? @db.Timestamp(0)
+  WeightDateOut      DateTime? @db.Timestamp(0)
+  WeightTimeOut      DateTime? @db.Timestamp(0)
   FlagCancel         String?   @default("N") @db.VarChar(1)
   FlagComplete       String?   @db.VarChar(1)
 
-  @@map("V_WeightData")
+  @@map("v_weightdata")
+  @@ignore
 }

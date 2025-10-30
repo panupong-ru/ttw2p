@@ -9,6 +9,7 @@ import type {
   WeightUnit,
   UserLogIn,
 } from '@/../prisma-client';
+import { getHWID } from '@/core/utils/hardware';
 
 // Type สำหรับ relations ที่ต้องการ include
 type RFIDTagWithRelations = RFIDTag & {
@@ -188,6 +189,7 @@ export class RFIDTagService {
     const convertedData = {
       ...data,
       DataID: data.RFIDTagID ? data.RFIDTagID : crypto.randomUUID(),
+      HWID: getHWID(),
       WeightAdjKey1: data.WeightAdjKey1 ? parseFloat(data.WeightAdjKey1.toString()) : null,
       WeightAdjKey2: data.WeightAdjKey2 ? parseFloat(data.WeightAdjKey2.toString()) : null,
       WeightAdjKey3: data.WeightAdjKey3 ? parseFloat(data.WeightAdjKey3.toString()) : null,
@@ -217,6 +219,7 @@ export class RFIDTagService {
   async update(id: string, data: Partial<RFIDTag>): Promise<RFIDTag> {
     const convertedData = {
       ...data,
+      HWID: getHWID(),
       WeightAdjKey1: data.WeightAdjKey1 ? parseFloat(data.WeightAdjKey1.toString()) : null,
       WeightAdjKey2: data.WeightAdjKey2 ? parseFloat(data.WeightAdjKey2.toString()) : null,
       WeightAdjKey3: data.WeightAdjKey3 ? parseFloat(data.WeightAdjKey3.toString()) : null,

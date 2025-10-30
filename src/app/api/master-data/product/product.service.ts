@@ -1,5 +1,6 @@
 import { prisma } from '@/core/libs/prisma';
 import type { Product } from '@/../prisma-client';
+import { getHWID } from '@/core/utils/hardware';
 
 export class ProductService {
   async find(
@@ -55,6 +56,7 @@ export class ProductService {
       data: {
         DataID: data.ProductID || crypto.randomUUID(),
         ...data,
+        HWID: getHWID(),
       },
     });
   }
@@ -62,7 +64,10 @@ export class ProductService {
   async update(id: string, data: Partial<Product>): Promise<Product> {
     return prisma.product.update({
       where: { DataID: id },
-      data,
+      data: {
+        ...data,
+        HWID: getHWID(),
+      },
     });
   }
 

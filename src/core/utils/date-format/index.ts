@@ -1,4 +1,34 @@
 import { format, formatDistanceToNow, parseISO, isValid, parse } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
+
+/**
+ * Default timezone for the application
+ */
+const DEFAULT_TIMEZONE = 'Asia/Bangkok';
+
+/**
+ * Get current date/time in Thailand timezone
+ * @returns Date object adjusted to Thailand timezone
+ */
+export const getThaiDate = (): Date => {
+  return toZonedTime(new Date(), DEFAULT_TIMEZONE);
+};
+
+/**
+ * Convert any date to Thailand timezone
+ * @param date - Date to convert
+ * @returns Date object adjusted to Thailand timezone
+ */
+export const toThaiDate = (date: Date | string | null | undefined): Date | null => {
+  if (!date) return null;
+  try {
+    const dateObj = typeof date === 'string' ? parseISO(date) : date;
+    if (!isValid(dateObj)) return null;
+    return toZonedTime(dateObj, DEFAULT_TIMEZONE);
+  } catch {
+    return null;
+  }
+};
 
 /**
  * Predefined date format patterns
@@ -155,21 +185,21 @@ export const formatRelativeTime = (date: Date | string | null | undefined): stri
 };
 
 /**
- * Get current date/time in specified format
+ * Get current date/time in specified format (Thailand timezone)
  * @param pattern - Format pattern (default: ISO datetime)
- * @returns Current date/time string
+ * @returns Current date/time string in Thailand timezone
  */
 export const getCurrentDateTime = (pattern: string = DATE_FORMATS.ISO_DATETIME): string => {
-  return format(new Date(), pattern);
+  return format(getThaiDate(), pattern);
 };
 
 /**
- * Get current date in specified format
+ * Get current date in specified format (Thailand timezone)
  * @param pattern - Format pattern (default: ISO date)
- * @returns Current date string
+ * @returns Current date string in Thailand timezone
  */
 export const getCurrentDate = (pattern: string = DATE_FORMATS.ISO_DATE): string => {
-  return format(new Date(), pattern);
+  return format(getThaiDate(), pattern);
 };
 
 /**
@@ -207,13 +237,13 @@ export const toISOString = (date: Date | string | null | undefined): string | nu
 };
 
 /**
- * Create file-safe filename with timestamp
+ * Create file-safe filename with timestamp (Thailand timezone)
  * @param prefix - Filename prefix (default: 'file')
  * @param extension - File extension (default: '')
- * @returns Filename with timestamp
+ * @returns Filename with timestamp in Thailand timezone
  */
 export const createTimestampedFilename = (prefix: string = 'file', extension: string = ''): string => {
-  const timestamp = format(new Date(), DATE_FORMATS.FILE_NAME);
+  const timestamp = format(getThaiDate(), DATE_FORMATS.FILE_NAME);
   const ext = extension ? (extension.startsWith('.') ? extension : `.${extension}`) : '';
   return `${prefix}_${timestamp}${ext}`;
 };
@@ -242,9 +272,121 @@ export const formatDateRange = (
   return `${start}${separator}${end}`;
 };
 
+/**
+ * Convert Date to local datetime string for API transmission
+ * Format: YYYY-MM-DD HH:mm:ss (without timezone)
+ * Example: Date(2025-10-30 15:28:54) -> "2025-10-30 15:28:54"
+ * @param date - Date object to convert
+ * @returns Local datetime string
+ */
+export const dateToLocalString = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
+
+/**
+ * Convert any value to FormData-safe string
+ * Handles Date objects, null, undefined, and other types
+ * @param value - Value to convert
+ * @returns String representation for FormData or null
+ */
+export const toFormDataValue = (value: unknown): string | null => {
+  if (value === null || value === undefined) return null;
+  if (value instanceof Date) return dateToLocalString(value);
+  return String(value);
+};
+
+/**
+ * Convert object to FormData with proper Date handling
+ * Automatically converts Date objects to local datetime strings
+ * @param data - Object to convert
+ * @returns FormData object
+ */
+export const objectToFormData = (data: Record<string, unknown>): FormData => {
+  const formData = new FormData();
+
+  Object.entries(data).forEach(([key, value]) => {
+    const formValue = toFormDataValue(value);
+    if (formValue !== null) {
+      formData.append(key, formValue);
+    }
+  });
+
+  return formData;
+};
+
+/**
+ * Convert Date fields in object to local datetime strings for JSON response
+ * Prevents automatic UTC conversion during JSON serialization
+ * @param data - Object that may contain Date fields
+ * @returns Object with Date fields converted to local datetime strings
+ */
+export const serializeDatesForJSON = <T extends Record<string, unknown>>(data: T): T => {
+  const result: Record<string, unknown> = {};
+
+  Object.entries(data).forEach(([key, value]) => {
+    if (value instanceof Date) {
+      result[key] = dateToLocalString(value);
+    } else if (value && typeof value === 'object' && !Array.isArray(value)) {
+      // Recursively handle nested objects
+      result[key] = serializeDatesForJSON(value as Record<string, unknown>);
+    } else if (Array.isArray(value)) {
+      // Handle arrays
+      result[key] = value.map((item) =>
+        item && typeof item === 'object' && !Array.isArray(item)
+          ? serializeDatesForJSON(item as Record<string, unknown>)
+          : item
+      );
+    } else {
+      result[key] = value;
+    }
+  });
+
+  return result as T;
+};
+
+/**
+ * Parse date string/object to Date for database storage
+ * With @db.Timestamp(0), Prisma will store as local time without UTC conversion
+ * @param value - Date value to parse
+ * @returns Date object or null
+ */
 export const parseDate = (value: unknown): Date | null => {
   if (!value) return null;
-  return new Date(value as string | Date);
+  try {
+    if (typeof value === 'string') {
+      // Try local datetime format first (YYYY-MM-DD HH:mm:ss)
+      const localDatePattern = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/;
+      const match = value.match(localDatePattern);
+
+      if (match) {
+        const [, year, month, day, hours, minutes, seconds] = match;
+        return new Date(
+          parseInt(year),
+          parseInt(month) - 1,
+          parseInt(day),
+          parseInt(hours),
+          parseInt(minutes),
+          parseInt(seconds)
+        );
+      }
+
+      // Try ISO format
+      const dateObj = parseISO(value);
+      return isValid(dateObj) ? dateObj : null;
+    } else if (value instanceof Date) {
+      return value;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
 };
 
 // Export commonly used formats for easy access

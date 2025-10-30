@@ -1,3 +1,5 @@
+import { getThaiDate } from '../date-format';
+
 type LogLevel = 'ERROR' | 'LOG' | 'WARN';
 
 const COLORS: { [key in 'reset' | LogLevel]: string } = {
@@ -17,7 +19,7 @@ export class Logger {
   constructor(private readonly tag: string) {}
 
   private formatMessage(level: LogLevel, ...params: unknown[]) {
-    const timestamp = new Date().toLocaleString('en-US', {
+    const timestamp = getThaiDate().toLocaleString('en-US', {
       dateStyle: 'medium',
       hour12: false,
       timeStyle: 'medium',
@@ -45,7 +47,7 @@ export class Logger {
   }
 
   log(...params: unknown[]) {
-    console.log(this.formatMessage('LOG', ...params));
+    console.error(this.formatMessage('LOG', ...params));
   }
 
   warn(...params: unknown[]) {

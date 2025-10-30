@@ -2,6 +2,7 @@ import { prisma } from '@/core/libs/prisma';
 import type { WeightType } from '@/../prisma-client';
 import { unlink } from 'fs/promises';
 import { join } from 'path';
+import { getHWID } from '@/core/utils/hardware';
 
 export class WeightTypeService {
   private readonly fileFields = [
@@ -118,6 +119,7 @@ export class WeightTypeService {
       data: {
         DataID: data.WeightTypeID || crypto.randomUUID(),
         ...data,
+        HWID: getHWID(),
       },
     });
   }
@@ -131,7 +133,10 @@ export class WeightTypeService {
 
     return prisma.weightType.update({
       where: { DataID: id },
-      data,
+      data: {
+        ...data,
+        HWID: getHWID(),
+      },
     });
   }
 

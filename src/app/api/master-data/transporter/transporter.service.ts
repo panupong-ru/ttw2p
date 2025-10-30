@@ -1,5 +1,6 @@
 import { prisma } from '@/core/libs/prisma';
 import type { Transporter } from '@/../prisma-client';
+import { getHWID } from '@/core/utils/hardware';
 
 export class TransporterService {
   async find(
@@ -52,6 +53,7 @@ export class TransporterService {
       data: {
         DataID: data.TransporterID || crypto.randomUUID(),
         ...data,
+        HWID: getHWID(),
       },
     });
   }
@@ -59,7 +61,10 @@ export class TransporterService {
   async update(id: string, data: Partial<Transporter>): Promise<Transporter> {
     return prisma.transporter.update({
       where: { DataID: id },
-      data,
+      data: {
+        ...data,
+        HWID: getHWID(),
+      },
     });
   }
 

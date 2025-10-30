@@ -18,7 +18,6 @@ import {
 } from '@mui/material';
 import { useEffect, useMemo, forwardRef, useImperativeHandle, useState, useCallback } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-
 import type { WeightSchema, CreateWeightSchema } from '@/client/modules/master-data/weight/schema';
 import { createWeightSchema } from '@/client/modules/master-data/weight/schema';
 import { useCustomerAPI } from '@/client/modules/master-data/customer/api';
@@ -30,6 +29,7 @@ import { NumberInput } from '@/client/components/number-input';
 import { useWeightUnitAPI } from '@/client/modules/master-data/weight-unit/api';
 import { useRFIDTagAPI } from '../master-data/rfid-tag/api';
 import { useWeightAPI } from '@/client/modules/master-data/weight/api';
+import { getThaiDate } from '@/core/utils/date-format';
 
 type RegisterFormProps = {
   info: {
@@ -53,6 +53,8 @@ const RegisterForm = forwardRef<RegisterFormRef, RegisterFormProps>(function Reg
     reset,
     handleSubmit,
     setValue,
+    getValues,
+    watch,
     formState: { errors },
   } = useForm<CreateWeightSchema>({
     resolver: zodResolver(createWeightSchema),
@@ -81,96 +83,182 @@ const RegisterForm = forwardRef<RegisterFormRef, RegisterFormProps>(function Reg
 
   const populateForm = useCallback(
     (formData: WeightSchema) => {
-      // Set values for all fields except RFIDTagDataID
-      setValue('DataID', formData.DataID ?? '');
-      setValue('DataCenter', formData.DataCenter ?? '');
-      setValue('DocID', formData.DocID ?? '');
-      setValue('DocNoIn', formData.DocNoIn ?? '');
-      setValue('DocNoOut', formData.DocNoOut ?? '');
-      setValue('WeightModeDataID', formData.WeightModeDataID ?? '');
-      setValue('TruckDataID', formData.TruckDataID ?? '');
-      setValue('WeightTypeDataID', formData.WeightTypeDataID ?? '');
-      setValue('CustomerDataID', formData.CustomerDataID ?? '');
-      setValue('ProductDataID', formData.ProductDataID ?? '');
-      setValue('TransporterDataID', formData.TransporterDataID ?? '');
-      setValue('DriverDataID', formData.DriverDataID ?? '');
-      setValue('SequenceWeightIn', formData.SequenceWeightIn ?? '');
-      setValue('WeightDateIn', formData.WeightDateIn ?? null);
-      setValue('WeightTimeIn', formData.WeightTimeIn ?? null);
-      setValue('WeightIn', formData.WeightIn ?? 0);
-      setValue('UserLogInDataIDIn', formData.UserLogInDataIDIn ?? '');
-      setValue('WeightScaleIDIn', formData.WeightScaleIDIn ?? '');
-      setValue('TicketPrintCountIn', formData.TicketPrintCountIn ?? 0);
-      setValue('SequenceWeightOut', formData.SequenceWeightOut ?? '');
-      setValue('WeightDateOut', formData.WeightDateOut ?? null);
-      setValue('WeightTimeOut', formData.WeightTimeOut ?? null);
-      setValue('WeightOut', formData.WeightOut ?? 0);
-      setValue('UserLogInDataIDOut', formData.UserLogInDataIDOut ?? '');
-      setValue('WeightScaleIDOut', formData.WeightScaleIDOut ?? '');
-      setValue('TicketPrintCountOut', formData.TicketPrintCountOut ?? 0);
-      setValue('Weight', formData.Weight ?? 0);
-      setValue('WeightAdjust', formData.WeightAdjust ?? 0);
-      setValue('AdjustPercent', formData.AdjustPercent ?? 0);
-      setValue('AdjustPercentWeight', formData.AdjustPercentWeight ?? 0);
-      setValue('WeightAdjKey1', formData.WeightAdjKey1 ?? 0);
-      setValue('WeightAdjCal1', formData.WeightAdjCal1 ?? 0);
-      setValue('WeightAdjKey2', formData.WeightAdjKey2 ?? 0);
-      setValue('WeightAdjCal2', formData.WeightAdjCal2 ?? 0);
-      setValue('WeightAdjKey3', formData.WeightAdjKey3 ?? 0);
-      setValue('WeightAdjCal3', formData.WeightAdjCal3 ?? 0);
-      setValue('WeightNet', formData.WeightNet ?? 0);
-      setValue('Price', formData.Price ?? 0);
-      setValue('Tax', formData.Tax ?? 0);
-      setValue('ProductUnitDataID', formData.ProductUnitDataID ?? '');
-      setValue('KgToUnit', formData.KgToUnit ?? 0);
-      setValue('Amount', formData.Amount ?? 0);
-      setValue('AmountAdjKey1', formData.AmountAdjKey1 ?? 0);
-      setValue('AmountAdjCal1', formData.AmountAdjCal1 ?? 0);
-      setValue('AmountAdjKey2', formData.AmountAdjKey2 ?? 0);
-      setValue('AmountAdjCal2', formData.AmountAdjCal2 ?? 0);
-      setValue('AmountAdjKey3', formData.AmountAdjKey3 ?? 0);
-      setValue('AmountAdjCal3', formData.AmountAdjCal3 ?? 0);
-      setValue('AmountNet', formData.AmountNet ?? 0);
-      setValue('Remark1', formData.Remark1 ?? '');
-      setValue('Remark2', formData.Remark2 ?? '');
-      setValue('Remark3', formData.Remark3 ?? '');
-      setValue('Remark4', formData.Remark4 ?? '');
-      setValue('SequenceRegisterIn', formData.SequenceRegisterIn ?? '');
-      setValue('RegisterDateIn', formData.RegisterDateIn ?? null);
-      setValue('RegisterTimeIn', formData.RegisterTimeIn ?? null);
-      setValue('UserLogInDataIDRegisterIn', formData.UserLogInDataIDRegisterIn ?? '');
-      setValue('RegisterStationIDIn', formData.RegisterStationIDIn ?? '');
-      setValue('SequenceRegisterOut', formData.SequenceRegisterOut ?? '');
-      setValue('RegisterDateOut', formData.RegisterDateOut ?? new Date());
-      setValue('RegisterTimeOut', formData.RegisterTimeOut ?? new Date());
-      setValue('UserLogInDataIDRegisterOut', formData.UserLogInDataIDRegisterOut ?? '');
-      setValue('RegisterStationIDOut', formData.RegisterStationIDOut ?? '');
-      setValue('FlagRegisterStatus', formData.FlagRegisterStatus ?? 'N');
-      setValue('FlagAutoSaveIn', formData.FlagAutoSaveIn ?? '');
-      setValue('FlagAutoSaveOut', formData.FlagAutoSaveOut ?? '');
-      setValue('FlagPlatformEdgeSensorIn', formData.FlagPlatformEdgeSensorIn ?? '');
-      setValue('FlagPlatformEdgeSensorOut', formData.FlagPlatformEdgeSensorOut ?? '');
-      setValue('FlagStatus', formData.FlagStatus ?? '');
-      setValue('FlagComplete', formData.FlagComplete ?? '');
-      setValue('FlagPayment', formData.FlagPayment ?? '');
-      setValue('PaymentDataID', formData.PaymentDataID ?? '');
-      setValue('PaymentDate', formData.PaymentDate ?? null);
-      setValue('PaymentTime', formData.PaymentTime ?? null);
-      setValue('PaymentUserLogInDataID', formData.PaymentUserLogInDataID ?? '');
-      setValue('WeightNetStandard', formData.WeightNetStandard ?? 0);
-      setValue('WeightNetTolerancePositive', formData.WeightNetTolerancePositive ?? 0);
-      setValue('WeightNetToleranceNegative', formData.WeightNetToleranceNegative ?? 0);
-      setValue('WeightNetApproveUserLogInDataID', formData.WeightNetApproveUserLogInDataID ?? '');
-      setValue('FlagCancel', formData.FlagCancel ?? 'N');
-      setValue('HWID', formData.HWID ?? '');
-      setValue('ExtendedData', formData.ExtendedData ?? '');
-      setValue('DataHash', formData.DataHash ?? null);
-      setValue('FlagUploadIn', formData.FlagUploadIn ?? '');
-      setValue('FlagUploadOut', formData.FlagUploadOut ?? '');
-      if (formData.CarRegister2) {
-        setIsCarRegister2Disabled(true);
+      if (formData.FlagCancel == 'N') {
+        // Set values for all fields except RFIDTagDataID
+        setValue('DocID', formData.DocID ?? null);
+        setValue('DocNoIn', formData.DocNoIn ?? null);
+        setValue('DocNoOut', formData.DocNoOut ?? null);
+        setValue('WeightModeDataID', formData.WeightModeDataID ?? null);
+        setValue('TruckDataID', formData.TruckDataID ?? null);
+        setValue('WeightTypeDataID', formData.WeightTypeDataID ?? null);
+        setValue('CustomerDataID', formData.CustomerDataID ?? null);
+        setValue('ProductDataID', formData.ProductDataID ?? null);
+        setValue('TransporterDataID', formData.TransporterDataID ?? null);
+        setValue('DriverDataID', formData.DriverDataID ?? null);
+        setValue('SequenceWeightIn', formData.SequenceWeightIn ?? null);
+        setValue('WeightDateIn', formData.WeightDateIn ?? null);
+        setValue('WeightTimeIn', formData.WeightTimeIn ?? null);
+        setValue('WeightIn', formData.WeightIn ?? null);
+        setValue('UserLogInDataIDIn', formData.UserLogInDataIDIn ?? null);
+        setValue('WeightScaleIDIn', formData.WeightScaleIDIn ?? null);
+        setValue('TicketPrintCountIn', formData.TicketPrintCountIn ?? null);
+        setValue('SequenceWeightOut', formData.SequenceWeightOut ?? null);
+        setValue('WeightDateOut', formData.WeightDateOut ?? null);
+        setValue('WeightTimeOut', formData.WeightTimeOut ?? null);
+        setValue('WeightOut', formData.WeightOut ?? null);
+        setValue('UserLogInDataIDOut', formData.UserLogInDataIDOut ?? null);
+        setValue('WeightScaleIDOut', formData.WeightScaleIDOut ?? null);
+        setValue('TicketPrintCountOut', formData.TicketPrintCountOut ?? null);
+        setValue('Weight', formData.Weight ?? null);
+        setValue('WeightAdjust', formData.WeightAdjust ?? null);
+        setValue('AdjustPercent', formData.AdjustPercent ?? null);
+        setValue('AdjustPercentWeight', formData.AdjustPercentWeight ?? null);
+        setValue('WeightAdjKey1', formData.WeightAdjKey1 ?? null);
+        setValue('WeightAdjCal1', formData.WeightAdjCal1 ?? null);
+        setValue('WeightAdjKey2', formData.WeightAdjKey2 ?? null);
+        setValue('WeightAdjCal2', formData.WeightAdjCal2 ?? null);
+        setValue('WeightAdjKey3', formData.WeightAdjKey3 ?? null);
+        setValue('WeightAdjCal3', formData.WeightAdjCal3 ?? null);
+        setValue('WeightNet', formData.WeightNet ?? null);
+        setValue('Price', formData.Price ?? null);
+        setValue('Tax', formData.Tax ?? null);
+        setValue('ProductUnitDataID', formData.ProductUnitDataID ?? null);
+        setValue('KgToUnit', formData.KgToUnit ?? null);
+        setValue('Amount', formData.Amount ?? null);
+        setValue('AmountAdjKey1', formData.AmountAdjKey1 ?? null);
+        setValue('AmountAdjCal1', formData.AmountAdjCal1 ?? null);
+        setValue('AmountAdjKey2', formData.AmountAdjKey2 ?? null);
+        setValue('AmountAdjCal2', formData.AmountAdjCal2 ?? null);
+        setValue('AmountAdjKey3', formData.AmountAdjKey3 ?? null);
+        setValue('AmountAdjCal3', formData.AmountAdjCal3 ?? null);
+        setValue('AmountNet', formData.AmountNet ?? null);
+        setValue('Remark1', formData.Remark1 ?? null);
+        setValue('Remark2', formData.Remark2 ?? null);
+        setValue('Remark3', formData.Remark3 ?? null);
+        setValue('Remark4', formData.Remark4 ?? null);
+        setValue('SequenceRegisterIn', formData.SequenceRegisterIn ?? null);
+        setValue('RegisterDateOut', formData.RegisterDateOut ?? null);
+        setValue('RegisterTimeOut', formData.RegisterTimeOut ?? null);
+        setValue('RegisterDateIn', formData.RegisterDateIn ?? getThaiDate());
+        setValue('RegisterTimeIn', formData.RegisterTimeIn ?? getThaiDate());
+        setValue('UserLogInDataIDRegisterIn', formData.UserLogInDataIDRegisterIn ?? null);
+        setValue('RegisterStationIDIn', formData.RegisterStationIDIn ?? null);
+        setValue('SequenceRegisterOut', formData.SequenceRegisterOut ?? null);
+        setValue('UserLogInDataIDRegisterOut', formData.UserLogInDataIDRegisterOut ?? null);
+        setValue('RegisterStationIDOut', formData.RegisterStationIDOut ?? null);
+        setValue('FlagRegisterStatus', formData.FlagRegisterStatus ?? 'Y');
+        setValue('FlagAutoSaveIn', formData.FlagAutoSaveIn ?? null);
+        setValue('FlagAutoSaveOut', formData.FlagAutoSaveOut ?? null);
+        setValue('FlagPlatformEdgeSensorIn', formData.FlagPlatformEdgeSensorIn ?? null);
+        setValue('FlagPlatformEdgeSensorOut', formData.FlagPlatformEdgeSensorOut ?? null);
+        setValue('FlagStatus', formData.FlagStatus ?? null);
+        setValue('FlagComplete', formData.FlagComplete ?? null);
+        setValue('FlagPayment', formData.FlagPayment ?? null);
+        setValue('PaymentDataID', formData.PaymentDataID ?? null);
+        setValue('PaymentDate', formData.PaymentDate ?? null);
+        setValue('PaymentTime', formData.PaymentTime ?? null);
+        setValue('PaymentUserLogInDataID', formData.PaymentUserLogInDataID ?? null);
+        setValue('WeightNetStandard', formData.WeightNetStandard ?? 0);
+        setValue('WeightNetTolerancePositive', formData.WeightNetTolerancePositive ?? 0);
+        setValue('WeightNetToleranceNegative', formData.WeightNetToleranceNegative ?? 0);
+        setValue('WeightNetApproveUserLogInDataID', formData.WeightNetApproveUserLogInDataID ?? null);
+        setValue('FlagCancel', formData.FlagCancel ?? 'Y');
+        setValue('HWID', formData.HWID ?? null);
+        setValue('ExtendedData', formData.ExtendedData ?? null);
+        setValue('DataHash', formData.DataHash ?? null);
+        setValue('FlagUploadIn', formData.FlagUploadIn ?? null);
+        setValue('FlagUploadOut', formData.FlagUploadOut ?? null);
       } else {
-        setIsCarRegister2Disabled(false);
+        // Set values for all fields except RFIDTagDataID
+        setValue('DocID', null);
+        setValue('DocNoIn', null);
+        setValue('DocNoOut', null);
+        setValue('WeightModeDataID', null);
+        setValue('TruckDataID', null);
+        setValue('WeightTypeDataID', null);
+        setValue('CustomerDataID', null);
+        setValue('ProductDataID', null);
+        setValue('TransporterDataID', null);
+        setValue('DriverDataID', null);
+        setValue('SequenceWeightIn', null);
+        setValue('WeightDateIn', null);
+        setValue('WeightTimeIn', null);
+        setValue('WeightIn', null);
+        setValue('UserLogInDataIDIn', null);
+        setValue('WeightScaleIDIn', null);
+        setValue('TicketPrintCountIn', null);
+        setValue('SequenceWeightOut', null);
+        setValue('WeightDateOut', null);
+        setValue('WeightTimeOut', null);
+        setValue('WeightOut', null);
+        setValue('UserLogInDataIDOut', null);
+        setValue('WeightScaleIDOut', null);
+        setValue('TicketPrintCountOut', null);
+        setValue('Weight', null);
+        setValue('WeightAdjust', null);
+        setValue('AdjustPercent', null);
+        setValue('AdjustPercentWeight', null);
+        setValue('WeightAdjKey1', null);
+        setValue('WeightAdjCal1', null);
+        setValue('WeightAdjKey2', null);
+        setValue('WeightAdjCal2', null);
+        setValue('WeightAdjKey3', null);
+        setValue('WeightAdjCal3', null);
+        setValue('WeightNet', null);
+        setValue('Price', null);
+        setValue('Tax', null);
+        setValue('ProductUnitDataID', null);
+        setValue('KgToUnit', null);
+        setValue('Amount', null);
+        setValue('AmountAdjKey1', null);
+        setValue('AmountAdjCal1', null);
+        setValue('AmountAdjKey2', null);
+        setValue('AmountAdjCal2', null);
+        setValue('AmountAdjKey3', null);
+        setValue('AmountAdjCal3', null);
+        setValue('AmountNet', null);
+        setValue('Remark1', null);
+        setValue('Remark2', null);
+        setValue('Remark3', null);
+        setValue('Remark4', null);
+        setValue('SequenceRegisterIn', null);
+        setValue('RegisterDateOut', null);
+        setValue('RegisterTimeOut', null);
+        setValue('RegisterDateIn', formData.RegisterDateIn ?? getThaiDate());
+        setValue('RegisterTimeIn', formData.RegisterTimeIn ?? getThaiDate());
+        setValue('UserLogInDataIDRegisterIn', null);
+        setValue('RegisterStationIDIn', null);
+        setValue('SequenceRegisterOut', null);
+        setValue('UserLogInDataIDRegisterOut', null);
+        setValue('RegisterStationIDOut', null);
+        setValue('FlagRegisterStatus', '');
+        setValue('FlagAutoSaveIn', null);
+        setValue('FlagAutoSaveOut', null);
+        setValue('FlagPlatformEdgeSensorIn', null);
+        setValue('FlagPlatformEdgeSensorOut', null);
+        setValue('FlagStatus', null);
+        setValue('FlagComplete', null);
+        setValue('FlagPayment', null);
+        setValue('PaymentDataID', null);
+        setValue('PaymentDate', null);
+        setValue('PaymentTime', null);
+        setValue('PaymentUserLogInDataID', null);
+        setValue('WeightNetStandard', 0);
+        setValue('WeightNetTolerancePositive', 0);
+        setValue('WeightNetToleranceNegative', 0);
+        setValue('WeightNetApproveUserLogInDataID', null);
+        setValue('FlagCancel', null);
+        setValue('HWID', null);
+        setValue('ExtendedData', null);
+        setValue('DataHash', null);
+        setValue('FlagUploadIn', null);
+        setValue('FlagUploadOut', null);
+
+        if (formData.CarRegister2) {
+          setIsCarRegister2Disabled(true);
+        } else {
+          setIsCarRegister2Disabled(false);
+        }
       }
     },
     [setValue]
@@ -185,93 +273,93 @@ const RegisterForm = forwardRef<RegisterFormRef, RegisterFormProps>(function Reg
       // Reset form to initial empty state
       const initialData = {
         DataID: '',
-        DataCenter: '',
-        DocID: '',
-        DocNoIn: '',
-        DocNoOut: '',
-        WeightModeDataID: '',
-        CarRegister: '',
-        CarRegister2: '',
-        TruckDataID: '',
-        RFIDTagDataID: '',
-        WeightTypeDataID: '',
-        CustomerDataID: '',
-        ProductDataID: '',
-        TransporterDataID: '',
-        DriverDataID: '',
-        SequenceWeightIn: '',
+        DataCenter: null,
+        DocID: null,
+        DocNoIn: null,
+        DocNoOut: null,
+        WeightModeDataID: null,
+        CarRegister: null,
+        CarRegister2: null,
+        TruckDataID: null,
+        RFIDTagDataID: null,
+        WeightTypeDataID: null,
+        CustomerDataID: null,
+        ProductDataID: null,
+        TransporterDataID: null,
+        DriverDataID: null,
+        SequenceWeightIn: null,
         WeightDateIn: null,
         WeightTimeIn: null,
-        WeightIn: 0,
-        UserLogInDataIDIn: '',
-        WeightScaleIDIn: '',
-        TicketPrintCountIn: 0,
-        SequenceWeightOut: '',
+        WeightIn: null,
+        UserLogInDataIDIn: null,
+        WeightScaleIDIn: null,
+        TicketPrintCountIn: null,
+        SequenceWeightOut: null,
         WeightDateOut: null,
         WeightTimeOut: null,
-        WeightOut: 0,
-        UserLogInDataIDOut: '',
-        WeightScaleIDOut: '',
-        TicketPrintCountOut: 0,
-        Weight: 0,
-        WeightAdjust: 0,
-        AdjustPercent: 0,
-        AdjustPercentWeight: 0,
-        WeightAdjKey1: 0,
-        WeightAdjCal1: 0,
-        WeightAdjKey2: 0,
-        WeightAdjCal2: 0,
-        WeightAdjKey3: 0,
-        WeightAdjCal3: 0,
-        WeightNet: 0,
-        Price: 0,
-        Tax: 0,
-        ProductUnitDataID: '',
-        KgToUnit: 0,
-        Amount: 0,
-        AmountAdjKey1: 0,
-        AmountAdjCal1: 0,
-        AmountAdjKey2: 0,
-        AmountAdjCal2: 0,
-        AmountAdjKey3: 0,
-        AmountAdjCal3: 0,
-        AmountNet: 0,
-        Remark1: '',
-        Remark2: '',
-        Remark3: '',
-        Remark4: '',
-        SequenceRegisterIn: '',
+        WeightOut: null,
+        UserLogInDataIDOut: null,
+        WeightScaleIDOut: null,
+        TicketPrintCountOut: null,
+        Weight: null,
+        WeightAdjust: null,
+        AdjustPercent: null,
+        AdjustPercentWeight: null,
+        WeightAdjKey1: null,
+        WeightAdjCal1: null,
+        WeightAdjKey2: null,
+        WeightAdjCal2: null,
+        WeightAdjKey3: null,
+        WeightAdjCal3: null,
+        WeightNet: null,
+        Price: null,
+        Tax: null,
+        ProductUnitDataID: null,
+        KgToUnit: null,
+        Amount: null,
+        AmountAdjKey1: null,
+        AmountAdjCal1: null,
+        AmountAdjKey2: null,
+        AmountAdjCal2: null,
+        AmountAdjKey3: null,
+        AmountAdjCal3: null,
+        AmountNet: null,
+        Remark1: null,
+        Remark2: null,
+        Remark3: null,
+        Remark4: null,
+        SequenceRegisterIn: null,
         RegisterDateIn: null,
         RegisterTimeIn: null,
-        UserLogInDataIDRegisterIn: '',
-        RegisterStationIDIn: '',
-        SequenceRegisterOut: '',
-        RegisterDateOut: new Date(),
-        RegisterTimeOut: new Date(),
-        UserLogInDataIDRegisterOut: '',
-        RegisterStationIDOut: '',
+        UserLogInDataIDRegisterIn: null,
+        RegisterStationIDIn: null,
+        SequenceRegisterOut: null,
+        RegisterDateOut: null,
+        RegisterTimeOut: null,
+        UserLogInDataIDRegisterOut: null,
+        RegisterStationIDOut: null,
         FlagRegisterStatus: '',
-        FlagAutoSaveIn: '',
-        FlagAutoSaveOut: '',
-        FlagPlatformEdgeSensorIn: '',
-        FlagPlatformEdgeSensorOut: '',
-        FlagStatus: '',
-        FlagComplete: '',
-        FlagPayment: '',
-        PaymentDataID: '',
+        FlagAutoSaveIn: null,
+        FlagAutoSaveOut: null,
+        FlagPlatformEdgeSensorIn: null,
+        FlagPlatformEdgeSensorOut: null,
+        FlagStatus: null,
+        FlagComplete: null,
+        FlagPayment: null,
+        PaymentDataID: null,
         PaymentDate: null,
         PaymentTime: null,
-        PaymentUserLogInDataID: '',
+        PaymentUserLogInDataID: null,
         WeightNetStandard: 0,
         WeightNetTolerancePositive: 0,
         WeightNetToleranceNegative: 0,
-        WeightNetApproveUserLogInDataID: '',
-        FlagCancel: '',
-        HWID: '',
-        ExtendedData: '',
+        WeightNetApproveUserLogInDataID: null,
+        FlagCancel: null,
+        HWID: null,
+        ExtendedData: null,
         DataHash: null,
-        FlagUploadIn: '',
-        FlagUploadOut: '',
+        FlagUploadIn: null,
+        FlagUploadOut: null,
       };
 
       reset(initialData);
@@ -362,6 +450,30 @@ const RegisterForm = forwardRef<RegisterFormRef, RegisterFormProps>(function Reg
     );
   }, [weightUnitData]);
 
+  const flagRegisterStatus = watch('FlagRegisterStatus');
+
+  const header = useMemo(() => {
+    if (flagRegisterStatus === 'N' && getValues('SequenceRegisterIn') === null) {
+      return (
+        <Typography fontSize={{ xs: 20, sm: 24 }} fontWeight={700} sx={{ color: '#000000' }}>
+          เข้า
+        </Typography>
+      );
+    } else if (flagRegisterStatus === 'N' && getValues('SequenceRegisterIn') != null) {
+      return (
+        <Typography fontSize={{ xs: 20, sm: 24 }} fontWeight={700} sx={{ color: '#000000' }}>
+          ออก
+        </Typography>
+      );
+    } else if (flagRegisterStatus === 'Y') {
+      return (
+        <Typography fontSize={{ xs: 20, sm: 24 }} fontWeight={700} sx={{ color: '#000000' }}>
+          ลงทะเบียน
+        </Typography>
+      );
+    }
+  }, [flagRegisterStatus, getValues]);
+
   useEffect(() => {
     if (info.data) {
       // Omit DataID, HWID, and DataHash when setting form data
@@ -372,93 +484,93 @@ const RegisterForm = forwardRef<RegisterFormRef, RegisterFormProps>(function Reg
     // Reset form to initial empty state
     const initialData = {
       DataID: '',
-      DataCenter: '',
-      DocID: '',
-      DocNoIn: '',
-      DocNoOut: '',
-      WeightModeDataID: '',
-      CarRegister: '',
-      CarRegister2: '',
-      TruckDataID: '',
-      RFIDTagDataID: '',
-      WeightTypeDataID: '',
-      CustomerDataID: '',
-      ProductDataID: '',
-      TransporterDataID: '',
-      DriverDataID: '',
-      SequenceWeightIn: '',
-      WeightDateIn: new Date(),
-      WeightTimeIn: new Date(),
-      WeightIn: 0,
-      UserLogInDataIDIn: '',
-      WeightScaleIDIn: '',
-      TicketPrintCountIn: 0,
-      SequenceWeightOut: '',
+      DataCenter: null,
+      DocID: null,
+      DocNoIn: null,
+      DocNoOut: null,
+      WeightModeDataID: null,
+      CarRegister: null,
+      CarRegister2: null,
+      TruckDataID: null,
+      RFIDTagDataID: null,
+      WeightTypeDataID: null,
+      CustomerDataID: null,
+      ProductDataID: null,
+      TransporterDataID: null,
+      DriverDataID: null,
+      SequenceWeightIn: null,
+      WeightDateIn: null,
+      WeightTimeIn: null,
+      WeightIn: null,
+      UserLogInDataIDIn: null,
+      WeightScaleIDIn: null,
+      TicketPrintCountIn: null,
+      SequenceWeightOut: null,
       WeightDateOut: null,
       WeightTimeOut: null,
-      WeightOut: 0,
-      UserLogInDataIDOut: '',
-      WeightScaleIDOut: '',
-      TicketPrintCountOut: 0,
-      Weight: 0,
-      WeightAdjust: 0,
-      AdjustPercent: 0,
-      AdjustPercentWeight: 0,
-      WeightAdjKey1: 0,
-      WeightAdjCal1: 0,
-      WeightAdjKey2: 0,
-      WeightAdjCal2: 0,
-      WeightAdjKey3: 0,
-      WeightAdjCal3: 0,
-      WeightNet: 0,
-      Price: 0,
-      Tax: 0,
-      ProductUnitDataID: '',
-      KgToUnit: 0,
-      Amount: 0,
-      AmountAdjKey1: 0,
-      AmountAdjCal1: 0,
-      AmountAdjKey2: 0,
-      AmountAdjCal2: 0,
-      AmountAdjKey3: 0,
-      AmountAdjCal3: 0,
-      AmountNet: 0,
-      Remark1: '',
-      Remark2: '',
-      Remark3: '',
-      Remark4: '',
-      SequenceRegisterIn: '',
+      WeightOut: null,
+      UserLogInDataIDOut: null,
+      WeightScaleIDOut: null,
+      TicketPrintCountOut: null,
+      Weight: null,
+      WeightAdjust: null,
+      AdjustPercent: null,
+      AdjustPercentWeight: null,
+      WeightAdjKey1: null,
+      WeightAdjCal1: null,
+      WeightAdjKey2: null,
+      WeightAdjCal2: null,
+      WeightAdjKey3: null,
+      WeightAdjCal3: null,
+      WeightNet: null,
+      Price: null,
+      Tax: null,
+      ProductUnitDataID: null,
+      KgToUnit: null,
+      Amount: null,
+      AmountAdjKey1: null,
+      AmountAdjCal1: null,
+      AmountAdjKey2: null,
+      AmountAdjCal2: null,
+      AmountAdjKey3: null,
+      AmountAdjCal3: null,
+      AmountNet: null,
+      Remark1: null,
+      Remark2: null,
+      Remark3: null,
+      Remark4: null,
+      SequenceRegisterIn: null,
       RegisterDateIn: null,
       RegisterTimeIn: null,
-      UserLogInDataIDRegisterIn: '',
-      RegisterStationIDIn: '',
-      SequenceRegisterOut: '',
+      UserLogInDataIDRegisterIn: null,
+      RegisterStationIDIn: null,
+      SequenceRegisterOut: null,
       RegisterDateOut: null,
       RegisterTimeOut: null,
-      UserLogInDataIDRegisterOut: '',
-      RegisterStationIDOut: '',
+      UserLogInDataIDRegisterOut: null,
+      RegisterStationIDOut: null,
       FlagRegisterStatus: '',
-      FlagAutoSaveIn: '',
-      FlagAutoSaveOut: '',
-      FlagPlatformEdgeSensorIn: '',
-      FlagPlatformEdgeSensorOut: '',
-      FlagStatus: '',
-      FlagComplete: '',
-      FlagPayment: '',
-      PaymentDataID: '',
+      FlagAutoSaveIn: null,
+      FlagAutoSaveOut: null,
+      FlagPlatformEdgeSensorIn: null,
+      FlagPlatformEdgeSensorOut: null,
+      FlagStatus: null,
+      FlagComplete: null,
+      FlagPayment: null,
+      PaymentDataID: null,
       PaymentDate: null,
       PaymentTime: null,
-      PaymentUserLogInDataID: '',
+      PaymentUserLogInDataID: null,
       WeightNetStandard: 0,
       WeightNetTolerancePositive: 0,
       WeightNetToleranceNegative: 0,
-      WeightNetApproveUserLogInDataID: '',
-      FlagCancel: '',
-      HWID: '',
-      ExtendedData: '',
+      WeightNetApproveUserLogInDataID: null,
+      FlagCancel: null,
+      HWID: null,
+      ExtendedData: null,
       DataHash: null,
-      FlagUploadIn: '',
-      FlagUploadOut: '',
+      FlagUploadIn: null,
+      FlagUploadOut: null,
     };
 
     reset(initialData);
@@ -466,6 +578,7 @@ const RegisterForm = forwardRef<RegisterFormRef, RegisterFormProps>(function Reg
 
   return (
     <Stack sx={{ width: '100%', gap: 2, pt: 2 }}>
+      {header}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <Controller
           control={control}
@@ -513,10 +626,34 @@ const RegisterForm = forwardRef<RegisterFormRef, RegisterFormProps>(function Reg
               <Typography variant='body2' color='text.secondary'>
                 วิธีลงทะเบียน
               </Typography>
-              <RadioGroup {...rest} row value={value ?? 'N'} onChange={(e) => onChange(e.target.value)}>
-                <FormControlLabel value='N' control={<Radio />} label='เข้าออก' />
-                <FormControlLabel value='Y' control={<Radio />} label='ครั้งเดียว' />
+              <RadioGroup
+                {...rest}
+                row
+                value={value ?? null}
+                onChange={(e) => {
+                  onChange(e.target.value);
+                  if (e.target.value == 'N') {
+                    // เข้าออก
+                    setValue('FlagCancel', 'N');
+                  }
+                }}
+              >
+                <FormControlLabel
+                  value='N'
+                  control={<Radio color={errors.FlagRegisterStatus ? 'error' : 'primary'} />}
+                  label='เข้าออก'
+                />
+                <FormControlLabel
+                  value='Y'
+                  control={<Radio color={errors.FlagRegisterStatus ? 'error' : 'primary'} />}
+                  label='ครั้งเดียว'
+                />
               </RadioGroup>
+              {errors.FlagRegisterStatus && (
+                <Typography variant='caption' color='error' sx={{ mt: 0.5, display: 'block' }}>
+                  {errors.FlagRegisterStatus.message}
+                </Typography>
+              )}
             </Box>
           )}
         />

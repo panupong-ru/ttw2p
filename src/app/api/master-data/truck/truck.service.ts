@@ -9,6 +9,7 @@ import type {
   WeightUnit,
   UserLogIn,
 } from '@/../prisma-client';
+import { getHWID } from '@/core/utils/hardware';
 
 // Type for included relations
 type TruckWithRelations = Truck & {
@@ -132,6 +133,7 @@ export class TruckService {
     // Convert string numbers to float
     const convertedData = {
       ...data,
+      HWID: getHWID(),
       Weight: data.Weight ? parseFloat(data.Weight.toString()) : null,
       WeightAdjKey1: data.WeightAdjKey1 ? parseFloat(data.WeightAdjKey1.toString()) : null,
       WeightAdjKey2: data.WeightAdjKey2 ? parseFloat(data.WeightAdjKey2.toString()) : null,
@@ -161,6 +163,7 @@ export class TruckService {
     // Convert string numbers to float
     const convertedData = {
       ...data,
+      HWID: getHWID(),
       Weight: data.Weight ? parseFloat(data.Weight.toString()) : null,
       WeightAdjKey1: data.WeightAdjKey1 ? parseFloat(data.WeightAdjKey1.toString()) : null,
       WeightAdjKey2: data.WeightAdjKey2 ? parseFloat(data.WeightAdjKey2.toString()) : null,

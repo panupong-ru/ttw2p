@@ -1,5 +1,6 @@
 import { prisma } from '@/core/libs/prisma';
 import type { WeightUnit } from '@/../prisma-client';
+import { getHWID } from '@/core/utils/hardware';
 
 export class WeightUnitService {
   async find(
@@ -55,6 +56,7 @@ export class WeightUnitService {
       data: {
         DataID: data.WeightUnitID || crypto.randomUUID(),
         ...data,
+        HWID: getHWID(),
       },
     });
   }
@@ -62,7 +64,10 @@ export class WeightUnitService {
   async update(id: string, data: Partial<WeightUnit>): Promise<WeightUnit> {
     return prisma.weightUnit.update({
       where: { DataID: id },
-      data,
+      data: {
+        ...data,
+        HWID: getHWID(),
+      },
     });
   }
 

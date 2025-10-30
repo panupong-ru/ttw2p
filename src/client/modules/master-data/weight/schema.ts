@@ -68,7 +68,7 @@ const WeightSchema = z.object({
   RegisterTimeOut: z.date().nullable(),
   UserLogInDataIDRegisterOut: z.string().nullable(),
   RegisterStationIDOut: z.string().nullable(),
-  FlagRegisterStatus: z.string().nullable(),
+  FlagRegisterStatus: z.string({ required_error: 'กรุณาเลือกวิธีลงทะเบียน' }).min(1, 'กรุณาเลือกวิธีลงทะเบียน'),
   FlagAutoSaveIn: z.string().nullable(),
   FlagAutoSaveOut: z.string().nullable(),
   FlagPlatformEdgeSensorIn: z.string().nullable(),

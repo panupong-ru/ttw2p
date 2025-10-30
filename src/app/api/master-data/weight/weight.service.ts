@@ -11,8 +11,9 @@ import type {
   Truck,
   RFIDTag,
 } from '@/../prisma-client';
+import { parseNumber } from '@/core/utils/number-format';
 import { parseDate } from '@/core/utils/date-format';
-import { parseNumber } from '@/client/components/number-input';
+import { getHWID } from '@/core/utils/hardware';
 
 // Type for included relations
 type WeightWithRelations = Weight & {
@@ -184,40 +185,84 @@ export class WeightService {
   }
 
   async create(data: Omit<Weight, 'DataID'>): Promise<Weight> {
-    const latestWeight = await prisma.v_WeightData.findFirst({
-      orderBy: {
-        SequenceRegisterIn: 'desc',
-      },
-      select: {
-        SequenceRegisterIn: true,
-      },
-    });
+    // Generate SequenceRegisterIn based on FlagRegisterStatus
+    let newSequenceRegisterIn: string;
+    let newSequenceRegisterOut: string | null = null;
 
-    let nextSequenceNumber = 1;
-    if (latestWeight && latestWeight.SequenceRegisterIn) {
-      // Parse the sequence, add 1
-      nextSequenceNumber = parseInt(latestWeight.SequenceRegisterIn, 10) + 1;
+    if (data.FlagRegisterStatus === 'Y') {
+      // ครั้งเดียว - หา sequence สำหรับ Y
+      const latestWeightOnce = await prisma.weight.findFirst({
+        where: {
+          FlagRegisterStatus: 'Y',
+        },
+        orderBy: {
+          SequenceRegisterIn: 'desc',
+        },
+        select: {
+          SequenceRegisterIn: true,
+          SequenceRegisterOut: true,
+        },
+      });
+
+      let nextSequenceNumber = 1;
+      if (latestWeightOnce && latestWeightOnce.SequenceRegisterIn) {
+        nextSequenceNumber = parseInt(latestWeightOnce.SequenceRegisterIn, 10) + 1;
+      }
+
+      newSequenceRegisterIn = String(nextSequenceNumber).padStart(10, '0');
+      newSequenceRegisterOut = newSequenceRegisterIn; // ครั้งเดียวใช้เลขเดียวกัน
+    } else {
+      // เข้าออก - หา sequence แยกสำหรับ In/Out
+      const latestWeightIn = await prisma.weight.findFirst({
+        where: {
+          FlagRegisterStatus: 'N',
+        },
+        orderBy: {
+          SequenceRegisterIn: 'desc',
+        },
+        select: {
+          SequenceRegisterIn: true,
+        },
+      });
+
+      let nextSequenceNumberIn = 1;
+      if (latestWeightIn && latestWeightIn.SequenceRegisterIn) {
+        nextSequenceNumberIn = parseInt(latestWeightIn.SequenceRegisterIn, 10) + 1;
+      }
+
+      newSequenceRegisterIn = String(nextSequenceNumberIn).padStart(10, '0');
+
+      // ถ้ามี SequenceRegisterIn อยู่แล้ว แปลว่ากำลังชั่งออก
+      if (data.SequenceRegisterIn) {
+        const latestWeightOut = await prisma.weight.findFirst({
+          where: {
+            FlagRegisterStatus: 'N',
+          },
+          orderBy: {
+            SequenceRegisterOut: 'desc',
+          },
+          select: {
+            SequenceRegisterOut: true,
+          },
+        });
+
+        let nextSequenceNumberOut = 1;
+        if (latestWeightOut && latestWeightOut.SequenceRegisterOut) {
+          nextSequenceNumberOut = parseInt(latestWeightOut.SequenceRegisterOut, 10) + 1;
+        }
+
+        newSequenceRegisterOut = String(nextSequenceNumberOut).padStart(10, '0');
+      }
     }
 
-    // Format to 10 digits with leading zeros
-    const newSequenceRegisterIn = String(nextSequenceNumber).padStart(10, '0');
-
-    // Transform the data object to parse numbers and dates
-    const transformedData = {
+    // Transform the data object to parse numbers
+    // For dates, keep as undefined if null to avoid sending to Prisma
+    const transformedData: any = {
       ...data,
       DataID: crypto.randomUUID(),
       SequenceRegisterIn: newSequenceRegisterIn,
-      // Parse date fields
-      WeightDateIn: parseDate(data.WeightDateIn),
-      WeightTimeIn: parseDate(data.WeightTimeIn),
-      WeightDateOut: parseDate(data.WeightDateOut),
-      WeightTimeOut: parseDate(data.WeightTimeOut),
-      RegisterDateIn: parseDate(data.RegisterDateIn),
-      RegisterTimeIn: parseDate(data.RegisterTimeIn),
-      RegisterDateOut: parseDate(data.RegisterDateOut),
-      RegisterTimeOut: parseDate(data.RegisterTimeOut),
-      PaymentDate: parseDate(data.PaymentDate),
-      PaymentTime: parseDate(data.PaymentTime),
+      SequenceRegisterOut: newSequenceRegisterOut ?? data.SequenceRegisterOut,
+      HWID: getHWID(),
       // Parse number fields
       WeightIn: parseNumber(data.WeightIn),
       WeightOut: parseNumber(data.WeightOut),
@@ -250,6 +295,18 @@ export class WeightService {
       WeightNetToleranceNegative: parseNumber(data.WeightNetToleranceNegative),
     };
 
+    // Parse date fields
+    transformedData.WeightDateIn = parseDate(data.WeightDateIn);
+    transformedData.WeightTimeIn = parseDate(data.WeightTimeIn);
+    transformedData.WeightDateOut = parseDate(data.WeightDateOut);
+    transformedData.WeightTimeOut = parseDate(data.WeightTimeOut);
+    transformedData.RegisterDateIn = parseDate(data.RegisterDateIn);
+    transformedData.RegisterTimeIn = parseDate(data.RegisterTimeIn);
+    transformedData.RegisterDateOut = parseDate(data.RegisterDateOut);
+    transformedData.RegisterTimeOut = parseDate(data.RegisterTimeOut);
+    transformedData.PaymentDate = parseDate(data.PaymentDate);
+    transformedData.PaymentTime = parseDate(data.PaymentTime);
+
     return prisma.weight.create({
       data: transformedData,
     });
@@ -257,7 +314,9 @@ export class WeightService {
 
   async update(id: string, data: Partial<Weight>): Promise<Weight> {
     // Create object with only defined fields, applying transformations
-    const transformedData: any = {};
+    const transformedData: any = {
+      HWID: getHWID(),
+    };
 
     // Copy all string fields as-is
     Object.entries(data).forEach(([key, value]) => {
