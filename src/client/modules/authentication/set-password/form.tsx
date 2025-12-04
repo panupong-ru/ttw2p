@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { setPasswordSchema, SetPasswordFormValues } from './schema';
-import { useSetPassword, SetPasswordResponse } from './api';
+import { setPasswordSchema, type SetPasswordFormValues } from './schema';
+import { useSetPassword, type SetPasswordResponse } from './api';
 import { useSearchParams } from 'next/navigation';
 import {
   Box,
@@ -23,9 +23,9 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
-interface SetPasswordFormProps {
+type SetPasswordFormProps = {
   onSuccess: (response: SetPasswordResponse) => void;
-}
+};
 
 export const SetPasswordForm = ({ onSuccess }: SetPasswordFormProps) => {
   const searchParams = useSearchParams();

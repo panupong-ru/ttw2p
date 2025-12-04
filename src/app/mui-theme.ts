@@ -4,9 +4,10 @@ import { createTheme } from '@mui/material/styles';
 
 // เพิ่ม interface สำหรับขยาย theme palette
 declare module '@mui/material/styles' {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface TypeBackground {
-    lightBg: string; // เพิ่มคุณสมบัตินี้ใน TypeBackground
-    sidebar: string; // เพิ่มสีพื้นหลังของ sidebar
+    lightBg?: string; // เพิ่มคุณสมบัตินี้ใน TypeBackground
+    sidebar?: string; // เพิ่มสีพื้นหลังของ sidebar
   }
 }
 

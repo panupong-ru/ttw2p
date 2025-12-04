@@ -2,16 +2,16 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { forgetPasswordSchema, ForgetPasswordFormValues } from './schema';
+import { forgetPasswordSchema, type ForgetPasswordFormValues } from './schema';
 import { useForgetPassword } from './api';
 import { useState } from 'react';
 import { Box, TextField, Button, Alert, CircularProgress, Typography } from '@mui/material';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-interface ForgetPasswordFormProps {
+type ForgetPasswordFormProps = {
   onSuccess?: () => void;
-}
+};
 
 export const ForgetPasswordForm = ({ onSuccess }: ForgetPasswordFormProps) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import type { PrismaPromise } from '@/../prisma-client';
 
 import { Prisma, PrismaClient } from '@/../prisma-client';

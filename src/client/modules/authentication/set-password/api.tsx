@@ -1,17 +1,17 @@
 'use client';
 
-import { SetPasswordFormValues } from './schema';
+import type { SetPasswordFormValues } from './schema';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 
-export interface SetPasswordParams extends SetPasswordFormValues {
+export type SetPasswordParams = SetPasswordFormValues & {
   token: string;
-}
+};
 
-export interface SetPasswordResponse {
+export type SetPasswordResponse = {
   success: boolean;
   message: string;
-}
+};
 
 export const setPassword = async (data: SetPasswordParams): Promise<SetPasswordResponse> => {
   try {

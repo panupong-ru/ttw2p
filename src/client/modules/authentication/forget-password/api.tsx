@@ -1,13 +1,13 @@
 'use client';
 
-import { ForgetPasswordFormValues } from './schema';
+import type { ForgetPasswordFormValues } from './schema';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 
-export interface ForgetPasswordResponse {
+export type ForgetPasswordResponse = {
   success: boolean;
   message: string;
-}
+};
 
 export const forgetPassword = async (data: ForgetPasswordFormValues): Promise<ForgetPasswordResponse> => {
   try {
