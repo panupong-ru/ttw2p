@@ -1,32 +1,58 @@
 services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: sqlserver
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: ttw2p_mysql
     environment:
-      - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=P@ssw0rd
-      - MSSQL_PID=Developer
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: ttw2p
+      MYSQL_USER: ttw2p_user
+      MYSQL_PASSWORD: ttw2p_password
     ports:
-      - '1433:1433'
+      - '3306:3306'
     volumes:
-      - sqlserver_data:/var/opt/mssql
+      # เก็บข้อมูลใน Docker volume (default)
+      # ข้อมูลจะไม่หายเมื่อ restart container
+      - mysql_data:/var/lib/mysql
+      
+      # ถ้าต้องการเก็บข้อมูลในโฟลเดอร์ที่เห็นได้ (เหมือน XAMPP)
+      # ให้ comment บรรทัดด้านบน และ uncomment บรรทัดนี้:
+      # - ./data/mysql:/var/lib/mysql
     restart: unless-stopped
     networks:
-      - sql_network
-    deploy:
-      resources:
-        limits:
-          memory: 2G
+      - ttw2p_network
     healthcheck:
-      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$$MSSQL_SA_PASSWORD" -Q "SELECT 1" || exit 1
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
+    command: --default-authentication-plugin=mysql_native_password
+
+  # Next.js Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ttw2p_app
+    environment:
+      - DATABASE_URL=mysql://ttw2p_user:ttw2p_password@mysql:3306/ttw2p
+      - AUTH_SECRET=${AUTH_SECRET:-change-me-in-production}
+      - MODE=${MODE:-production}
+      - TZ=${TZ:-Asia/Bangkok}
+      - NODE_ENV=production
+    ports:
+      - '3000:3000'
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - ttw2p_network
+    restart: unless-stopped
 
 networks:
-  sql_network:
+  ttw2p_network:
     driver: bridge
 
 volumes:
-  sqlserver_data:
+  mysql_data:
