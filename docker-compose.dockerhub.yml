@@ -32,7 +32,7 @@ services:
   # Next.js Application
   app:
     # ใช้ image จาก Docker Hub แทน build
-    image: yourusername/ttw2p-app:latest
+    image: golfpg8/ttw2p-app:latest
     container_name: ttw2p_app
     environment:
       - DATABASE_URL=mysql://ttw2p_user:ttw2p_password@mysql:3306/ttw2p
