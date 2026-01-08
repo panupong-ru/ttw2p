@@ -1,7 +1,7 @@
 services:
   # MySQL Database
   mysql:
-    image: mysql:8.0
+    image:  golfpg8/ttw2p-app:latest
     container_name: ttw2p_mysql
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
@@ -31,12 +31,8 @@ services:
 
   # Next.js Application
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      # ใช้ BuildKit เร็วขึ้น
-      args:
-        BUILDKIT_INLINE_CACHE: 1
+    # ใช้ image จาก Docker Hub แทน build
+    image: yourusername/ttw2p-app:latest
     container_name: ttw2p_app
     environment:
       - DATABASE_URL=mysql://ttw2p_user:ttw2p_password@mysql:3306/ttw2p
@@ -59,3 +55,4 @@ networks:
 
 volumes:
   mysql_data:
+

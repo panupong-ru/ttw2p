@@ -46,7 +46,11 @@ This is the easiest way to run the application on any machine.
 
 3. **Build and start the application:**
    ```bash
-   docker-compose up -d
+   # Build ครั้งแรก (ใช้เวลา 5-10 นาที)
+   docker-compose up -d --build
+   
+   # หรือใช้ BuildKit เพื่อ build เร็วขึ้น (Windows)
+   $env:COMPOSE_DOCKER_CLI_BUILD=1; $env:DOCKER_BUILDKIT=1; docker-compose up -d --build
    ```
 
    **Troubleshooting:**

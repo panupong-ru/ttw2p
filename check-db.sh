@@ -32,3 +32,4 @@ echo "   Password: P@\$sW0rd!"
 echo ""
 echo "🔗 Application: http://localhost:3000"
 
+

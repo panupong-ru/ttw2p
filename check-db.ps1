@@ -37,3 +37,4 @@ Write-Host "   Username: admin" -ForegroundColor White
 Write-Host "   Password: P@`$sW0rd!" -ForegroundColor White
 Write-Host "`n🔗 Application: http://localhost:3000" -ForegroundColor Cyan
 
+
